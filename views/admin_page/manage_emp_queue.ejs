@@ -1,0 +1,252 @@
+<style>
+    .container-fluid {
+        padding: 12px;
+    }
+
+    .modal-body {
+        padding-left: 30px;
+        padding-right: 30px;
+    }
+
+    .modal-footer {
+        padding-left: 30px;
+        padding-right: 30px;
+    }
+
+    .form-control {
+        background-color: rgba(175, 175, 175, 0.3);
+    }
+
+    td.alert {
+        border-radius: 0%;
+        border-color: black; 
+        color: red;
+        
+    }
+
+</style>
+
+<div class="container-fluid">
+    
+    <div class="d-flex justify-content-center">
+        <div class="">
+            <div class="card card-body text-center " style="padding-left: 40px; padding-right: 40px;">
+                <h3>ระบบจัดการคิวพนักงาน%></h3>
+            </div>
+        </div>
+    </div>
+
+    <div class="d-flex justify-content-between mb-2 mr-2" style="gap: 5px;">
+        <a href="manage_emp_work" class="btn btn-info">กลับไปที่จัดการงานของพนักงาน</a>
+        <button class="btn btn-primary " onclick="save('<%= db_emp_queue.length %>')" >บันทึก</button>
+    </div>
+  
+    <div class="d-flex justify-content-center">
+            <div class="card card-body " style="padding-left: 40px; padding-right: 40px; gap: 10px;" >
+                
+                <% for (const [i, value] of db_emp_queue.entries()) {%>
+                    <div class="d-flex card card-body p-3 m-0" >
+                        <div class="d-flex justify-content-start " style="gap: 10px">
+                            <p class="mb-0 p-2 px-3 bg-secondary rounded d-none">
+                                <span style="padding-right: 2px;">ID</span>
+                                <span id="q_id_<%= i %>"><%= value.id%></span>
+                            </p>
+                            <p class="mb-0 p-2 px-3 bg-secondary rounded" >
+                                <span style="padding-right: 2px;">คิวที่</span>
+                                <span id="q_number_<%= i %>"><%= value.number%></span>
+                                <!-- <textarea class="d-none" name="q_number_<%= i %>"><%= value.number%></textarea> -->
+                            </p>
+                            <p class="mb-0 p-2 px-3 bg-secondary rounded" >
+                                <span style="padding-right: 2px;">ID:</span>
+                                <span id="q_emp_id_<%= i %>"><%= value.emp_id%></span>
+                            </p>
+                            <p class="flex-grow-1 mb-0 p-2 px-3 rounded" style="background-color: rgba(128, 128, 128, 0.3);">   
+                                <span style="padding-right: 2px;">ชื่อ:</span>
+                                <span id="q_emp_f_name_<%= i %>" style="padding-right: 2px;"><%= value.f_name%></span>
+                                <span id="q_emp_l_name_<%= i %>" style="padding-right: 5px;"><%= value.l_name%></span>
+                                <span>(</span>
+                                <span id="q_emp_n_name_<%= i %>"><%= value.n_name%></span>
+                                <span>)</span>
+                            </p>
+                            <% if (i > 0) { %>
+                                <button  type="button" class="btn btn-primary p-1 px-1" onclick="moveUp('<%= i %>') ">ขึ้น</button>
+                            <% } else { %>
+                                <button  type="button" class="btn btn-primary p-1 px-1" onclick="moveUp('<%= i %>')" disabled>ขึ้น</button>
+                            <% } %>
+                            <% if (i < db_emp_queue.length-1) { %>
+                                <button  type="button" class="btn btn-primary p-1 px-1" onclick="moveDown('<%= i %>')" >ลง</button>
+                            <% } else { %>
+                                <button  type="button" class="btn btn-primary p-1 px-1" onclick="moveDown('<%= i %>')" disabled>ลง</button>
+                            <% } %>
+                        </div>
+                    </div>
+                <% } %>
+                
+            </div>
+    </div>
+</div>
+
+<script src="/axios/axios.min.js"></script>
+<script>
+    
+    function axios_validation(url,params,form_id,error_text){
+        axios({
+            url:url,
+            method:'get',
+            params:params,
+            timeout:3000
+        }).then((result)=>{
+            if( result.data.status == 1){
+                $(form_id).submit();
+            }else{
+                toastr.error(error_text)
+            }
+        }).catch(()=>{
+            toastr.error("404 Error Not Found")
+        });
+    }
+</script>
+
+<script>
+    function moveUp(input_index){
+        var index  = parseInt(input_index)
+        var idElement1 = document.getElementById(`q_id_${index}`);
+        var empIDElement1 = document.getElementById(`q_emp_id_${index}`);
+        var empFNameElement1 = document.getElementById(`q_emp_f_name_${index}`);
+        var empLNameElement1 = document.getElementById(`q_emp_l_name_${index}`);
+        var empNNameElement1 = document.getElementById(`q_emp_n_name_${index}`);
+
+        var idElement2 = document.getElementById(`q_id_${index-1}`);
+        var empIDElement2 = document.getElementById(`q_emp_id_${index-1}`);
+        var empFNameElement2 = document.getElementById(`q_emp_f_name_${index-1}`);
+        var empLNameElement2 = document.getElementById(`q_emp_l_name_${index-1}`);
+        var empNNameElement2 = document.getElementById(`q_emp_n_name_${index-1}`);
+
+        
+        // Check if the element exists
+        if (idElement1 && empIDElement1 && empFNameElement1 && empLNameElement1 && empNNameElement1 &&
+            idElement2 && empIDElement2 && empFNameElement2 && empLNameElement2 && empNNameElement2
+        ) {
+            var backup = {
+                id: idElement2.textContent,
+                emp_id: empIDElement2.textContent,
+                emp_f_name: empFNameElement2.textContent,
+                emp_l_name: empLNameElement2.textContent,
+                emp_n_name: empNNameElement2.textContent
+            }
+            idElement2.textContent = idElement1.textContent;
+            empIDElement2.textContent = empIDElement1.textContent;
+            empFNameElement2.textContent = empFNameElement1.textContent;
+            empLNameElement2.textContent = empLNameElement1.textContent;
+            empNNameElement2.textContent = empNNameElement1.textContent;
+
+            idElement1.textContent = backup.id;
+            empIDElement1.textContent = backup.emp_id;
+            empFNameElement1.textContent = backup.emp_f_name;
+            empLNameElement1.textContent = backup.emp_l_name;
+            empNNameElement1.textContent = backup.emp_n_name;
+        }
+    
+    }
+
+    function moveDown(input_index){
+        var index  = parseInt(input_index)
+        var idElement1 = document.getElementById(`q_id_${index}`);
+        var empIDElement1 = document.getElementById(`q_emp_id_${index}`);
+        var empFNameElement1 = document.getElementById(`q_emp_f_name_${index}`);
+        var empLNameElement1 = document.getElementById(`q_emp_l_name_${index}`);
+        var empNNameElement1 = document.getElementById(`q_emp_n_name_${index}`);
+
+        var idElement2 = document.getElementById(`q_id_${index+1}`);
+        var empIDElement2 = document.getElementById(`q_emp_id_${index+1}`);
+        var empFNameElement2 = document.getElementById(`q_emp_f_name_${index+1}`);
+        var empLNameElement2 = document.getElementById(`q_emp_l_name_${index+1}`);
+        var empNNameElement2 = document.getElementById(`q_emp_n_name_${index+1}`);
+
+        
+        // Check if the element exists
+        if (idElement1 && empIDElement1 && empFNameElement1 && empLNameElement1 && empNNameElement1 &&
+            idElement2 && empIDElement2 && empFNameElement2 && empLNameElement2 && empNNameElement2
+        ) {
+            var backup = {
+                id: idElement2.textContent,
+                emp_id: empIDElement2.textContent,
+                emp_f_name: empFNameElement2.textContent,
+                emp_l_name: empLNameElement2.textContent,
+                emp_n_name: empNNameElement2.textContent
+            }
+            idElement2.textContent = idElement1.textContent;
+            empIDElement2.textContent = empIDElement1.textContent;
+            empFNameElement2.textContent = empFNameElement1.textContent;
+            empLNameElement2.textContent = empLNameElement1.textContent;
+            empNNameElement2.textContent = empNNameElement1.textContent;
+
+            idElement1.textContent = backup.id;
+            empIDElement1.textContent = backup.emp_id;
+            empFNameElement1.textContent = backup.emp_f_name;
+            empLNameElement1.textContent = backup.emp_l_name;
+            empNNameElement1.textContent = backup.emp_n_name;
+        }
+        else{
+            console.log('element not found',idElement1, empIDElement1, empFNameElement1, empLNameElement1, empNNameElement1,
+            idElement2, empIDElement2, empFNameElement2, empLNameElement2, empNNameElement2)
+        }
+    
+    }
+    
+    function del(data_str){
+        var data = JSON.parse(data_str)
+        console.log(data,$(`input[name=data_${data.id}]`).val())
+        $("input[name=Uproduct_name]").val(data.id);
+        $(`input[name=data_${data.id}]`).val(0);
+        var textElement = document.getElementById(`data_${data.id}`);
+        // Check if the element exists
+        if (textElement) {
+            // Set the new text content
+            textElement.textContent = 0;
+        }
+        // $("input[name=id_del]").val(parseInt(id))
+        // if(confirm("ยืนการลบข้อมูล") == true){
+        //     $("#delete").submit();
+        // }
+    }
+
+
+
+    function save(len_data){
+        // const db_emp_queue = "<%= db_emp_queue %>"
+        // console.log(len_data,db_emp_queue)
+        if(confirm("ยืนยันการบันทึกข้อมูล") == true){
+            const data_list = []
+            for (let i = 0; i < len_data; i++) {
+                const data = {
+                    id: parseInt(document.getElementById(`q_id_${i}`).textContent),
+                    emp_id: parseInt(document.getElementById(`q_emp_id_${i}`).textContent),
+                    number: parseInt(document.getElementById(`q_number_${i}`).textContent),
+                }
+                // console.log(data)
+                data_list.push(data)
+            }
+
+            const data = {
+                data: data_list,
+            };
+
+            fetch("manage_emp_queue/update_queue", {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json', // Adjust the content type as needed.
+                },
+                body: JSON.stringify(data), // Convert the data to a JSON string.
+            })  
+        }
+    }
+  
+</script>
+
+<!-- ============================= ERROR Zone =============================-->
+<!-- toastr.success('Lorem ipsum dolor sit amet, consetetur sadipscing elitr.')
+toastr.info('Lorem ipsum dolor sit amet, consetetur sadipscing elitr.')
+toastr.error('Lorem ipsum dolor sit amet, consetetur sadipscing elitr.')
+toastr.warning('Lorem ipsum dolor sit amet, consetetur sadipscing elitr.') -->
+<!-- ============================= ERROR Zone =============================-->

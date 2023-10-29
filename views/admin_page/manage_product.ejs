@@ -1,0 +1,304 @@
+<style>
+    .container-fluid {
+        padding: 12px;
+    }
+
+    .modal-body {
+        padding-left: 30px;
+        padding-right: 30px;
+    }
+
+    .modal-footer {
+        padding-left: 30px;
+        padding-right: 30px;
+    }
+
+    .form-control {
+        background-color: rgba(175, 175, 175, 0.3);
+    }
+</style>
+
+<div class="container-fluid">
+    
+    
+    <div class="d-flex justify-content-center">
+        <div class="">
+            <div class="card card-body text-center" style="padding-left: 40px; padding-right: 40px;">
+                <h3>ระบบจัดการข้อมูลสินค้า : <%= db_prod_type[0].name %></h3>
+            </div>
+        </div>
+    </div>
+  
+    
+
+    <div class="d-flex justify-content-start mb-2" style="gap: 5px">
+        <a href="manage_product_type" class="btn btn-info">กลับไปที่จัดการประเภทสินค้า</a>
+        <button  type="button" class="btn btn-success" data-toggle="modal" data-target="#modal-add" onclick="">
+            เพิ่มสินค้า
+        </button>
+    </div>
+
+    <div class="row">
+        <div class="col-12">
+            <div class="card card-body">
+                
+                <table id="product" class="table table-bordered table-hover " >
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>ชื่อ</th>
+                            <th>ราคา</th>
+                            <th>จำนวนการใช้งาน(ครั้ง)</th>
+                            <th>จำนวนต่ำสุด</th>
+                            <th>จำนวนมากสุด</th>
+                            <th>จำนวน</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% for(let i of db_prod) {%>
+                            <tr>
+                                <td><%= i.id%></td>
+                                <td><%= i.name%></td>
+                                <td><%= i.price%></td>
+                                <td><%= i.can_used%></td>
+                                <td><%= i.min_stock%></td>
+                                <td><%= i.max_stock%></td>
+                                <td><%= i.stock%></td>
+                                <td>
+                                    <div class="">
+                                        <button  type="button" class="btn btn-warning p-1 px-1" data-toggle="modal" data-target="#modal-update"onclick="update('<%=JSON.stringify(i)%>') ">แก้
+                                        </button>
+                                        <button  type="button" class="btn btn-danger p-1 px-1" onclick="del('<%=i.id%>')" >ลบ</button>
+                                    </div>
+                                </td>
+                                
+                            </tr>
+                        <% } %>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+
+<form id="delete" action="manage_product/delete" method="post" class="d-inline">
+    <input type="number" name="type_id" class="d-none" value="<%= db_prod_type[0].id%>">
+    <input type="number" name="id_del" class="d-none" value="">
+</form>
+
+<!-- =================== Modal Insert ===================-->
+<div class="modal fade" id="modal-add">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header bg-purple">
+          <h4 class="modal-title ">เพิ่มสินค้า</h4>
+          <button type="button " class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true" class="text-light">&times;</span>
+          </button>
+        </div>
+        <form id="mange_add" action="manage_product/add" method="post">
+            <input type="number" class="form-control d-none" name="prod_type_id" value="<%= db_prod_type[0].id %>" >
+            <div class="modal-body">
+            <!-- ============================== Form ==============================-->
+                <div class="form-group">
+                    <div class="form-group">
+                        <label >ชื่อ</label>
+                        <input type="text" class="form-control" name="name">
+                    </div>
+                    <div class="form-group">
+                        <label >ราคา</label>
+                        <input type="number" class="form-control" name="price">
+                    </div>
+                    <div class="form-group">
+                        <label >จำนวนการใช้งาน(ครั้ง)</label>
+                        <input type="number" class="form-control" name="can_used">
+                    </div>
+                    <div class="form-group">
+                        <label >จำนวนต่ำสุด</label>
+                        <input type="number" class="form-control" name="min_stock" required>
+                    </div>
+                    <div class="form-group">
+                        <label >จำนวนมากสุด</label>
+                        <input type="number" class="form-control" name="max_stock" >
+                    </div>
+                    <input type="number" name="type_id" class="d-none" value="<%= db_prod_type[0].id%>">
+                </div>
+            </div>
+            <div class="modal-footer justify-content-between">
+                <button type="button" class="btn btn-default" data-dismiss="modal">ยกเลิก</button>
+                <button type="submit" class="btn btn-primary" onclick="return vali('add')">ยืนยัน</button>
+            </div>
+
+        </form>
+
+      </div>
+    </div>
+</div>
+
+<!-- =================== Modal Update ===================-->
+<div class="modal fade" id="modal-update">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header bg-purple">
+          <h4 class="modal-title ">แก้ไขข้อมูลสินค้า</h4>
+          <button type="button " class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true" class="text-light">&times;</span>
+          </button>
+        </div>
+
+        <form id="mange_update" action="manage_product/update" method="post">
+            <div class="modal-body">
+            <!-- ============================== Form ==============================-->
+                <div class="form-group">
+                    <label >ชื่อ</label>
+                    <input type="text" class="form-control" name="Uname">
+                </div>
+                <div class="form-group">
+                    <label >ราคา</label>
+                    <input type="number" class="form-control" name="Uprice">
+                </div>
+                <div class="form-group">
+                    <label >จำนวนการใช้งาน(ครั้ง)</label>
+                    <input type="number" class="form-control" name="Ucan_used">
+                </div>
+                <div class="form-group">
+                    <label >จำนวนต่ำสุด</label>
+                    <input type="number" class="form-control" name="Umin_stock">
+                </div>
+                <div class="form-group">
+                    <label >จำนวนมากสุด</label>
+                    <input type="number" class="form-control" name="Umax_stock" >
+                </div>
+                <input type="number" name="type_id" class="d-none" value="<%= db_prod_type[0].id%>">
+                <input type="number" name="id_update" class="d-none" value="">
+            </div>
+
+            <div class="modal-footer justify-content-between">
+                <button type="button" class="btn btn-default" data-dismiss="modal">ยกเลิก</button>
+                <button type="submit" class="btn btn-primary" onclick="return vali('update')">ยืนยัน</button>
+            </div>
+
+        </form>
+
+      </div>
+    </div>
+</div>
+
+
+<script src="/axios/axios.min.js"></script>
+<script>
+    
+    function axios_validation(url,params,form_id,error_text){
+        axios({
+            url:url,
+            method:'get',
+            params:params,
+            timeout:3000
+        }).then((result)=>{
+            if( result.data.status == 1){
+                $(form_id).submit();
+            }else{
+                toastr.error(error_text)
+            }
+        }).catch(()=>{
+            toastr.error("404 Error Not Found")
+        });
+    }
+</script>
+<script>
+    
+    $(function () {
+      $('#product').DataTable({
+        "paging": true,
+        "lengthMenu": [[5, 10, 20], [5, 10, 20]],
+        "searching": true,
+        "ordering": true,
+        "info": true,
+        "autoWidth": false,
+        "responsive": true,
+      }); 
+    });
+
+    function update(data){
+        data = JSON.parse(data)
+        $("input[name=Uname]").val(data.name)
+        $("input[name=Uprice]").val(data.price)
+        $("input[name=Ucan_used]").val(data.can_used)
+        $("input[name=Umin_stock]").val(data.min_stock)
+        $("input[name=Umax_stock]").val(data.max_stock)
+        $("input[name=id_update]").val(data.id)
+    }
+
+    function del(id){
+        $("input[name=id_del]").val(parseInt(id))
+        if(confirm("ยืนการลบข้อมูล") == true){
+            $("#delete").submit();
+        }
+    }
+
+    function vali(mode){
+        /*
+            Mode insert , update 
+        */
+        // (document.querySelector("input[name=Fname]").innerText).trim()
+        if(mode === "add"){
+            let name = ($("input[name=name]").val()).trim();
+            let price = ($("input[name=price]").val()).trim();
+            let can_use = ($("input[name=can_used]").val()).trim();
+            let min_stock = ($("input[name=min_stock]").val()).trim();
+            let max_stock = ($("input[name=max_stock]").val()).trim();
+    
+            if( name !== "" && price !== "" && can_use !== "" && min_stock !== "" && max_stock !== ""){
+                let params= {
+                    name:name,
+                    type_id:$("input[name=type_id]").val(),
+                }
+                axios_validation(
+                    'manage_product/check_can_add',
+                    params,
+                    '#mange_add',
+                    'มีชื่อสินค้านี้อยู่เเล้ว'
+                );
+                
+            }else{
+                toastr.error("! กรุณาใส่ข้อมูลให้ครบ")
+            }
+            return false;
+        }else if(mode === "update"){
+            let name = ($("input[name=Uname]").val()).trim();
+            let price = ($("input[name=Uprice]").val()).trim();
+            let can_use = ($("input[name=Ucan_used]").val()).trim();
+            let min_stock = ($("input[name=Umin_stock]").val()).trim();
+            let max_stock = ($("input[name=Umax_stock]").val()).trim();
+    
+            if( name !== "" && price !== "" && can_use !== "" && min_stock !== "" && max_stock !== ""){
+                let params= {
+                    name:name,
+                    type_id:$("input[name=type_id]").val(),
+                    id:$("input[name=id_update]").val()
+                }
+                axios_validation(
+                    'manage_product/check_can_update',
+                    params,
+                    '#mange_update',
+                    'มีชื่อสินค้านี้อยู่เเล้ว'
+                );
+            }else{
+                toastr.error("! กรุณาใส่ข้อมูลให้ครบ")
+            }
+            return false;
+        }
+        
+    }
+  
+</script>
+
+<!-- ============================= ERROR Zone =============================-->
+<!-- toastr.success('Lorem ipsum dolor sit amet, consetetur sadipscing elitr.')
+toastr.info('Lorem ipsum dolor sit amet, consetetur sadipscing elitr.')
+toastr.error('Lorem ipsum dolor sit amet, consetetur sadipscing elitr.')
+toastr.warning('Lorem ipsum dolor sit amet, consetetur sadipscing elitr.') -->
+<!-- ============================= ERROR Zone =============================-->

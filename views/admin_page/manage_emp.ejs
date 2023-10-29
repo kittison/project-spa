@@ -1,0 +1,436 @@
+<style>
+    .container-fluid {
+        padding: 12px;
+    }
+
+    .modal-body {
+        padding-left: 30px;
+        padding-right: 30px;
+    }
+
+    .modal-footer {
+        padding-left: 30px;
+        padding-right: 30px;
+    }
+
+    .form-control {
+        background-color: rgba(175, 175, 175, 0.3);
+    }
+</style>
+
+<div class="container-fluid">
+    
+    <div class="d-flex justify-content-center">
+        <div class="">
+            <div class="card card-body text-center" style="padding-left: 40px; padding-right: 40px;">
+                <h3>ระบบจัดการข้อมูลพนักงาน</h3>
+            </div>
+        </div>
+    </div>
+
+    <div class="d-flex  justify-content-start mb-2" style="gap: 5px;">
+        <button  type="button" class="btn btn-success" data-toggle="modal" data-target="#modal-add" onclick="">
+            เพิ่มพนักงาน
+        </button>
+        <a href="manage_emp_type" class="btn btn-primary">จัดการข้อมูลตำแหน่ง</a>
+        <a href="manage_job_level" class="btn btn-primary">จัดการข้อมูลระดับ</a>
+    </div>
+
+    <div class="row">
+        <div class="col-12">
+            <div class="card card-body">
+                
+                <table id="employee" class="table table-bordered table-hover " >
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>ชื่อ</th>
+                            <th>นามสกุล</th>
+                            <th>ชื่อเล่น</th>
+                            <th>ที่อยู่</th>
+                            <th>เบอร์</th>
+                            <th>วันที่เริ่ม</th>
+                            <th>วันที่ออก</th>
+                            <th>ตำเเหน่ง</th>
+                            <th>ระดับ</th>
+                            <th>บัญชีธนาคาร</th>
+                            <th>เงินเดือน</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% for(let i of db_employee) {%>
+                            <tr>
+                                <td><%= i.id%></td>
+                                <td><%= i.f_name%></td>
+                                <td><%= i.l_name%></td>
+                                <td><%= i.n_name%></td>
+                                <td><%= i.address%></td>
+                                <td><%= i.tel%></td>
+                                <% if(i.date_start){ %>
+                                    <% let f_date_start = new Intl.DateTimeFormat('id-ID',{ day:'2-digit', month:'2-digit', year:'numeric'}).format(i.date_start) %>
+                                    <td><%= f_date_start%></td>
+                                <% } else{ %>  
+                                    <td>-</td>
+                                <% } %>
+                                <% if(i.date_end){ %>
+                                    <% let f_date_end = new Intl.DateTimeFormat('id-ID',{ day:'2-digit', month:'2-digit', year:'numeric'}).format(i.date_end) %>
+                                    <td><%= f_date_end%></td>
+                                <% } else{ %>  
+                                    <td>-</td>
+                                <% } %>
+                                <td><%= i.emp_type%></td>
+                                <td><%= i.description%></td>
+                                <td><%= i.bank_account%></td>
+                                <td><%= i.wage%></td>
+                               
+                                <td>
+                                    <div class="">
+                                        <button  type="button" class="btn btn-warning p-1 px-1" data-toggle="modal" data-target="#modal-update"onclick="update('<%=JSON.stringify(i)%>') ">แก้
+                                        </button>
+                                        <button  type="button" class="btn btn-danger p-1 px-1" onclick="del('<%=i.id%>')" >ลบ</button>
+                                    </div>
+                                </td>
+                                
+                            </tr>
+                        <% } %>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<form id="delete" action="manage_emp/delete" method="post" class="d-inline">
+    <input type="number" name="id_del" class="d-none" value="">
+</form>
+
+<!-- =================== Modal Insert ===================-->
+<div class="modal fade" id="modal-add">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header bg-purple">
+          <h4 class="modal-title ">เพิ่มพนักงาน</h4>
+          <button type="button " class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true" class="text-light">&times;</span>
+          </button>
+        </div>
+        <form id="mange_add" action="manage_emp/add" method="post">
+            <div class="modal-body">
+            <!-- ============================== Form ==============================-->
+                <div class="form-group">
+                    <label >Username</label>
+                    <input type="text" class="form-control" name="username" >
+                </div>
+                <div class="form-group">
+                    <label >ชื่อ</label>
+                    <input type="text" class="form-control" name="f_name">
+                </div>
+                <div class="form-group">
+                    <label >นามสกุล</label>
+                    <input type="text" class="form-control" name="l_name">
+                </div>
+                <div class="form-group">
+                    <label >ชื่อเล่น</label>
+                    <input type="text" class="form-control" name="n_name">
+                </div>
+                <div class="form-group">
+                    <label >ที่อยู่</label>
+                    <input type="text" class="form-control" name="address">
+                </div>
+                <div class="form-group">
+                    <label >เบอร์โทร</label>
+                    <input type="number" class="form-control" name="tel">
+                </div>
+                <div class="form-group">
+                    <label >วันที่เริ่ม</label>
+                    <input type="datetime-local" class="form-control" name="date_start">
+                </div>
+                <div class="form-group">
+                    <label >วันที่ออก</label>
+                    <input type="datetime-local" class="form-control" name="date_end">
+                </div>
+                <div class="form-group">
+                    <label >ตำเเหน่ง</label>
+                    <select class="form-control" name="position" >
+                        <% for(i of db_position){%> 
+                            <option id="pos_<%=i.id%>" value="<%=i.id%>" ><%=i.name%></option>
+                        <%} %> 
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label >ระดับ</label>
+                    <select class="form-control" name="level" >
+                        <% for(i of db_level){%> 
+                            <option id="lv_<%=i.id%>" value="<%=i.id%>"><%=i.description%></option>
+                        <%} %> 
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label >บัญชีธนาคาร</label>
+                    <input type="number" class="form-control" name="bank_account" >
+                </div>
+                <div class="form-group">
+                    <label >เงินเดือน</label>
+                    <input type="number" class="form-control" name="wage" >
+                </div>
+
+            </div>
+            
+            <div class="modal-footer justify-content-between">
+                <button type="button" class="btn btn-default" data-dismiss="modal">ยกเลิก</button>
+                <button type="submit" class="btn btn-primary" onclick="return vali('add')">ยืนยัน</button>
+            </div>
+
+        </form>
+
+      </div>
+    </div>
+</div>
+
+
+<!-- =================== Modal Update ===================-->
+<div class="modal fade" id="modal-update">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header bg-purple">
+          <h4 class="modal-title ">แก้ไขข้อมูลพนักงาน</h4>
+          <button type="button " class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true" class="text-light">&times;</span>
+          </button>
+        </div>
+
+        <form id="mange_update" action="manage_emp/update" method="post">
+            <div class="modal-body">
+            <!-- ============================== Form ==============================-->
+                <div class="form-group">
+                    <label >ชื่อ</label>
+                    <input type="text" class="form-control" name="Uf_name">
+                </div>
+                <div class="form-group">
+                    <label >นามสกุล</label>
+                    <input type="text" class="form-control" name="Ul_name">
+                </div>
+                <div class="form-group">
+                    <label >ชื่อเล่น</label>
+                    <input type="text" class="form-control" name="Un_name">
+                </div>
+                <div class="form-group">
+                    <label >ที่อยู่</label>
+                    <input type="text" class="form-control" name="Uaddress">
+                </div>
+                <div class="form-group">
+                    <label >เบอร์โทร</label>
+                    <input type="number" class="form-control" name="Utel">
+                </div>
+                <div class="form-group">
+                    <label >วันที่เริ่ม</label>
+                    <input type="datetime-local" class="form-control" name="Udate_start">
+                </div>
+                <div class="form-group">
+                    <label >วันที่ออก</label>
+                    <input type="datetime-local" class="form-control" name="Udate_end">
+                </div>
+                <div class="form-group">
+                    <label >ตำเเหน่ง</label>
+                    <select class="form-control" name="Uposition" >
+                        <% for(i of db_position){%> 
+                            <option id="Upos_<%=i.id%>" value="<%=i.id%>"><%=i.name%></option>
+                        <%} %> 
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label >ระดับ</label>
+                    <select class="form-control" name="Ulevel" >
+                        <% for(i of db_level){%> 
+                            <option  id="Ulv_<%=i.id%>" value="<%=i.id%>"><%=i.description%></option>
+                        <%} %> 
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label >บัญชีธนาคาร</label>
+                    <input type="number" class="form-control" name="Ubank_account" >
+                </div>
+                <div class="form-group">
+                    <label >เงินเดือน</label>
+                    <input type="number" class="form-control" name="Uwage" >
+                </div>
+
+                <input type="number" name="id_update" class="d-none" value="">
+            </div>
+
+            <div class="modal-footer justify-content-between">
+                <button type="button" class="btn btn-default" data-dismiss="modal">ยกเลิก</button>
+                <button type="submit" class="btn btn-primary" onclick="return vali('update')">ยืนยัน</button>
+            </div>
+
+        </form>
+
+      </div>
+    </div>
+</div>
+
+
+
+
+
+
+<script src="/axios/axios.min.js"></script>
+<script>
+    function axios_validation(url,params,form_id,error_text){
+        axios({
+            url:url,
+            method:'get',
+            params:params,
+            timeout:3000
+        }).then((result)=>{
+            if( result.data.status == 1){
+                $(form_id).submit();
+            }else{
+                toastr.error(error_text)
+            }
+        }).catch(()=>{
+            toastr.error("404 Error Not Found")
+        });
+    }
+</script>
+
+
+
+<script>
+    $(function () {
+      $('#employee').DataTable({
+        "paging": true,
+        "lengthMenu": [[5, 10, 20], [5, 10, 20]],
+        "searching": true,
+        "ordering": true,
+        "info": true,
+        "autoWidth": false,
+        "responsive": true,
+      });
+    });
+
+    let oldOpPos = "";
+    let oldOpLv = "";
+    function update(data){
+        data = JSON.parse(data)
+        $("input[name=Uf_name]").val(data.f_name);
+        $("input[name=Ul_name]").val(data.l_name);
+        $("input[name=Un_name]").val(data.n_name);
+        $("input[name=Uaddress]").val(data.address);
+        $("input[name=Utel]").val(data.tel);
+        $("input[name=Udate_start]").val(formatDateTimeForInput(data.date_start));
+        $("input[name=Udate_end]").val(data.date_end? formatDateTimeForInput(data.date_end): '');
+        $("input[name=Ubank_account]").val(data.bank_account);
+        $("input[name=Uwage]").val(data.wage);           
+        $("input[name=id_update]").val(data.id);
+        let new_select1 = data.emp_type_id;
+        $(`option[id=Upos_${new_select1}]`).attr("selected","true");
+        if(oldOpPos !== new_select1 ){
+            if(oldOpPos != ""){
+                $(`option[id=Upos_${oldOpPos}]`).removeAttr("selected");
+            }
+            oldOpPos = new_select1 ;
+        }
+        let new_select2 = data.job_level_id;
+        $(`option[id=Ulv_${new_select2}]`).attr("selected","true");
+        if(oldOpLv !== new_select2 ){
+            if(oldOpLv != ""){
+                $(`option[id=Ulv_${oldOpLv}]`).removeAttr("selected");
+            }
+            oldOpLv = new_select2 ;
+        }
+
+    }
+
+    function del(id){
+        $("input[name=id_del]").val(parseInt(id))
+        if(confirm("ยืนการลบข้อมูล") == true){
+            $("#delete").submit();
+        }
+    }
+
+    function vali(mode){
+        /*
+            Mode insert , update 
+        */
+        // (document.querySelector("input[name=Fname]").innerText).trim()
+        if(mode === "add"){
+            let username = ($("input[name=username]").val()).trim();
+            let f_name = ($("input[name=f_name]").val()).trim();
+            let l_name = ($("input[name=l_name]").val()).trim();
+            let n_name = ($("input[name=n_name]").val()).trim();
+            let address = ($("input[name=address]").val()).trim();
+            let tel = ($("input[name=tel]").val()).trim();
+            let date_start = ($("input[name=date_start]").val()).trim();
+            let date_end = ($("input[name=date_end]").val()).trim();
+            let emp_type_id = $("select[name=position]").val();
+            let job_level_id = $("select[name=level]").val();
+            let bank_account = ($("input[name=bank_account]").val()).trim();
+            let wage = ($("input[name=wage]").val()).trim();
+            if( username !== "" && f_name !== "" && l_name !== "" && n_name !== "" && address !== "" && tel !== "" &&
+                date_start !== "" && emp_type_id !== "" && job_level_id !== "" && bank_account !== "" && wage !== ""
+            ){
+                let params= {
+                    f_name:f_name,
+                    l_name:l_name,
+                    username:username,
+                }
+                axios_validation(
+                    'manage_emp/check_can_add',
+                    params,
+                    '#mange_add',
+                    'มี username/ชื่อ/นามสุกล พนักงานนี้อยู่เเล้ว'
+                );
+                
+            }else{
+                toastr.error("! กรุณาใส่ข้อมูลให้ครบ")
+            }
+            return false;
+
+
+        }else if(mode === "update"){
+            let f_name = ($("input[name=Uf_name]").val()).trim();
+            let l_name = ($("input[name=Ul_name]").val()).trim();
+            let n_name = ($("input[name=Un_name]").val()).trim();
+            let address = ($("input[name=Uaddress]").val()).trim();
+            let tel = ($("input[name=Utel]").val()).trim();
+            let date_start = ($("input[name=Udate_start]").val()).trim();
+            let date_end = ($("input[name=Udate_end]").val()).trim();
+            let emp_type_id = $("select[name=Uposition]").val();
+            let job_level_id = $("select[name=Ulevel]").val();
+            let bank_account = ($("input[name=Ubank_account]").val()).trim();
+            let wage = ($("input[name=Uwage]").val()).trim();
+
+            if( f_name !== "" && l_name !== "" && n_name !== "" && address !== "" && tel !== "" &&
+                date_start !== "" && emp_type_id !== "" && job_level_id !== "" && bank_account !== "" && wage !== ""
+            ){
+                let params= {
+                    f_name:f_name,
+                    l_name:l_name,
+                    id:$("input[name=id_update]").val()
+                }
+                axios_validation(
+                    'manage_emp/check_can_update',
+                    params,
+                    '#mange_update',
+                    'มีชื่อ/นามสุกลพนักงานนี้อยู่เเล้ว'
+                );
+            }else{
+                toastr.error("! กรุณาใส่ข้อมูลให้ครบ")
+            }
+            return false;
+        }
+        
+    }
+  
+</script>
+
+
+<!-- ============================= ERROR Zone =============================-->
+<!-- toastr.success('Lorem ipsum dolor sit amet, consetetur sadipscing elitr.')
+toastr.info('Lorem ipsum dolor sit amet, consetetur sadipscing elitr.')
+toastr.error('Lorem ipsum dolor sit amet, consetetur sadipscing elitr.')
+toastr.warning('Lorem ipsum dolor sit amet, consetetur sadipscing elitr.') -->
+<!-- ============================= ERROR Zone =============================-->

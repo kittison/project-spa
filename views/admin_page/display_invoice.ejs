@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ใบแจ้งหนี้</title>
+    <style>
+
+        .invoice {
+            width: 90%;
+            padding: 20px;
+            margin: 0 auto;
+        }
+
+        .header {
+            padding: 20px;
+            text-align: center;
+        }
+
+        .invoice-details {
+            padding: 20px;
+            border: 1px solid #ddd;
+        }
+
+        .invoice-details h1 {
+            font-size: 24px;
+        }
+
+        .invoice-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .invoice-table th, .invoice-table td {
+            border: 1px solid #ddd;
+            padding: 10px;
+        }
+
+        .invoice-footer {
+            padding: 10px;
+            padding-top: 20px;
+            text-align: right;
+        }
+    </style>
+</head>
+<body>
+    <div class="invoice">
+        <div class="header">
+            <h1>ใบแจ้งหนี้</h1>
+        </div>
+        <div class="invoice-details">
+            <p><strong>ชื่อร้าน:</strong> <%= data.shop.shop_name %></p>
+            <p><strong>ที่อยู่:</strong> <%= data.shop.location %></p>
+            <p><strong>ติตต่อ:</strong> <%= data.shop.contact %></p>
+            <p></p>
+            <p><strong>เลขที่:</strong> <%= data.invoice_number %></p>
+            <p><strong>วันที่:</strong> <%= data.date %></p>
+        </div>
+        <table class="invoice-table">
+            <thead>
+                <tr>
+                    <th>ลำดับที่</th>
+                    <th>รายการ</th>
+                    <th>ราคา/หน่วย</th>
+                    <th>จำนวน</th>
+                    <th>จำนวนเงิน</th>
+                </tr>
+            </thead>
+            <tbody>
+                <% for (const [i, value] of data.services.entries()) { %>
+                    <tr>
+                        <td><%= i %></td>
+                        <td><%= value.name %> <%= value.type %> (<%= value.function.time %> นาที)</td>
+                        <td><%= value.function.price %></td>
+                        <td><%= value.quantity %></td>
+                        <td><%= value.total %></td>
+                    </tr>
+                <% } %>
+            </tbody>
+        </table>
+        <div class="invoice-footer">
+            <p><strong>จำนวนเงินรวม:</strong> <%= data.amount %> บาท</p>
+            <p><strong>ส่วนลด:</strong> <%= data.discount %> บาท</p>
+            <p><strong>รวมทั้งสิ้น:</strong> <%= data.total %> บาท</p>
+        </div>
+    </div>
+</body>
+</html>

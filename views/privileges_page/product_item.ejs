@@ -1,0 +1,442 @@
+
+<div class="container-fluid">
+    
+    
+    <div class="d-flex justify-content-center">
+        <div class="pt-2  w-50">
+            <div class="card card-body btn ">
+                <h3>สินค้าในหมวดหมู่ : <%= db_category[0].category_name %></h3>
+            </div>
+        </div>
+    </div>
+  
+   
+    
+
+    <div class="d-flex  justify-content-start mb-1">
+        <button  type="button" class="btn btn-success" data-toggle="modal" data-target="#modal-add" onclick="">
+            เพิ่มสินค้า
+        </button>
+    </div>
+
+    <!-- ------------------------- Insert , Del : time ------------------------- -->
+    <div class="d-flex  justify-content-start mb-1">
+
+        <button  type="button" class="btn btn-success" data-toggle="modal" data-target="#modal-add-time" onclick="">
+            เพิ่มราคาเเละเวลา
+        </button>
+
+        <button  type="button" class="btn btn-danger ml-1" data-toggle="modal" data-target="#modal-del-time" onclick="">
+            ลบราคาเเละเวลา
+        </button>
+
+    </div>
+
+    <div class="row">
+        <div class="col-12">
+            <div class="card card-body">
+                
+                <table id="employee" class="table table-bordered table-hover " >
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>ชื่อสินค้า</th>
+                            <th>ราคาเเละเวลา</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% for(let i of db_product_item) {%>
+                            <tr>
+                                <td><%= i.id%></td>
+                                <td><%= i.menu_name%></td>
+                                <td>
+                                    <div class="m-2"> 
+                                        <% for(let cost of i.cost) {%>
+                                            <p class=" btn-primary p-1 my-1 rounded d-inline"><%=cost.price%>/<%=cost.time%> ซม</p> 
+                                            <!-- <p class=" btn-primary p-1 my-1 rounded d-inline">800/1ซม</p>  -->
+                                        <% } %>
+                                    </div>
+                                    
+                                </td>
+                               
+                                <td>
+                                    <div class="d-flex">
+                                        <p class="btn btn-warning p-1 px-1 mr-1" data-toggle="modal" data-target="#modal-update"onclick="update('<%=JSON.stringify(i)%>') ">แก้
+                                        </p>
+                                        <p class="btn btn-danger p-1 px-1 " onclick="del('<%=i.id%>')" >ลบ</p>
+                                    </div>
+                                </td>
+                                
+                            </tr>
+                        <% } %>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+
+    <a href="manage_product_old" class="btn btn-info">กลับไปที่จัดการหมวดสินค้า</a>
+
+
+</div>
+
+
+<form id="delete" action="product_item/delete" method="post" class="d-inline">
+    <input type="number" name="id_del" class="d-none" value="">
+    <input type="number" class="d-none" name="category_id_del" value="<%= db_category[0].id %>" >
+</form>
+
+
+
+
+
+<!-- =================== Modal Insert Time ===================-->
+<div class="modal fade" id="modal-add-time">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header bg-purple">
+          <h4 class="modal-title ">เพิ่มราคาเเละเวลา</h4>
+          <button type="button " class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true" class="text-light">&times;</span>
+          </button>
+        </div>
+        <form id="mange_add" action="product_item/cost/add" method="post">
+            <input type="number" class="form-control d-none" name="category_id" value="<%= db_category[0].id %>" >
+            <div class="modal-body">
+            <!-- ============================== Form ==============================-->
+                <div class="form-group">
+                    <label > เลือกรายการสินค้า</label>
+                    <select class="form-control" name="cost_id">
+                        <% for(let i of db_product_item) {%>
+                            <option value="<%= i.id%>"><%= i.menu_name%></option>
+                        <%}%>
+                    </select>
+                </div>
+                <label >เวลาเเละราคา</label>
+                <div class="input-group mb-3">
+                    <span class="input-group-text" id="basic-addon1">เวลา</span>
+                    <input type="text" class="form-control bs-timepicker"  name="cost_time">
+                    <span class="input-group-text" id="basic-addon1">ราคา</span>
+                    <input type="number" class="form-control " name="cost_price">
+                </div>
+            </div>
+            <div class="modal-footer justify-content-between">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                <button type="submit" class="btn btn-primary" onclick="return vali_add_time()">Save changes</button>
+            </div>
+
+        </form>
+
+      </div>
+    </div>
+</div>
+
+<!-- =================== Modal Delete Time ===================-->
+<div class="modal fade" id="modal-del-time">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header bg-purple">
+          <h4 class="modal-title ">ลบราคาเเละเวลา</h4>
+          <button type="button " class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true" class="text-light">&times;</span>
+          </button>
+        </div>
+        <form id="mange_add" action="product_item/cost/del" method="post">
+            <input type="number" class="form-control d-none" name="category_id" value="<%= db_category[0].id %>" >
+            <div class="modal-body">
+            <!-- ============================== Form ==============================-->
+                <div class="form-group">
+                    <label > เลือกรายการสินค้า</label>
+                    <select class="form-control" name="Ucost_id" onchange="open_option('<%=JSON.stringify(db_product_item)%>')" >
+                        <option value=""  ></option>
+                        <% for(let i of db_product_item) {%>
+                            <option value="<%= i.id%>"  ><%= i.menu_name%></option>
+                        <%}%>
+                    </select>
+                </div>
+                <label >เวลาเเละราคา</label>
+                <div id="cost_del">
+                    <!-- init -->
+                    
+                </div>
+                  
+            </div>
+            
+            <div class="modal-footer justify-content-between">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                <button type="submit" class="btn btn-primary" onclick="return vali_del_time()">Save changes</button>
+            </div>
+
+        </form>
+
+      </div>
+    </div>
+</div>
+
+
+
+
+
+
+<!-- =================== Modal Insert ===================-->
+<div class="modal fade" id="modal-add">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header bg-purple">
+          <h4 class="modal-title ">เพิ่มรายการสินค้า</h4>
+          <button type="button " class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true" class="text-light">&times;</span>
+          </button>
+        </div>
+        <form id="mange_add" action="product_item/add" method="post">
+            <div class="modal-body">
+            <!-- ============================== Form ==============================-->
+                <div class="form-group">
+                    <label >ชื่อรายการสินค้า</label>
+                    <input type="text" class="form-control" name="product_name">
+                    <input type="number" class="form-control d-none" name="category_id" value="<%= db_category[0].id %>" >
+                </div>
+            </div>
+            
+            <div class="modal-footer justify-content-between">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                <button type="submit" class="btn btn-primary" onclick="return vali('add')">Save changes</button>
+            </div>
+
+        </form>
+
+      </div>
+    </div>
+</div>
+
+
+<!-- =================== Modal Update ===================-->
+<div class="modal fade" id="modal-update">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header bg-purple">
+          <h4 class="modal-title ">อัปเดตรายการสินค้า</h4>
+          <button type="button " class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true" class="text-light">&times;</span>
+          </button>
+        </div>
+
+        <form id="mange_update" action="product_item/update" method="post">
+            <div class="modal-body">
+            <!-- ============================== Form ==============================-->
+                <div class="form-group">
+                    <label >ชื่อรายการสินค้า</label>
+                    <input type="text" class="form-control" name="Uproduct_name">
+                    <input type="number" class="form-control d-none" name="Ucategory_id" value="<%= db_category[0].id %>" >
+                </div>
+
+
+                <input type="number" name="id_update" class="d-none" value="">
+            </div>
+
+            <div class="modal-footer justify-content-between">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                <button type="submit" class="btn btn-primary" onclick="return vali('update')">Save changes</button>
+            </div>
+
+        </form>
+
+      </div>
+    </div>
+</div>
+
+
+
+
+
+<script src="/axios/axios.min.js"></script>
+<script>
+    
+    function axios_validation(url,params,form_id,error_text){
+        axios({
+            url:url,
+            method:'get',
+            params:params,
+            timeout:3000
+        }).then((result)=>{
+            if( result.data.status == 1){
+                $(form_id).submit();
+            }else{
+                toastr.error(error_text)
+            }
+        }).catch(()=>{
+            toastr.error("404 Error Not Found")
+        });
+    }
+</script>
+<script>
+    //------------- time picker -------------
+    $(function () {
+        $('.bs-timepicker').timepicker();
+    });
+    
+    $(function () {
+      $('#employee').DataTable({
+        "paging": true,
+        "lengthMenu": [[5, 10, 20], [5, 10, 20]],
+        "searching": true,
+        "ordering": true,
+        "info": true,
+        "autoWidth": false,
+        "responsive": true,
+      });
+      
+    });
+
+
+    function update(data){
+        data = JSON.parse(data)
+        $("input[name=Uproduct_name]").val(data.menu_name);
+        $("input[name=id_update]").val(data.id)
+    }
+
+    function del(id){
+        $("input[name=id_del]").val(parseInt(id))
+        if(confirm("ยืนการลบข้อมูล") == true){
+            $("#delete").submit();
+        }
+    }
+
+    function vali(mode){
+        /*
+            Mode insert , update 
+        */
+        // (document.querySelector("input[name=Fname]").innerText).trim()
+        if(mode === "add"){
+            let product_name = ($("input[name=product_name]").val()).trim() === "";
+    
+            if( !product_name){
+                let params= {
+                    product_name:($("input[name=product_name]").val()).trim(),
+                    category_id:$("input[name=category_id]").val(),
+                }
+                axios_validation(
+                    'product_item/is_duplicate_name_product_item',
+                    params,
+                    '#mange_add',
+                    'มีสินค้านี้อยู่เเล้ว'
+                );
+                
+            }else{
+                toastr.error("! กรุณาใส่ข้อมูลให้ครบ")
+            }
+            return false;
+
+
+        }else if(mode === "update"){
+
+            let Uproduct_name = ($("input[name=Uproduct_name]").val()).trim() === "";
+            if( !Uproduct_name  ){
+                let params= {
+                    Uproduct_name:($("input[name=Uproduct_name]").val()).trim() ,
+                    category_id:$("input[name=category_id]").val(),
+                    id:$("input[name=id_update]").val()
+                }
+                axios_validation(
+                    'product_item/is_duplicate_name_id_product_item',
+                    params,
+                    '#mange_update',
+                    'มีสินค้านี้อยู่เเล้ว'
+                );
+            }else{
+                toastr.error("! กรุณาใส่ข้อมูลให้ครบ")
+            }
+            return false;
+        }
+        
+    }
+  
+</script>
+
+<script>
+    // ========================= For delete Cost =========================
+    /*
+    <div class="custom-control custom-checkbox">
+        <input class="custom-control-input custom-control-input-danger " type="checkbox" id="t2" >
+        <label for="t2" class="custom-control-label"> 250/1ซม </label>
+    </div>
+    */
+    function open_option(input){
+        data = JSON.parse(input)
+        select = $('select[name=Ucost_id]').val()
+
+        let main = document.querySelector("#cost_del");
+        main.textContent = ''
+
+        for(let i of data){
+            if(i.id == select){
+                for(let x of i.cost){
+                    const box = document.createElement("div");
+                    box.className  = "custom-control custom-checkbox";
+
+                    const minput = document.createElement("input");
+                    minput.className  = "custom-control-input custom-control-input-danger"
+                    minput.type = "checkbox"
+                    minput.id = "n"+x.id
+                    minput.name = "cost_del"
+                    minput.value = x.id
+
+
+                    const label = document.createElement("label");
+                    label.className  = "custom-control-label"
+                    label.htmlFor = "n"+x.id
+                    label.innerText = `${x.price} / ${x.time}`
+
+                    box.appendChild(minput)
+                    box.appendChild(label)
+                    
+                    main.appendChild(box)
+                }
+            }
+        }
+    }
+
+    function vali_add_time(){
+        let cost_id = $("select[name=cost_id]").val();
+        let cost_time = $("input[name=cost_time]").val();
+        let cost_price = $("input[name=cost_price]").val();
+        // console.log(cost_id,cost_time,cost_price);
+        if( cost_id && cost_time && cost_price){
+            return true;
+        }else{
+            toastr.error("! กรุณาใส่ข้อมูลให้ครบ")
+            return false;
+        }
+        
+    }
+    function vali_del_time(){
+        let cost_id = $("select[name=Ucost_id]").val();
+        let cost_del = document.querySelectorAll("input[name=cost_del]");
+        let isCheck = false;
+        for(let i of cost_del){
+            if(i.checked  == true){
+                isCheck = true;
+                break;
+            }
+        }
+        if( cost_id && isCheck ){
+            return true;
+        }else{
+            toastr.error("! กรุณาใส่ข้อมูลให้ครบ")
+            return false;
+        }
+        
+    }
+
+
+</script>
+
+
+<!-- ============================= ERROR Zone =============================-->
+<!-- toastr.success('Lorem ipsum dolor sit amet, consetetur sadipscing elitr.')
+toastr.info('Lorem ipsum dolor sit amet, consetetur sadipscing elitr.')
+toastr.error('Lorem ipsum dolor sit amet, consetetur sadipscing elitr.')
+toastr.warning('Lorem ipsum dolor sit amet, consetetur sadipscing elitr.') -->
+<!-- ============================= ERROR Zone =============================-->

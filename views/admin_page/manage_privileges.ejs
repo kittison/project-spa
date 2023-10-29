@@ -1,0 +1,245 @@
+
+
+
+<div class="container-fluid">
+    
+    
+    <div class="d-flex justify-content-center">
+        <div class="pt-2  w-50">
+            <div class="card card-body btn ">
+                <h3>ระบบจัดการสิทธิ์</h3>
+            </div>
+        </div>
+    </div>
+  
+   
+
+
+    <!-- Show Data -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card card-body">
+                
+                <table id="employee" class="table table-bordered table-hover " >
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>ชื่อ</th>
+                            <th>นามสกุล</th>
+                            <th>สิทธิ์</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% for(let i of db_emp_role) {%>
+                            <tr>
+                                <td><%= i.id%></td>
+                                <td><%= i.f_name%></td>
+                                <td><%= i.l_name%></td>
+                                <td>
+                                    <div class="select2-primary">
+                                        <select class="select2" multiple="multiple" data-placeholder="None" disabled data-dropdown-css-class="select2-primary" style="width: 100%;">
+                                            <% for(let x of i.privileges) {%>
+                                                <option selected> <%= x.name %> </option>
+                                            <%}%>
+                                        </select>
+                                      </div>
+                                </td>
+                                
+                                <td>
+                                    <div class="d-flex">
+                                        <p class="btn btn-warning p-1 px-1 mr-1" data-toggle="modal" data-target="#modal-update"onclick="update('<%=JSON.stringify(i)%>')" >
+                                            แก้ไข
+                                        </p>
+                                    </div>
+                                </td>
+                                
+                            </tr>
+                        <% } %>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+
+
+<!-- =================== Modal Update ===================-->
+<div class="modal fade" id="modal-update">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header bg-purple">
+          <h4 class="modal-title ">จัดการสิทธิ์พนักงาน</h4>
+          <button type="button " class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true" class="text-light">&times;</span>
+          </button>
+        </div>
+
+        <form id="mange_update" action="manage_privileges/update" method="post">
+            <div class="modal-body">
+            <!-- ============================== Form ==============================-->
+                <div class="form-group">
+                    <label >ชื่อ</label>
+                    <input type="text" class="form-control" name="UFname" disabled>
+                </div>
+                <div class="form-group">
+                    <label >นามสกุล</label>
+                    <input type="text" class="form-control" name="ULname" disabled>
+                </div>
+                <!-- Data form privalet -->
+                <div class="form-group">
+                    <label >สิทธิ์</label>
+                    <div class="select2-primary">
+                        <select id="select_pri" class="select2" name="privileges"  multiple="multiple" data-placeholder="None"  data-dropdown-css-class="select2-primary" style="width: 100%;">
+                            <% for(i of db_privileges){%> 
+                                <option id="<%=i.id%>" value="<%=i.id%>"  > <%= i.name %> </option>
+                            <%} %> 
+                        </select>
+                    </div>
+
+                </div>
+                <input type="number" name="id_update" class="d-none" value="">
+            </div>
+
+            <div class="modal-footer justify-content-between">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                <button type="submit" class="btn btn-primary" onclick="return vali('update')">Save changes</button>
+            </div>
+
+        </form>
+
+      </div>
+    </div>
+</div>
+
+
+
+
+
+
+<script src="/axios/axios.min.js"></script>
+
+<script>
+    function axios_validation(url,params,form_id,error_text){
+        axios({
+            url:url,
+            method:'get',
+            params:params,
+            timeout:3000
+        }).then((result)=>{
+            if( result.data.status == 1){
+                $(form_id).submit();
+            }else{
+                toastr.error(error_text)
+            }
+        }).catch(()=>{
+            toastr.error("404 Error Not Found")
+        });
+    }
+</script>
+
+
+
+
+
+<script>
+    
+    $(function () {
+        //Initialize Select2 Elements
+        $('.select2').select2()
+
+        $('#employee').DataTable({
+            "paging": true,
+            "lengthMenu": [[5, 10, 20], [5, 10, 20]],
+            "searching": true,
+            "ordering": true,
+            "info": true,
+            "autoWidth": false,
+            "responsive": true,
+        });
+      
+    });
+
+    function update(data){
+        data = JSON.parse(data)
+        $("input[name=UFname]").val(data.f_name);
+        $("input[name=ULname]").val(data.l_name)
+        $("input[name=id_update]").val(data.id)
+        
+        $('#select_pri').val(null).trigger('change');
+        let array = []
+        for(let i of data.privileges){
+            array.push(i.privileges_id)
+        }
+        $("#select_pri").val(array)
+        $('#select_pri').trigger('change');
+    }
+
+    function vali(mode){
+        /*
+            Mode insert , update 
+        */
+        // (document.querySelector("input[name=Fname]").innerText).trim()
+        if(mode === "add"){
+            let Fname = ($("input[name=Fname]").val()).trim() === "";
+            let Lname = ($("input[name=Lname]").val()).trim() === "";
+            let address = ($("input[name=address]").val()).trim() === "";
+            let tel = ($("input[name=tel]").val()).trim() === "";
+            let username = ($("input[name=username]").val()).trim() === "";
+    
+            if( !Fname && !Lname && !address && !tel && !username){
+                let params= {
+                    f_name:($("input[name=Fname]").val()).trim(),
+                    l_name:($("input[name=Lname]").val()).trim(),
+                }
+                axios_validation(
+                    'manage_emp/is_duplicate_name',
+                    params,
+                    '#mange_add',
+                    'มีชื่อ/นามสุกลพนักงานนี้อยู่เเล้ว'
+                );
+                
+            }else{
+                toastr.error("! กรุณาใส่ข้อมูลให้ครบ")
+            }
+            return false;
+
+
+        }else if(mode === "update"){
+
+            let Fname = ($("input[name=UFname]").val()).trim() === "";
+            let Lname = ($("input[name=ULname]").val()).trim() === "";
+            let address = ($("input[name=Uaddress]").val()).trim() === "";
+            let tel = ($("input[name=Utel]").val()).trim() === "";
+
+            if( !Fname && !Lname && !address && !tel ){
+                let params= {
+                    UFname: ( $("input[name=UFname]").val() ).trim(),
+                    ULname: ( $("input[name=ULname]").val() ).trim(),
+                    id:$("input[name=id_update]").val()
+                }
+                axios_validation(
+                    'manage_emp/is_duplicate_name_id',
+                    params,
+                    '#mange_update',
+                    'มีชื่อ/นามสุกลพนักงานนี้อยู่เเล้ว'
+                );
+            }else{
+                toastr.error("! กรุณาใส่ข้อมูลให้ครบ")
+            }
+            return false;
+        }
+        
+    }
+  
+</script>
+
+
+<!-- ============================= ERROR Zone =============================-->
+<!-- toastr.success('Lorem ipsum dolor sit amet, consetetur sadipscing elitr.')
+toastr.info('Lorem ipsum dolor sit amet, consetetur sadipscing elitr.')
+toastr.error('Lorem ipsum dolor sit amet, consetetur sadipscing elitr.')
+toastr.warning('Lorem ipsum dolor sit amet, consetetur sadipscing elitr.') -->
+<!-- ============================= ERROR Zone =============================-->

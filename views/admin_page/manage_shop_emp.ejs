@@ -1,0 +1,197 @@
+<style>
+    .container-fluid {
+        padding: 12px;
+    }
+
+    .modal-body {
+        padding-left: 30px;
+        padding-right: 30px;
+    }
+
+    .modal-footer {
+        padding-left: 30px;
+        padding-right: 30px;
+    }
+
+    .form-control {
+        background-color: rgba(175, 175, 175, 0.3);
+    }
+</style>
+
+<div class="container-fluid">
+    
+    <div class="d-flex justify-content-center">
+        <div class="">
+            <div class="card card-body text-center" style="padding-left: 40px; padding-right: 40px;">
+                <h3>พนักงานของร้าน : <%= db_shop[0].shop_name %></h3>
+            </div>
+        </div>
+    </div>
+  
+    
+
+    <div class="d-flex justify-content-start mb-2" style="gap: 5px">
+        <a href="manage_shop" class="btn btn-info">กลับไปที่จัดการข้อมูลร้าน</a>
+        <button  type="button" class="btn btn-success" data-toggle="modal" data-target="#modal-add-employee" onclick="">
+            เพิ่มพนักงาน
+        </button>
+    </div>
+
+    <div class="row">
+        <div class="col-12">
+            <div class="card card-body">
+                
+                <table id="employee" class="table table-bordered table-hover " >
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>ชื่อ</th>
+                            <th>นามสกุล</th>
+                            <th>ชื่อเล่น</th>
+                            <th>ตำแหน่ง</th>
+                            <th>ระดับ</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% for(let i of db_shop_emp) {%>
+                            <tr>
+                                <td><%= i.emp_id%></td>
+                                <td><%= i.f_name%></td>
+                                <td><%= i.l_name%></td>
+                                <td><%= i.n_name%></td>
+                                <td><%= i.emp_type%></td>
+                                <td><%= i.description%></td>
+                                <td>
+                                    <div class="d-flex">
+                                        <button  type="button" class="btn btn-danger p-1 px-1" onclick="del('<%=i.id%>')" >ลบ</button>
+                                    </div>
+                                </td>
+                                
+                            </tr>
+                        <% } %>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+
+<form id="delete" action="manage_shop_emp/delete" method="post" class="d-inline">
+    <input type="number" name="shop_id" class="d-none" value="<%= db_shop[0].id %>">
+    <input type="number" name="id_del" class="d-none" value="">
+</form>
+
+<!-- =================== Modal Insert Employee ===================-->
+<div class="modal fade" id="modal-add-employee">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header bg-purple">
+          <h4 class="modal-title ">เพิ่มพนักงาน</h4>
+          <button type="button " class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true" class="text-light">&times;</span>
+          </button>
+        </div>
+        <form id="mange_add" action="manage_shop_emp/add" method="post">
+            <input type="number" class="form-control d-none" name="shop_id" value="<%= db_shop[0].id %>" >
+            <div class="modal-body">
+            <!-- ============================== Form ==============================-->
+                <div class="form-group">
+                    <label > เลือกพนักงาน</label>
+                    <select class="form-control" name="emp_id">
+                        <% for(let i of db_emp) {%>
+                            <option value="<%= i.id%>"><%= i.id%> - <%= i.f_name%> <%= i.l_name%> (<%= i.emp_type%>-<%= i.description%>)</option>
+                        <%}%>
+                    </select>
+                </div>
+            </div>
+            <div class="modal-footer justify-content-between">
+                <button type="button" class="btn btn-default" data-dismiss="modal">ยกเลิก</button>
+                <button type="submit" class="btn btn-primary" onclick="return vali('add')">ยืนยัน</button>
+            </div>
+
+        </form>
+
+      </div>
+    </div>
+</div>
+
+<script src="/axios/axios.min.js"></script>
+<script>
+    
+    function axios_validation(url,params,form_id,error_text){
+        axios({
+            url:url,
+            method:'get',
+            params:params,
+            timeout:3000
+        }).then((result)=>{
+            if( result.data.status == 1){
+                $(form_id).submit();
+            }else{
+                toastr.error(error_text)
+            }
+        }).catch(()=>{
+            toastr.error("404 Error Not Found")
+        });
+    }
+</script>
+<script>
+    
+    $(function () {
+      $('#employee').DataTable({
+        "paging": true,
+        "lengthMenu": [[5, 10, 20], [5, 10, 20]],
+        "searching": true,
+        "ordering": true,
+        "info": true,
+        "autoWidth": false,
+        "responsive": true,
+      }); 
+    });
+
+    function del(id){
+        $("input[name=id_del]").val(parseInt(id))
+        if(confirm("ยืนการลบข้อมูล") == true){
+            $("#delete").submit();
+        }
+    }
+
+    function vali(mode){
+        /*
+            Mode insert , update 
+        */
+        // (document.querySelector("input[name=Fname]").innerText).trim()
+        if(mode === "add"){
+            let emp_id = $("select[name=emp_id]").val();
+    
+            if( emp_id !== ""){
+                let params= {
+                    shop_id:$("input[name=shop_id]").val(),
+                    emp_id:emp_id,
+                }
+                axios_validation(
+                    'manage_shop_emp/check_can_add_emp',
+                    params,
+                    '#mange_add',
+                    'มีพนักงานคนนี้อยู่เเล้ว'
+                );
+                
+            }else{
+                toastr.error("! กรุณาใส่ข้อมูลให้ครบ")
+            }
+            return false;
+        }
+        
+    }
+  
+</script>
+
+<!-- ============================= ERROR Zone =============================-->
+<!-- toastr.success('Lorem ipsum dolor sit amet, consetetur sadipscing elitr.')
+toastr.info('Lorem ipsum dolor sit amet, consetetur sadipscing elitr.')
+toastr.error('Lorem ipsum dolor sit amet, consetetur sadipscing elitr.')
+toastr.warning('Lorem ipsum dolor sit amet, consetetur sadipscing elitr.') -->
+<!-- ============================= ERROR Zone =============================-->

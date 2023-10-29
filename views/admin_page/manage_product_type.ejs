@@ -1,0 +1,279 @@
+<style>
+    .container-fluid {
+        padding: 12px;
+    }
+
+    .modal-body {
+        padding-left: 30px;
+        padding-right: 30px;
+    }
+
+    .modal-footer {
+        padding-left: 30px;
+        padding-right: 30px;
+    }
+
+    .form-control {
+        background-color: rgba(175, 175, 175, 0.3);
+    }
+</style>
+
+<div class="container-fluid">
+    
+    <div class="d-flex justify-content-center">
+        <div class="">
+            <div class="card card-body text-center" style="padding-left: 40px; padding-right: 40px;">
+                <h3>ระบบจัดการข้อมูลสินค้า</h3>
+            </div>
+        </div>
+    </div>
+  
+   
+
+
+    <div class="d-flex  justify-content-start mb-2">
+        <button  type="button" class="btn btn-success" data-toggle="modal" data-target="#modal-add" onclick="">
+            เพิ่มประเภทสินค้า
+        </button>
+    </div>
+
+    <div class="row">
+        <div class="col-12">
+            <div class="card card-body">
+                
+                <table id="product" class="table table-bordered table-hover " >
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>ชื่อ</th>
+                            <th>Refill By</th>
+                            <th>สินค้า</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% for(let i of db_prod_type) {%>
+                            <tr>
+                                <td><%= i.id%></td>
+                                <td><%= i.name%></td>
+                                <td><%= i.refill_by%></td>
+                                <td>
+                                    <div class="">
+                                        <button  type="button" class="btn btn-secondary p-1 px-1" onclick="req_detail('<%=i.id%>')" >จัดการสินค้า</button>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="">
+                                        <button  type="button" class="btn btn-warning p-1 px-1" data-toggle="modal" data-target="#modal-update"onclick="update('<%=JSON.stringify(i)%>') ">แก้
+                                        </button>
+                                        <button  type="button" class="btn btn-danger p-1 px-1" onclick="del('<%=i.id%>')" >ลบ</button>
+                                    </div>
+                                </td>
+                                
+                            </tr>
+                        <% } %>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+
+<form id="delete" action="manage_product_type/delete" method="post" class="d-inline">
+    <input type="number" name="id_del" class="d-none" value="">
+</form>
+
+<!-- =================== Modal Insert ===================-->
+<div class="modal fade" id="modal-add">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header bg-purple">
+          <h4 class="modal-title ">เพิ่มประเภทสินค้า</h4>
+          <button type="button " class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true" class="text-light">&times;</span>
+          </button>
+        </div>
+        <form id="mange_add" action="manage_product_type/add" method="post">
+            <div class="modal-body">
+            <!-- ============================== Form ==============================-->
+                
+                <div class="form-group">
+                    <label >ชื่อ</label>
+                    <input type="text" class="form-control" name="name">
+                </div>
+                <div class="form-group">
+                    <label >Refill By</label>
+                    <input type="text" class="form-control" name="refill_by">
+                </div>
+
+            </div>
+            
+            <div class="modal-footer justify-content-between">
+                <button type="button" class="btn btn-default" data-dismiss="modal">ยกเลิก</button>
+                <button type="submit" class="btn btn-primary" onclick="return vali('add')">ยืนยัน</button>
+            </div>
+
+        </form>
+
+      </div>
+    </div>
+</div>
+
+
+<!-- =================== Modal Update ===================-->
+<div class="modal fade" id="modal-update">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header bg-purple">
+          <h4 class="modal-title ">แก้ไขข้อมูลประเภทสินค้า</h4>
+          <button type="button " class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true" class="text-light">&times;</span>
+          </button>
+        </div>
+
+        <form id="mange_update" action="manage_product_type/update" method="post">
+            <div class="modal-body">
+            <!-- ============================== Form ==============================-->
+                <div class="form-group">
+                    <label >ชื่อ</label>
+                    <input type="text" class="form-control" name="Uname">
+                </div>
+                <div class="form-group">
+                    <label >Refill By</label>
+                    <input type="text" class="form-control" name="Urefill_by">
+                </div>
+
+                <input type="number" name="id_update" class="d-none" value="">
+            </div>
+
+            <div class="modal-footer justify-content-between">
+                <button type="button" class="btn btn-default" data-dismiss="modal">ยกเลิก</button>
+                <button type="submit" class="btn btn-primary" onclick="return vali('update')">ยืนยัน</button>
+            </div>
+
+        </form>
+
+      </div>
+    </div>
+</div>
+
+
+
+
+
+
+<script src="/axios/axios.min.js"></script>
+<script>
+    function axios_validation(url,params,form_id,error_text){
+        axios({
+            url:url,
+            method:'get',
+            params:params,
+            timeout:3000
+        }).then((result)=>{
+            if( result.data.status == 1){
+                $(form_id).submit();
+            }else{
+                toastr.error(error_text)
+            }
+        }).catch(()=>{
+            toastr.error("404 Error Not Found")
+        });
+    }
+</script>
+
+
+
+<script>
+    
+    
+    $(function () {
+      $('#product').DataTable({
+        "paging": true,
+        "lengthMenu": [[5, 10, 20], [5, 10, 20]],
+        "searching": true,
+        "ordering": true,
+        "info": true,
+        "autoWidth": false,
+        "responsive": true,
+      });
+      
+    });
+
+    function update(data){
+        data = JSON.parse(data)
+        $("input[name=Uname]").val(data.name);
+        $("input[name=Urefill_by]").val(data.refill_by)
+        $("input[name=id_update]").val(data.id)
+    }
+
+    function del(id){
+        $("input[name=id_del]").val(parseInt(id))
+        if(confirm("ยืนการลบข้อมูล") == true){
+            $("#delete").submit();
+        }
+    }
+
+    function vali(mode){
+        /*
+            Mode insert , update 
+        */
+        // (document.querySelector("input[name=Fname]").innerText).trim()
+        if(mode === "add"){
+            let name = ($("input[name=name]").val()).trim();
+            let refill_by = ($("input[name=refill_by]").val()).trim();
+    
+            if( name !== "" && refill_by !== ""){
+                let params= {
+                    name:name,
+                }
+                axios_validation(
+                    'manage_product_type/check_can_add',
+                    params,
+                    '#mange_add',
+                    'มีชื่อประเภทสินค้านี้อยู่เเล้ว'
+                );
+                
+            }else{
+                toastr.error("! กรุณาใส่ข้อมูลให้ครบ")
+            }
+            return false;
+
+
+        }else if(mode === "update"){
+            let name = ($("input[name=Uname]").val()).trim();
+            let refill_by = ($("input[name=Urefill_by]").val()).trim();
+    
+            if( name !== "" && refill_by !== ""){
+                let params= {
+                    name:name,
+                    id:$("input[name=id_update]").val()
+                }
+                axios_validation(
+                    'manage_product_type/check_can_update',
+                    params,
+                    '#mange_update',
+                    'มีชื่อประเภทสินค้านี้อยู่เเล้ว'
+                );
+            }else{
+                toastr.error("! กรุณาใส่ข้อมูลให้ครบ")
+            }
+            return false;
+        }
+        
+    }
+    function req_detail(input){
+        window.location = `manage_product?type_id=${input}`
+    }
+  
+</script>
+
+
+<!-- ============================= ERROR Zone =============================-->
+<!-- toastr.success('Lorem ipsum dolor sit amet, consetetur sadipscing elitr.')
+toastr.info('Lorem ipsum dolor sit amet, consetetur sadipscing elitr.')
+toastr.error('Lorem ipsum dolor sit amet, consetetur sadipscing elitr.')
+toastr.warning('Lorem ipsum dolor sit amet, consetetur sadipscing elitr.') -->
+<!-- ============================= ERROR Zone =============================-->

@@ -1,0 +1,316 @@
+<style>
+    .container-fluid {
+        padding: 12px;
+    }
+
+    .modal-body {
+        padding-left: 30px;
+        padding-right: 30px;
+    }
+
+    .modal-footer {
+        padding-left: 30px;
+        padding-right: 30px;
+    }
+
+    .form-control {
+        background-color: rgba(175, 175, 175, 0.3);
+    }
+
+    td.alert {
+        border-radius: 0%;
+        border-color: black; 
+        color: red;
+        
+    }
+
+</style>
+
+<div class="container-fluid">
+    
+    
+    <div class="d-flex justify-content-center">
+        <div class="">
+            <div class="card card-body text-center" style="padding-left: 40px; padding-right: 40px;">
+                <h3>ระบบจัดการงานของพนักงาน></h3>
+            </div>
+        </div>
+    </div>
+
+    <div class="d-flex justify-content-between" style="gap: 5px;">
+        <h5 style="margin-top: 10px; padding-left: 10px;">คิวการทำงานของพนักงาน</h5>
+        <% if(db_emp_queue.length>0){ %>
+            <a href="manage_emp_queue" class="btn btn-primary mb-2 mr-2">จัดลำดับคิว</a>
+        <% } %>
+    </div>
+    <% if(db_emp_queue.length>0){ %>
+        <div class="row">
+            <div class="col-12">
+                <div class="card card-body">
+                    
+                    <table id="employee_queue" class="table table-bordered table-hover " >
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>คิวลำดับที่</th>
+                                <th>ID พนักงาน</th>
+                                <th>ชื่อ</th>
+                                <th>นามสกุล</th>
+                                <th>ชื่อเล่น</th>
+                                <!-- <th>วันเวลา</th> -->
+                                <!-- <th></th> -->
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <% for(let i of db_emp_queue) {%>
+                                <tr>
+                                    <td><%= i.id%></td>
+                                    <td><%= i.number%></td>
+                                    <td><%= i.emp_id%></td>
+                                    <td><%= i.f_name%></td>
+                                    <td><%= i.l_name%></td>
+                                    <td><%= i.n_name%></td>
+                                    <!-- <td>
+                                        <% let f_date_start = new Intl.DateTimeFormat(
+                                            'id-ID',{ day:'2-digit', month:'2-digit', year:'numeric', hour:'2-digit', minute:'2-digit', second:'2-digit'}
+                                        ).format(i.created_date) %>
+                                        <%= f_date_start%>
+                                    </td> -->
+                                    <!-- <td>
+                                        <div class="">
+                                            <button  type="button" class="btn btn-warning p-1 px-1" data-toggle="modal" data-target="#modal-update"onclick="update('<%=JSON.stringify(i)%>') ">แก้
+                                            </button>
+                                            <button  type="button" class="btn btn-danger p-1 px-1" onclick="del('<%=i.id%>')" >ลบ</button>
+                                        </div>
+                                    </td> -->
+                                </tr>
+                            <% } %>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    <% } else{ %>
+        <div class="row">
+            <div class="col-12">
+                <div class="card card-body text-center">- ไม่พบข้อมูล -
+                </div>
+            </div>
+        </div>
+    <% } %>
+
+    <div class="d-flex flex-wrap align-content-end justify-content-start" style="gap: 5px; padding-top: 10px;">
+        <h5 style="margin-top: 10px; padding-left: 10px;">การทำงานของพนักงาน</h5>
+    </div>
+
+    <div class="row">
+        <div class="col-12">
+            <div class="card card-body">
+                
+                <table id="employee_work" class="table table-bordered table-hover " >
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>ชื่อ</th>
+                            <th>นามสกุล</th>
+                            <th>ชื่อเล่น</th>
+                            <th>จำนวนงานรายวัน</th>
+                            <th>จำนวนงานรายสัปดาห์</th>
+                            <th>จำนวนงานรายเดือน</th>
+                            <th>สถานะการทำงาน</th>
+                            <!-- <th></th> -->
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% for(let i of db_emp_work) {%>
+                            <tr>
+                                <td><%= i.id%></td>
+                                <td><%= i.f_name%></td>
+                                <td><%= i.l_name%></td>
+                                <td><%= i.n_name%></td>
+                                <td>0</td>
+                                <td>0</td>
+                                <td>0</td>
+                                <td>
+                                    <% if(i.is_service == 0){ %>
+                                        รองาน
+                                    <% } else if (i.is_service == 1){ %>
+                                        กำลังทำงาน
+                                    <% } else { %>
+                                        <%= i.is_service%>
+                                    <% } %>
+                                </td>
+                                <!-- <td>
+                                    <div class="">
+                                        <button  type="button" class="btn btn-warning p-1 px-1" data-toggle="modal" data-target="#modal-update"onclick="update('<%=JSON.stringify(i)%>') ">แก้
+                                        </button>
+                                        <button  type="button" class="btn btn-danger p-1 px-1" onclick="del('<%=i.id%>')" >ลบ</button>
+                                    </div>
+                                </td> -->
+                            </tr>
+                        <% } %>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    
+
+</div>
+
+
+<form id="delete" action="manage_shop_emp/delete" method="post" class="d-inline">
+    <input type="number" name="id_del" class="d-none" value="">
+</form>
+
+<!-- =================== Modal Insert Employee ===================-->
+<div class="modal fade" id="modal-add-employee">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header bg-purple">
+          <h4 class="modal-title ">เพิ่มพนักงาน</h4>
+          <button type="button " class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true" class="text-light">&times;</span>
+          </button>
+        </div>
+        <form id="mange_add" action="product_item/cost/add" method="post">
+            <input type="number" class="form-control d-none" name="prod_type_id" value="" >
+            <div class="modal-body">
+            <!-- ============================== Form ==============================-->
+                <div class="form-group">
+                    <div class="form-group">
+                        <label >ชื่อ</label>
+                        <input type="text" class="form-control" name="name">
+                    </div>
+                    <div class="form-group">
+                        <label >ที่ตั้ง</label>
+                        <input type="text" class="form-control" name="location">
+                    </div>
+                    <div class="form-group">
+                        <label >ติดต่อ</label>
+                        <input type="text" class="form-control" name="contact">
+                    </div>
+                    <div class="form-group">
+                        <label >เวลาเปิด</label>
+                        <input type="time" class="form-control" name="Otime" required>
+                    </div>
+    
+                    <div class="form-group">
+                        <label >เวลาปิด</label>
+                        <input type="time" class="form-control" name="Ctime" >
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer justify-content-between">
+                <button type="button" class="btn btn-default" data-dismiss="modal">ยกเลิก</button>
+                <button type="submit" class="btn btn-primary" onclick="return vali('add')">ยืนยัน</button>
+            </div>
+
+        </form>
+
+      </div>
+    </div>
+</div>
+
+<script src="/axios/axios.min.js"></script>
+<script>
+    
+    function axios_validation(url,params,form_id,error_text){
+        axios({
+            url:url,
+            method:'get',
+            params:params,
+            timeout:3000
+        }).then((result)=>{
+            if( result.data.status == 1){
+                $(form_id).submit();
+            }else{
+                toastr.error(error_text)
+            }
+        }).catch(()=>{
+            toastr.error("404 Error Not Found")
+        });
+    }
+</script>
+
+<script>
+    $(function () {
+      $('#employee_queue').DataTable({
+        "paging": true,
+        "lengthMenu": [[5, 10, 20], [5, 10, 20]],
+        "searching": true,
+        "ordering": true,
+        "info": true,
+        "autoWidth": false,
+        "responsive": true,
+        "order": [[1, 'asc']],
+      }); 
+    });
+
+    $(function () {
+      $('#employee_work').DataTable({
+        "paging": true,
+        "lengthMenu": [[5, 10, 20], [5, 10, 20]],
+        "searching": true,
+        "ordering": true,
+        "info": true,
+        "autoWidth": false,
+        "responsive": true,
+      }); 
+    });
+    
+    function del(data_str){
+        var data = JSON.parse(data_str)
+        console.log(data,$(`input[name=data_${data.id}]`).val())
+        $("input[name=Uproduct_name]").val(data.id);
+        $(`input[name=data_${data.id}]`).val(0);
+        var textElement = document.getElementById(`data_${data.id}`);
+        // Check if the element exists
+        if (textElement) {
+            // Set the new text content
+            textElement.textContent = 0;
+        }
+        // $("input[name=id_del]").val(parseInt(id))
+        // if(confirm("ยืนการลบข้อมูล") == true){
+        //     $("#delete").submit();
+        // }
+    }
+
+    function vali(mode){
+        /*
+            Mode insert , update 
+        */
+        // (document.querySelector("input[name=Fname]").innerText).trim()
+        if(mode === "add"){
+            let product_name = ($("input[name=emp_id]").val()).trim() === "";
+    
+            if( !product_name){
+                let params= {
+                    product_name:($("input[name=product_name]").val()).trim(),
+                    category_id:$("input[name=category_id]").val(),
+                }
+                axios_validation(
+                    'product_item/is_duplicate_name_product_item',
+                    params,
+                    '#mange_add',
+                    'มีสินค้านี้อยู่เเล้ว'
+                );
+                
+            }else{
+                toastr.error("! กรุณาใส่ข้อมูลให้ครบ")
+            }
+            return false;
+
+
+        }
+        
+    }
+  
+</script>
+
+<!-- ============================= ERROR Zone =============================-->
+<!-- toastr.success('Lorem ipsum dolor sit amet, consetetur sadipscing elitr.')
+toastr.info('Lorem ipsum dolor sit amet, consetetur sadipscing elitr.')
+toastr.error('Lorem ipsum dolor sit amet, consetetur sadipscing elitr.')
+toastr.warning('Lorem ipsum dolor sit amet, consetetur sadipscing elitr.') -->
+<!-- ============================= ERROR Zone =============================-->

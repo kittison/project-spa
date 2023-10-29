@@ -1,0 +1,573 @@
+<style>
+    .container-fluid {
+        padding: 12px;
+    }
+
+    .modal-body {
+        padding-left: 30px;
+        padding-right: 30px;
+    }
+
+    .modal-footer {
+        padding-left: 30px;
+        padding-right: 30px;
+    }
+
+    .form-control {
+        background-color: rgba(175, 175, 175, 0.3);
+    }
+
+    td.alert {
+        border-radius: 0%;
+        border-color: black; 
+        color: red;
+        
+    }
+
+</style>
+
+<div class="container-fluid">
+    
+    
+    <div class="d-flex justify-content-center">
+        <div class="">
+            <div class="card card-body text-center" style="padding-left: 40px; padding-right: 40px;">
+                <h3>ระบบจัดการคลังสินค้า></h3>
+            </div>
+        </div>
+    </div>
+  
+    <div class="d-flex justify-content-start" style="gap: 5px;">
+        <h5 style="margin-top: 10px; padding-left: 10px; color: red; font-weight: bold;">แจ้งเตือนปริมาณสินค้า</h5>
+    </div>
+    <div class="row" >
+        <div class="col-12" >
+            <div class="card card-body"  style="border-color: red; border-width: 2px; background-color: rgba(255, 0, 0, 0.1);">
+                
+                <table id="product_alert" class="table table-bordered table-hover " style="border-color: black;" >
+                    <thead >
+                        <tr>
+                            <th style="border-color: black;">ID</th>
+                            <th style="border-color: black;">ชื่อ</th>
+                            <th style="border-color: black;">ประเภท</th>
+                            <th style="border-color: black;">ราคา</th>
+                            <th style="border-color: black;">จำนวนต่ำสุด</th>
+                            <th style="border-color: black;">จำนวน</th>
+                            <th style="border-color: black;">จำนวนมากสุด</th>
+                            <th style="border-color: black;">หมายเหตุ</th>
+                            <th style="border-color: black;"></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% for(let i of db_prod_alert) {%>
+                            <tr">
+                                <div style="color: red;">
+                                <td class="alert"><%= i.id%></td>
+                                <td class="alert"><%= i.name%></td>
+                                <td class="alert"><%= i.type%></td>
+                                <td class="alert"><%= i.price%></td>
+                                <td class="alert"><%= i.min_stock%></td>
+                                <td class="alert" id="data_<%= i.id %>"><%=i.stock%></td>
+                                <td class="alert"><%= i.max_stock%></td>
+                                <td class="alert">
+                                    <% if(i.stock < i.min_stock){ %>
+                                        มีจำนวนน้อยเกินไป
+                                    <% } else{ %>
+                                        มีจำนวนมากเกินไป
+                                    <% } %>
+                                </td>
+                                </div>
+                                <td style="border-color: black;">
+                                    <!-- <input type="text" class="form-control" name="data_<%= i.id %>" value="<%=i.stock%>"> -->
+                                    <div class="">
+                                        <button  type="button" class="btn btn-success p-1 px-1" data-toggle="modal" data-target="#modal-add-stock"
+                                                onclick="update('add','<%=JSON.stringify(i)%>') ">เพิ่มจำนวน
+                                        </button>
+                                        <button  type="button" class="btn btn-danger p-1 px-1" data-toggle="modal" data-target="#modal-remove-stock"
+                                            onclick="update('remove','<%=JSON.stringify(i)%>') ">ลดจำนวน
+                                        </button>
+                                    </div>
+                                </td>
+                                
+                            </tr>
+                        <% } %>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div class="d-flex justify-content-start" style="gap: 5px; padding-top: 10px;">
+        <h5 style="margin-top: 10px; padding-left: 10px;">สินค้าทั้งหมด</h5>
+    </div>
+
+    <div class="row">
+        <div class="col-12">
+            <div class="card card-body">
+                
+                <table id="product" class="table table-bordered table-hover " >
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>ชื่อ</th>
+                            <th>ประเภท</th>
+                            <th>ราคา</th>
+                            <th>จำนวน</th>
+                            <th>จำนวนต่ำสุด</th>
+                            <th>จำนวนมากสุด</th>
+                            <th>จำนวนการใช้งาน(ครั้ง/ชิ้น)</th>
+                            <th>การใช้งานรายวัน</th>
+                            <th>การใช้งานรายสัปดาห์</th>
+                            <th>การใช้งานรายเดือน</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% for(let i of db_prod) {%>
+                            <tr>
+                                <td><%= i.id%></td>
+                                <td><%= i.name%></td>
+                                <td><%= i.type%></td>
+                                <td><%= i.price%></td>
+                                <td><%= i.stock%></td>
+                                <td><%= i.min_stock%></td>
+                                <td><%= i.max_stock%></td>
+                                <td><%= i.can_used%></td>
+                                <% if (i.statistics[0]) { %>
+                                    <td><%= i.statistics[0].used_day %></td>
+                                    <td><%= i.statistics[0].used_week %></td>
+                                    <td><%= i.statistics[0].used_month %></td>
+                                <% } else { %>
+                                    <td>0</td>
+                                    <td>0</td>
+                                    <td>0</td>
+                                <% } %>
+                                <td>
+                                    <div class="">
+                                        <div class="">
+                                            <button  type="button" class="btn btn-success p-1 px-1" data-toggle="modal" data-target="#modal-add-stock"
+                                                onclick="update('add','<%=JSON.stringify(i)%>') ">เพิ่มจำนวน
+                                            </button>
+                                            <button  type="button" class="btn btn-danger p-1 px-1" data-toggle="modal" data-target="#modal-remove-stock"
+                                                onclick="update('remove','<%=JSON.stringify(i)%>') ">ลดจำนวน
+                                            </button>
+                                        </div>
+                                    </div>
+                                </td>
+                                
+                            </tr>
+                        <% } %>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- <div class="d-flex flex-wrap justify-content-start" style="gap: 10px; padding-top: 10px;"> -->
+    <div class="d-flex justify-content-between" style="gap: 5px; padding-top: 20px;">
+        <h5 style="margin-top: 10px; padding-left: 10px;">สินค้าที่ใช้ได้หลายครั้ง (เปิดใช้งานแล้ว)</h5>
+        <button  type="button" class="btn btn-primary mb-2 mr-2" data-toggle="modal" data-target="#modal-add-reuse" onclick="">
+            เปิดใช้งานสินค้า
+        </button>
+    </div>
+    <% if(db_prod_reuse.length>0){ %>
+        
+
+        <div class="row">
+            <div class="col-12">
+                <div class="card card-body">
+                    
+                    <table id="product_reuse" class="table table-bordered table-hover " >
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>ID สินค้า</th>
+                                <th>ชื่อสินค้า</th>
+                                <th>ประเภทสินค้า</th>
+                                <th>จำนวนครั้งทั้งหมด</th>
+                                <th>จำนวนครั้งที่เหลือ</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <% for(let i of db_prod_reuse) {%>
+                                <tr>
+                                    <td><%= i.id%></td>
+                                    <td><%= i.prod_id%></td>
+                                    <td><%= i.prod_name%></td>
+                                    <td><%= i.type_name%></td>
+                                    <td><%= i.max_used%></td>
+                                    <td><%= i.remaining%></td>
+                                    <td>
+                                        <div class="">
+                                            <button  type="button" class="btn btn-warning p-1 px-1" data-toggle="modal" data-target="#modal-update-reuse"onclick="update('update_reuse','<%=JSON.stringify(i)%>') ">แก้
+                                            </button>
+                                            <button  type="button" class="btn btn-danger p-1 px-1" onclick="del('<%=i.id%>')" >ลบ</button>
+                                        </div>
+                                    </td>
+                                    
+                                </tr>
+                            <% } %>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    <% } else{ %>
+        <div class="row">
+            <div class="col-12">
+                <div class="card card-body text-center">- ไม่พบข้อมูล -
+                </div>
+                </div>
+                </div>
+    <% } %>
+
+</div>
+
+<!-- =================== Modal Add Stock ===================-->
+<div class="modal fade" id="modal-add-stock">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header bg-purple">
+          <h4 class="modal-title ">เพิ่มจำนวนสินค้า</h4>
+          <button type="button " class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true" class="text-light">&times;</span>
+          </button>
+        </div>
+        <form id="mange_add_stock" action="manage_storage/add_stock" method="post">
+            <div class="modal-body">
+            <!-- ============================== Form ==============================-->
+                <div class="form-group">
+                    <div class="form-group">
+                        <label >ID</label>
+                        <input type="text" class="form-control" name="Iid" readonly>
+                    </div>
+                    <div class="form-group">
+                        <label >ชื่อ</label>
+                        <input type="text" class="form-control" name="Iname" readonly>
+                    </div>
+                    <div class="form-group">
+                        <label >ประเภท</label>
+                        <input type="text" class="form-control" name="Itype" readonly>
+                    </div>
+                    <div class="form-group">
+                        <label >จำนวนสินค้าที่มีอยู่</label>
+                        <input type="number" class="form-control" name="Istock" readonly>
+                    </div>
+                    <div class="form-group">
+                        <label >จำนวนที่ต้องการเพิ่ม</label>
+                        <input type="number" class="form-control" name="Iamount">
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer justify-content-between">
+                <button type="button" class="btn btn-default" data-dismiss="modal">ยกเลิก</button>
+                <button type="submit" class="btn btn-primary" onclick="return vali('add_stock')">ยืนยัน</button>
+            </div>
+
+        </form>
+
+      </div>
+    </div>
+</div>
+
+<!-- =================== Modal Remove Stock ===================-->
+<div class="modal fade" id="modal-remove-stock">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header bg-purple">
+          <h4 class="modal-title ">ลดจำนวนสินค้า</h4>
+          <button type="button " class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true" class="text-light">&times;</span>
+          </button>
+        </div>
+        <form id="mange_remove_stock" action="manage_storage/remove_stock" method="post">
+            <div class="modal-body">
+            <!-- ============================== Form ==============================-->
+                <div class="form-group">
+                    <div class="form-group">
+                        <label >ID</label>
+                        <input type="text" class="form-control" name="Did" readonly>
+                    </div>
+                    <div class="form-group">
+                        <label >ชื่อ</label>
+                        <input type="text" class="form-control" name="Dname" readonly>
+                    </div>
+                    <div class="form-group">
+                        <label >ประเภท</label>
+                        <input type="text" class="form-control" name="Dtype" readonly>
+                    </div>
+                    <div class="form-group">
+                        <label >จำนวนสินค้าที่มีอยู่</label>
+                        <input type="number" class="form-control" name="Dstock" readonly>
+                    </div>
+                    <div class="form-group">
+                        <label >จำนวนที่ต้องการลด</label>
+                        <input type="number" class="form-control" name="Damount">
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer justify-content-between">
+                <button type="button" class="btn btn-default" data-dismiss="modal">ยกเลิก</button>
+                <button type="submit" class="btn btn-primary" onclick="return vali('remove_stock')">ยืนยัน</button>
+            </div>
+
+        </form>
+
+      </div>
+    </div>
+</div>
+
+<form id="delete_reuse" action="manage_storage/delete_reuse" method="post" class="d-inline">
+    <input type="number" name="id_del_reuse" class="d-none" value="">
+</form>
+
+<!-- =================== Modal Insert Product Reuse ===================-->
+<div class="modal fade" id="modal-add-reuse">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header bg-purple">
+          <h4 class="modal-title ">เปิดใช้งานสินค้า</h4>
+          <button type="button " class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true" class="text-light">&times;</span>
+          </button>
+        </div>
+        <form id="mange_add_reuse" action="manage_storage/add_reuse" method="post">
+            <div class="modal-body">
+            <!-- ============================== Form ==============================-->
+                <div class="form-group">
+                    <label > เลือกสินค้า</label>
+                    <select class="form-control" name="data_add_reuse" onchange="select()">
+                        <% for (let i of db_prod_reuse_list) {%>
+                            <option data-id="<%= i.id %>" data-used="<%= i.can_used %>" data-stock="<%= i.stock %>">
+                                <%= i.id%> - <%= i.name%> (<%= i.stock%>)
+                            </option>
+                        <%}%>
+                    </select>
+                </div>
+                <input type="number" name="prod_id" class="d-none" value="<%= db_prod_reuse_list[0].id%>">
+                <input type="number" name="stock" class="d-none" value="<%= db_prod_reuse_list[0].stock%>">
+                <input type="number" name="can_used" class="d-none" value="<%= db_prod_reuse_list[0].can_used%>">
+            </div>
+            <div class="modal-footer justify-content-between">
+                <button type="button" class="btn btn-default" data-dismiss="modal">ยกเลิก</button>
+                <button type="submit" class="btn btn-primary" onclick="return vali('add_reuse')">ยืนยัน</button>
+            </div>
+
+        </form>
+
+      </div>
+    </div>
+</div>
+
+<!-- =================== Modal Update Product Reuse ===================-->
+<div class="modal fade" id="modal-update-reuse">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header bg-purple">
+          <h4 class="modal-title ">แก้ไขจำนวนครั้งที่เหลือ</h4>
+          <button type="button " class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true" class="text-light">&times;</span>
+          </button>
+        </div>
+
+        <form id="mange_update_reuse" action="manage_storage/update_reuse" method="post">
+            <div class="modal-body">
+            <!-- ============================== Form ==============================-->
+                <div class="form-group">
+                    <label >ID</label>
+                    <input class="form-control" name="Uid" value="" readonly></input>
+                </div>
+                <div class="form-group">
+                    <label >ID สินค้า</label>
+                    <input class="form-control" name="Uprod_id" value="" readonly></input>
+                </div>
+                <div class="form-group">
+                    <label >ชื่อสินค้า</label>
+                    <input class="form-control" name="Uprod_name" value="" readonly></input>
+                </div>
+                <div class="form-group">
+                    <label >ประเภทสินค้า</label>
+                    <input class="form-control" name="Uprod_type" value="" readonly></input>
+                </div>
+                <div class="form-group">
+                    <label >จำนวนครั้งทั้งหมด</label>
+                    <input type="number" class="form-control" name="Umax_used" value="" readonly></input>
+                </div>
+                <div class="form-group">
+                    <label >จำนวนครั้งที่เหลือ</label>
+                    <input type="number" class="form-control" name="Uremaining" value=""></input>
+                </div>
+                <input type="number" class="d-none" name="Uremaining_backup" value=""></input>
+            </div>
+
+            <div class="modal-footer justify-content-between">
+                <button type="button" class="btn btn-default" data-dismiss="modal">ยกเลิก</button>
+                <button type="submit" class="btn btn-primary" onclick="return vali('update_reuse')">ยืนยัน</button>
+            </div>
+
+        </form>
+
+      </div>
+    </div>
+</div>
+
+<script src="/axios/axios.min.js"></script>
+<script>
+    
+    function axios_validation(url,params,form_id,error_text){
+        axios({
+            url:url,
+            method:'get',
+            params:params,
+            timeout:3000
+        }).then((result)=>{
+            if( result.data.status == 1){
+                $(form_id).submit();
+            }else{
+                toastr.error(error_text)
+            }
+        }).catch(()=>{
+            toastr.error("404 Error Not Found")
+        });
+    }
+</script>
+
+<script>
+    $(function () {
+      $('#product_alert').DataTable({
+        "paging": true,
+        "lengthMenu": [[5, 10, 20], [5, 10, 20]],
+        "searching": true,
+        "ordering": true,
+        "info": true,
+        "autoWidth": false,
+        "responsive": true,
+      }); 
+    });
+
+    $(function () {
+      $('#product').DataTable({
+        "paging": true,
+        "lengthMenu": [[5, 10, 20], [5, 10, 20]],
+        "searching": true,
+        "ordering": true,
+        "info": true,
+        "autoWidth": false,
+        "responsive": true,
+      }); 
+    });
+
+    $(function () {
+      $('#product_reuse').DataTable({
+        "paging": true,
+        "lengthMenu": [[5, 10, 20], [5, 10, 20]],
+        "searching": true,
+        "ordering": true,
+        "info": true,
+        "autoWidth": false,
+        "responsive": true,
+      }); 
+    });
+
+    function select(){
+        const selectedOption = document.querySelector("select[name=data_add_reuse] option:checked");
+        $("input[name=prod_id]").val(selectedOption.getAttribute("data-id"));
+        $("input[name=stock]").val(selectedOption.getAttribute("data-id"));
+        $("input[name=can_used]").val(selectedOption.getAttribute("data-used"));
+    }
+
+    function update(mode,data){
+        data = JSON.parse(data)
+        if (mode === "add"){
+            $("input[name=Iid]").val(data.id);
+            $("input[name=Iname]").val(data.name);
+            $("input[name=Itype]").val(data.type);
+            $("input[name=Istock]").val(data.stock);
+            $("input[name=Iamount]").val(0);
+        }
+        else if (mode === "remove"){
+            $("input[name=Did]").val(data.id);
+            $("input[name=Dname]").val(data.name);
+            $("input[name=Dtype]").val(data.type);
+            $("input[name=Dstock]").val(data.stock);
+            $("input[name=Damount]").val(0);
+        }
+        else if (mode === "update_reuse"){
+            $("input[name=Uid]").val(data.id);
+            $("input[name=Uprod_id]").val(data.prod_id);
+            $("input[name=Uprod_name]").val(data.prod_name);
+            $("input[name=Uprod_type]").val(data.type_name);
+            $("input[name=Umax_used]").val(data.max_used);
+            $("input[name=Uremaining]").val(data.remaining);
+            $("input[name=Uremaining_backup]").val(data.remaining);
+        }
+    }
+    
+    function del(id){
+        $("input[name=id_del_reuse]").val(parseInt(id))
+        if(confirm("ยืนการลบข้อมูล") == true){
+            $("#delete_reuse").submit();
+        }
+    }
+
+    function vali(mode){
+        /*
+            Mode insert , update 
+        */
+        // (document.querySelector("input[name=Fname]").innerText).trim()
+        if(mode === "add_stock"){
+            let amount = parseInt(($("input[name=Iamount]").val()));
+            if( amount > 0){
+                $("#mange_add_stock").submit();
+                
+            }else{
+                toastr.error("จำนวนต้องมากกว่า 0")
+            }
+            return false;
+        }else if(mode === "remove_stock"){
+            let stock = parseInt(($("input[name=Dstock]").val()));
+            let amount = parseInt(($("input[name=Damount]").val()));
+            // console.log(stock,amount)
+            if( amount > 0 && amount <= stock){
+                $("#mange_remove_stock").submit();
+            }else{
+                toastr.error(`จำนวนต้องมากกว่า 0 และ ไม่เกิน ${stock}`)
+            }
+            return false;
+        }else if (mode === "add_reuse"){
+            let prod_id = parseInt(($("input[name=prod_id]").val()));
+            let stock = parseInt(($("input[name=stock]").val()));
+            let can_used = parseInt(($("input[name=can_used]").val()));
+            if( prod_id !== undefined, prod_id !== undefined, prod_id !== undefined){
+                $("#mange_add_reuse").submit();
+            }else{
+                toastr.error(`! กรุณาเลือกสินค้า`)
+            }
+            return false;
+        }else if (mode === "update_reuse"){
+            let max_used = parseInt(($("input[name=Umax_used]").val()));
+            let remaining = parseInt(($("input[name=Uremaining]").val()));
+            let remaining_backup = parseInt(($("input[name=Uremaining_backup]").val()));
+            if( remaining === remaining_backup){
+                $("#modal-update-reuse").modal("hide")
+            }
+            else if( remaining !== "" && remaining >= 0 && remaining <= max_used){
+                $("#mange_update_reuse").submit();
+            }
+            else{
+                toastr.error(`จำนวนต้องไม่น้อยกว่า 0 และไม่เกิน ${max_used}`)
+            }
+            return false;
+        }
+        
+    }
+  
+</script>
+
+<!-- ============================= ERROR Zone =============================-->
+<!-- toastr.success('Lorem ipsum dolor sit amet, consetetur sadipscing elitr.')
+toastr.info('Lorem ipsum dolor sit amet, consetetur sadipscing elitr.')
+toastr.error('Lorem ipsum dolor sit amet, consetetur sadipscing elitr.')
+toastr.warning('Lorem ipsum dolor sit amet, consetetur sadipscing elitr.') -->
+<!-- ============================= ERROR Zone =============================-->

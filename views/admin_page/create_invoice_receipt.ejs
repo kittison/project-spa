@@ -1,0 +1,224 @@
+<style>
+    .container-fluid {
+        padding: 12px;
+    }
+
+    .modal-body {
+        padding-left: 30px;
+        padding-right: 30px;
+    }
+
+    .modal-footer {
+        padding-left: 30px;
+        padding-right: 30px;
+    }
+
+    .form-control {
+        background-color: rgba(175, 175, 175, 0.3);
+    }
+
+    td.alert {
+        border-radius: 0%;
+        border-color: black; 
+        color: red;
+        
+    }
+
+</style>
+
+<div class="container-fluid">
+    
+    
+    <div class="d-flex justify-content-center">
+        <div class="">
+            <div class="card card-body text-center" style="padding-left: 40px; padding-right: 40px;">
+                <h3>ใบแจ้งหนี้/ใบเสร็จรับเงิน></h3>
+            </div>
+        </div>
+    </div>
+
+    <div class="d-flex justify-content-between" style="gap: 5px; padding-top: 20px; padding-left: 30px; padding-right: 30px;">
+        <h5 style="margin-top: 10px; padding-left: 10px;">ใบแจ้งหนี้</h5>
+        <a href="create_invoice_receipt/save_invoice" class="btn btn-primary">บันทึก</a>
+    </div>
+
+    <div class="d-flex justify-content-center" style="padding: 20px;" >
+        <div class="d-flex justify-content-center" style="width: 80%;">
+            <%- include('./display_invoice'); %>
+        </div>
+    </div>
+
+    <div class="d-flex justify-content-between" style="gap: 5px; padding-top: 20px; padding-left: 30px; padding-right: 30px;">
+        <h5 style="margin-top: 10px; padding-left: 10px;">ใบเสร็จรับเงิน</h5>
+        <a href="create_invoice_receipt/save_receipt" class="btn btn-primary">บันทึก</a>
+    </div>
+
+    <div class="d-flex justify-content-center" style="padding: 20px;" >
+        <div class="d-flex justify-content-center" style="width: 80%;">
+            <%- include('./display_receipt'); %>
+        </div>
+    </div>
+    
+
+</div>
+
+
+<script src="/axios/axios.min.js"></script>
+<script>
+    
+    function axios_validation(url,params,form_id,error_text){
+        axios({
+            url:url,
+            method:'get',
+            params:params,
+            timeout:3000
+        }).then((result)=>{
+            if( result.data.status == 1){
+                $(form_id).submit();
+            }else{
+                toastr.error(error_text)
+            }
+        }).catch(()=>{
+            toastr.error("404 Error Not Found")
+        });
+    }
+</script>
+
+<script>
+    $(function () {
+      $('#product_alert').DataTable({
+        "paging": true,
+        "lengthMenu": [[5, 10, 20], [5, 10, 20]],
+        "searching": true,
+        "ordering": true,
+        "info": true,
+        "autoWidth": false,
+        "responsive": true,
+      }); 
+    });
+
+    $(function () {
+      $('#product').DataTable({
+        "paging": true,
+        "lengthMenu": [[5, 10, 20], [5, 10, 20]],
+        "searching": true,
+        "ordering": true,
+        "info": true,
+        "autoWidth": false,
+        "responsive": true,
+      }); 
+    });
+
+    $(function () {
+      $('#product_reuse').DataTable({
+        "paging": true,
+        "lengthMenu": [[5, 10, 20], [5, 10, 20]],
+        "searching": true,
+        "ordering": true,
+        "info": true,
+        "autoWidth": false,
+        "responsive": true,
+      }); 
+    });
+
+    function select(){
+        const selectedOption = document.querySelector("select[name=data_add_reuse] option:checked");
+        $("input[name=prod_id]").val(selectedOption.getAttribute("data-id"));
+        $("input[name=stock]").val(selectedOption.getAttribute("data-id"));
+        $("input[name=can_used]").val(selectedOption.getAttribute("data-used"));
+    }
+
+    function update(mode,data){
+        data = JSON.parse(data)
+        if (mode === "add"){
+            $("input[name=Iid]").val(data.id);
+            $("input[name=Iname]").val(data.name);
+            $("input[name=Itype]").val(data.type);
+            $("input[name=Istock]").val(data.stock);
+            $("input[name=Iamount]").val(0);
+        }
+        else if (mode === "remove"){
+            $("input[name=Did]").val(data.id);
+            $("input[name=Dname]").val(data.name);
+            $("input[name=Dtype]").val(data.type);
+            $("input[name=Dstock]").val(data.stock);
+            $("input[name=Damount]").val(0);
+        }
+        else if (mode === "update_reuse"){
+            $("input[name=Uid]").val(data.id);
+            $("input[name=Uprod_id]").val(data.prod_id);
+            $("input[name=Uprod_name]").val(data.prod_name);
+            $("input[name=Uprod_type]").val(data.type_name);
+            $("input[name=Umax_used]").val(data.max_used);
+            $("input[name=Uremaining]").val(data.remaining);
+            $("input[name=Uremaining_backup]").val(data.remaining);
+        }
+    }
+    
+    function del(id){
+        $("input[name=id_del_reuse]").val(parseInt(id))
+        if(confirm("ยืนการลบข้อมูล") == true){
+            $("#delete_reuse").submit();
+        }
+    }
+
+    function vali(mode){
+        /*
+            Mode insert , update 
+        */
+        // (document.querySelector("input[name=Fname]").innerText).trim()
+        if(mode === "add_stock"){
+            let amount = parseInt(($("input[name=Iamount]").val()));
+            if( amount > 0){
+                $("#mange_add_stock").submit();
+                
+            }else{
+                toastr.error("จำนวนต้องมากกว่า 0")
+            }
+            return false;
+        }else if(mode === "remove_stock"){
+            let stock = parseInt(($("input[name=Dstock]").val()));
+            let amount = parseInt(($("input[name=Damount]").val()));
+            // console.log(stock,amount)
+            if( amount > 0 && amount <= stock){
+                $("#mange_remove_stock").submit();
+            }else{
+                toastr.error(`จำนวนต้องมากกว่า 0 และ ไม่เกิน ${stock}`)
+            }
+            return false;
+        }else if (mode === "add_reuse"){
+            let prod_id = parseInt(($("input[name=prod_id]").val()));
+            let stock = parseInt(($("input[name=stock]").val()));
+            let can_used = parseInt(($("input[name=can_used]").val()));
+            if( prod_id !== undefined, prod_id !== undefined, prod_id !== undefined){
+                $("#mange_add_reuse").submit();
+            }else{
+                toastr.error(`! กรุณาเลือกสินค้า`)
+            }
+            return false;
+        }else if (mode === "update_reuse"){
+            let max_used = parseInt(($("input[name=Umax_used]").val()));
+            let remaining = parseInt(($("input[name=Uremaining]").val()));
+            let remaining_backup = parseInt(($("input[name=Uremaining_backup]").val()));
+            if( remaining === remaining_backup){
+                $("#modal-update-reuse").modal("hide")
+            }
+            else if( remaining !== "" && remaining >= 0 && remaining <= max_used){
+                $("#mange_update_reuse").submit();
+            }
+            else{
+                toastr.error(`จำนวนต้องไม่น้อยกว่า 0 และไม่เกิน ${max_used}`)
+            }
+            return false;
+        }
+        
+    }
+  
+</script>
+
+<!-- ============================= ERROR Zone =============================-->
+<!-- toastr.success('Lorem ipsum dolor sit amet, consetetur sadipscing elitr.')
+toastr.info('Lorem ipsum dolor sit amet, consetetur sadipscing elitr.')
+toastr.error('Lorem ipsum dolor sit amet, consetetur sadipscing elitr.')
+toastr.warning('Lorem ipsum dolor sit amet, consetetur sadipscing elitr.') -->
+<!-- ============================= ERROR Zone =============================-->
