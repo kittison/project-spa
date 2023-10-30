@@ -32,7 +32,7 @@
     <div class="d-flex justify-content-center">
         <div class="">
             <div class="card card-body text-center" style="padding-left: 40px; padding-right: 40px;">
-                <h3>ระบบจัดการงานของพนักงาน></h3>
+                <h3>ระบบจัดการงานของพนักงาน</h3>
             </div>
         </div>
     </div>
@@ -140,13 +140,6 @@
                                         <%= i.is_service%>
                                     <% } %>
                                 </td>
-                                <!-- <td>
-                                    <div class="">
-                                        <button  type="button" class="btn btn-warning p-1 px-1" data-toggle="modal" data-target="#modal-update"onclick="update('<%=JSON.stringify(i)%>') ">แก้
-                                        </button>
-                                        <button  type="button" class="btn btn-danger p-1 px-1" onclick="del('<%=i.id%>')" >ลบ</button>
-                                    </div>
-                                </td> -->
                             </tr>
                         <% } %>
                     </tbody>
@@ -157,11 +150,6 @@
     
 
 </div>
-
-
-<form id="delete" action="manage_shop_emp/delete" method="post" class="d-inline">
-    <input type="number" name="id_del" class="d-none" value="">
-</form>
 
 <!-- =================== Modal Insert Employee ===================-->
 <div class="modal fade" id="modal-add-employee">
@@ -258,23 +246,6 @@
         "responsive": true,
       }); 
     });
-    
-    function del(data_str){
-        var data = JSON.parse(data_str)
-        console.log(data,$(`input[name=data_${data.id}]`).val())
-        $("input[name=Uproduct_name]").val(data.id);
-        $(`input[name=data_${data.id}]`).val(0);
-        var textElement = document.getElementById(`data_${data.id}`);
-        // Check if the element exists
-        if (textElement) {
-            // Set the new text content
-            textElement.textContent = 0;
-        }
-        // $("input[name=id_del]").val(parseInt(id))
-        // if(confirm("ยืนการลบข้อมูล") == true){
-        //     $("#delete").submit();
-        // }
-    }
 
     function vali(mode){
         /*
