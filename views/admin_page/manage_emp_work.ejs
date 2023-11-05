@@ -128,12 +128,15 @@
                                 <td><%= i.f_name%></td>
                                 <td><%= i.l_name%></td>
                                 <td><%= i.n_name%></td>
-                                <td>0</td>
-                                <td>0</td>
-                                <td>0</td>
+                                <td><%= i.daily_completed_count%></td>
+                                <td><%= i.weekly_completed_count%></td>
+                                <td><%= i.monthly_completed_count%></td>
                                 <td>
                                     <% if(i.is_service == 0){ %>
                                         รองาน
+                                    <% } else if (i.is_service == 1 && i.onprocess_end_date){ %>
+                                        <% let f_end_date = new Intl.DateTimeFormat('id-ID',{ hour: 'numeric', minute: 'numeric'}).format(i.onprocess_end_date) %>
+                                        ทำงานเสร็จ <%= f_end_date%> น.
                                     <% } else if (i.is_service == 1){ %>
                                         กำลังทำงาน
                                     <% } else { %>

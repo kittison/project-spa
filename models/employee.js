@@ -140,9 +140,45 @@ exports.get_emp_queue = async () => {
 };
 
 exports.get_emp_work = async () => {
-    let sql = ` SELECT em.id, em.f_name, em.l_name, em.n_name, em.is_service
-                FROM employee em
-                where em.emp_type_id = 2 and em.flag = 1`
+    let sql = ` SELECT
+                    e.id, e.f_name, e.l_name, e.n_name, e.is_service,
+                    NOW(),
+                    SUM(CASE WHEN DATE(a.start_date) = CURDATE() AND a.status = 'Completed' THEN 1 ELSE 0 END) AS daily_completed_count,
+                    SUM(CASE WHEN YEARWEEK(a.start_date) = YEARWEEK(CURDATE()) AND a.status = 'Completed' THEN 1 ELSE 0 END) AS weekly_completed_count,
+                    SUM(CASE WHEN YEAR(a.start_date) = YEAR(CURDATE()) AND MONTH(a.start_date) = MONTH(CURDATE()) AND a.status = 'Completed' THEN 1 ELSE 0 END) AS monthly_completed_count,
+                    MAX(onprocess_appointment.onprocess_id) as onprocess_id,
+                    MAX(onprocess_appointment.onprocess_start_date) as onprocess_start_date,
+                    MAX(onprocess_appointment.onprocess_end_date) as onprocess_end_date
+                FROM
+                    employee e
+                LEFT JOIN appointment a ON
+                    e.id = a.emp_id
+                    AND a.flag = 1
+                LEFT JOIN (
+                    SELECT
+                        appt.id as onprocess_id,
+                        appt.start_date as onprocess_start_date,
+                        appt.end_date as onprocess_end_date,
+                        appt.emp_id
+                    FROM
+                        appointment appt
+                    WHERE
+                        appt.status = 'Onprocess'
+                        AND NOW() BETWEEN appt.start_date AND appt.end_date
+                    ORDER BY
+                        appt.start_date ASC
+                    LIMIT 1
+                ) onprocess_appointment ON
+                    e.id = onprocess_appointment.emp_id
+                WHERE
+                    e.emp_type_id = 2
+                    AND e.flag = 1
+                    AND (DATE(a.start_date) = CURDATE() 
+                        OR YEARWEEK(a.start_date, 1) = YEARWEEK(CURDATE(), 1)
+                        OR (YEAR(a.start_date) = YEAR(CURDATE())
+                            AND MONTH(a.start_date) = MONTH(CURDATE())))
+                GROUP BY e.id`
+                
     let result = await con.query(sql)
     return result;
 };

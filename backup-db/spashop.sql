@@ -498,7 +498,7 @@ CREATE TABLE `appointment` (
   `room_id` int(11) NOT NULL,
   `vip_id` int(11) NULL,
   `shop_id` int(11) NOT NULL,
-  `status` int(11) NOT NULL,
+  `status` text NOT NULL,
   `is_vip` int(11) NOT NULL,
   `is_comfirmed` int(11) NOT NULL,
   `flag` int(11) NOT NULL
@@ -510,9 +510,11 @@ CREATE TABLE `appointment` (
 
 INSERT INTO `appointment` (`id`, `start_date`, `end_date`, `cust_id`, `serv_id`, `emp_id`, `room_id`, `vip_id`, `shop_id`, 
 `status`, `is_vip`, `is_comfirmed`, `flag`) VALUES
-(1, '2023-10-01 14:00:00', '2023-10-04 14:00:00', 1, 1, 1, 1, 1, 1, 3, 0, 1, 1),
-(2, '2023-10-01 14:00:00', '2023-10-04 14:00:00', 2, 1, 3, 1, 2, 2, 3, 0, 1, 1),
-(3, '2023-10-10 14:00:00', '2023-10-04 14:00:00', 1, 1, 1, 1, NULL, 1, 0, 0, 0, 1),
+(1, '2023-10-01 13:00:00', '2023-10-04 14:00:00', 1, 1, 2, 1, NULL, 1, "Completed", 0, 1, 1),
+(2, '2023-10-01 13:00:00', '2023-10-04 14:00:00', 2, 1, 3, 2, NULL, 2, "Completed", 0, 1, 1),
+(3, '2023-10-10 14:00:00', '2023-10-04 15:00:00', 2, 1, 2, 2, NULL, 1, "Onprocess", 0, 0, 1),
+(4, '2023-10-10 14:00:00', '2023-10-04 15:00:00', 1, 1, 1, 1, NULL, 1, "Cancelled", 0, 0, 1),
+(5, '2023-10-10 14:30:00', '2023-10-04 15:30:00', 1, 1, 1, 1, NULL, 1, "Scheduled", 0, 0, 1)
 
 -- --------------------------------------------------------
 
@@ -887,7 +889,7 @@ ALTER TABLE `employee_queue`
 -- AUTO_INCREMENT for table `appointment`
 --
 ALTER TABLE `appointment`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6
 
 --
 -- AUTO_INCREMENT for table `room`
