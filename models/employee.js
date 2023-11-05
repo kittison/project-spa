@@ -173,10 +173,6 @@ exports.get_emp_work = async () => {
                 WHERE
                     e.emp_type_id = 2
                     AND e.flag = 1
-                    AND (DATE(a.start_date) = CURDATE() 
-                        OR YEARWEEK(a.start_date, 1) = YEARWEEK(CURDATE(), 1)
-                        OR (YEAR(a.start_date) = YEAR(CURDATE())
-                            AND MONTH(a.start_date) = MONTH(CURDATE())))
                 GROUP BY e.id`
                 
     let result = await con.query(sql)
