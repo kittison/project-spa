@@ -33,7 +33,7 @@ exports.setStorage =async (req, res) => {
         if(req.params.action === "add_stock"){
             let new_stock = parseInt(req.body.Istock) + parseInt(req.body.Iamount);
             await model.update_stock(req.body.Iid,new_stock).then((data)=>{return data});
-            await model.record_history(req.bodyIid,req.body.Istock,new_stock,1);
+            await model.record_history(req.body.Iid,req.body.Istock,new_stock,1);
             res.redirect("../manage_storage");
         }else if(req.params.action === "remove_stock"){
             let new_stock = parseInt(req.body.Dstock) - parseInt(req.body.Damount);

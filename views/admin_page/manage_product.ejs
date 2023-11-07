@@ -124,6 +124,10 @@
                         <label >จำนวนมากสุด</label>
                         <input type="number" class="form-control" name="max_stock" >
                     </div>
+                    <div class="form-group">
+                        <label >จำนวนเริ่มต้น</label>
+                        <input type="number" class="form-control" name="stock" >
+                    </div>
                     <input type="number" name="type_id" class="d-none" value="<%= db_prod_type[0].id%>">
                 </div>
             </div>
@@ -250,8 +254,9 @@
             let can_use = ($("input[name=can_used]").val()).trim();
             let min_stock = ($("input[name=min_stock]").val()).trim();
             let max_stock = ($("input[name=max_stock]").val()).trim();
+            let stock = ($("input[name=stock]").val()).trim();
     
-            if( name !== "" && price !== "" && can_use !== "" && min_stock !== "" && max_stock !== ""){
+            if( name !== "" && price !== "" && can_use !== "" && min_stock !== "" && max_stock !== "" && stock !== ""){
                 let params= {
                     name:name,
                     type_id:$("input[name=type_id]").val(),
