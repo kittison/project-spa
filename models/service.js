@@ -164,7 +164,7 @@ exports.get_serv_func_by_servID = async (input) => {
 
 exports.insert_service_function = async (input) => {
     let sql = ` INSERT INTO service_function( serv_id, time, price, flag) 
-                VALUES ("${input.serv_id}", "${input.time}", "${input.price}", 1);`
+                VALUES ("${input.service_id}", "${input.time}", "${input.price}", 1);`
     let result = await con.query(sql)
 };
 exports.update_service_function = async (input) => {
