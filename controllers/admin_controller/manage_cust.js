@@ -1,5 +1,6 @@
 
 const model = require('../../models/customer');
+const model_course = require('../../models/course');
 
 exports.Manage_customer = async (req, res) => {
     if( req.session.role === "admin" ){
@@ -14,7 +15,7 @@ exports.Manage_customer = async (req, res) => {
             file:'admin_page/manage_cust'
         });
     }else{
-        res.redirect('/');
+        res.redirect('/admin');
     }
 
 };
@@ -33,7 +34,7 @@ exports.setCustomer =async (req, res) => {
             res.redirect("../manage_cust");
         }
     }else{
-        res.redirect("/");
+        res.redirect("/admin");
     }
 };
 
@@ -51,3 +52,26 @@ exports.check_can_update = async (req, res) => {
     res.send({status:status});
 };
 
+// ---------------------- Customer Vip ----------------------
+
+exports.Manage_customer_vip = async (req, res) => {
+    if( req.session.role === "admin" ){
+        let db_cust =  await model.get_cust_byID({id:req.query.cust_id});
+        let db_cust_vip =  await model.get_cust_vip({id:req.query.cust_id});
+        let db_course =  await model_course.get_course();
+        // console.log("#",db_employee);
+        res.render('template',{
+            session_user_id:req.session.user_id,
+            session_user:req.session.user,
+            session_role:req.session.role,
+            db_cust:db_cust,
+            db_cust_vip:db_cust_vip,
+            db_course:db_course,
+            header:"Manage Customer",
+            file:'admin_page/manage_cust_vip'
+        });
+    }else{
+        res.redirect('/admin');
+    }
+
+};

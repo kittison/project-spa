@@ -87,3 +87,50 @@ exports.is_duplicate_emp = async (input) => {
         return false;
     }
 };
+
+
+// -------------------- Shop Room --------------------
+
+exports.get_shop_room = async (input) => {
+    let sql = `SELECT r.id, r.name, r.type, r.status 
+                FROM shop AS s
+                JOIN room AS r ON s.id = r.shop_id
+                WHERE s.id = '${input.id}' AND r.flag = 1`
+    let result = await con.query(sql)
+    // console.log('!',result)
+    return result;
+};
+exports.insert_shop_room = async (input) => {
+    let sql = ` INSERT INTO room( shop_id , name, type, status, flag ) 
+                VALUES (${parseInt(input.shop_id)}, "${input.name}", "${input.type}", 0, 1);`
+    let result = await con.query(sql)
+};
+exports.update_shop_room = async (input) => {
+    let sql = ` UPDATE room SET name=  "${input.Uname}", type=  "${input.Utype}" WHERE id = ${input.id_update} `
+    let result = await con.query(sql)
+};
+exports.delete_shop_room = async (input) => {
+    // console.log(input);
+    let sql = ` UPDATE room SET flag = 0 WHERE id = ${parseInt(input.id_del)}`
+    let result = await con.query(sql)
+};
+
+exports.is_duplicate_name_room = async (input) => {
+    // console.log(input);
+    let sql = `SELECT * FROM room WHERE shop_id = ${parseInt(input.shop_id)} and name = '${input.name}' and flag = 1 `
+    let result = await con.query(sql)
+    if( result.length > 0 ){
+        return true;
+    }else{
+        return false;
+    }
+};
+exports.is_duplicate_name_self_room = async (input) => {
+    let sql = `SELECT * FROM room WHERE shop_id = ${parseInt(input.shop_id)} and name = '${input.name}' and id =${input.id} and flag = 1 `
+    let result = await con.query(sql)
+    if( result.length > 0 ){
+        return true;
+    }else{
+        return false;
+    }
+};

@@ -22,7 +22,7 @@ exports.Manage_storage = async (req, res) => {
             file:'admin_page/manage_storage'
         });
     }else{
-        res.redirect('/');
+        res.redirect('/admin');
     }
 
 };
@@ -54,7 +54,7 @@ exports.setStorage =async (req, res) => {
             await model.delete_product_reuse(req.body).then((data)=>{return data});
             res.redirect("../manage_storage");
         }else{
-            res.redirect("/");
+            res.redirect("/admin");
         }
     }
 };

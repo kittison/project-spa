@@ -18,7 +18,7 @@ exports.Manage_emp = async (req, res) => {
             file:'admin_page/manage_emp'
         });
     }else{
-        res.redirect('/');
+        res.redirect('/admin');
     }
 
 };
@@ -37,7 +37,7 @@ exports.setEmployee =async (req, res) => {
             res.redirect("../manage_emp");
         }
     }else{
-        res.redirect("/");
+        res.redirect("/admin");
     }
 };
 
@@ -71,7 +71,7 @@ exports.Manage_emp_type = async (req, res) => {
             file:'admin_page/manage_emp_type'
         });
     }else{
-        res.redirect('/');
+        res.redirect('/admin');
     }
 
 };
@@ -90,7 +90,7 @@ exports.setEmployeeType =async (req, res) => {
             res.redirect("../manage_emp_type");
         }
     }else{
-        res.redirect("/");
+        res.redirect("/admin");
     }
 };
 
@@ -124,7 +124,7 @@ exports.Manage_job_level = async (req, res) => {
             file:'admin_page/manage_job_level'
         });
     }else{
-        res.redirect('/');
+        res.redirect('/admin');
     }
 
 };
@@ -143,7 +143,7 @@ exports.setJobLevel =async (req, res) => {
             res.redirect("../manage_job_level");
         }
     }else{
-        res.redirect("/");
+        res.redirect("/admin");
     }
 };
 
@@ -179,7 +179,7 @@ exports.Manage_emp_work = async (req, res) => {
             file:'admin_page/manage_emp_work'
         });
     }else{
-        res.redirect('/');
+        res.redirect('/admin');
     }
 
 };
@@ -198,7 +198,7 @@ exports.setEmployeeWork =async (req, res) => {
             res.redirect("../manage_emp_work");
         }
     }else{
-        res.redirect("/");
+        res.redirect("/admin");
     }
 };
 
@@ -216,7 +216,7 @@ exports.Manage_emp_queue = async (req, res) => {
             file:'admin_page/manage_emp_queue'
         });
     }else{
-        res.redirect('/');
+        res.redirect('/admin');
     }
 
 };
@@ -232,7 +232,7 @@ exports.setEmployeeQueue =async (req, res) => {
             res.redirect("../manage_emp_queue");
         }
     }else{
-        res.redirect("/");
+        res.redirect("/admin");
     }
 };
 

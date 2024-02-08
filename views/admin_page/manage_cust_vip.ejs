@@ -1,0 +1,352 @@
+<style>
+    .container-fluid {
+        padding: 12px;
+    }
+
+    .modal-body {
+        padding-left: 30px;
+        padding-right: 30px;
+    }
+
+    .modal-footer {
+        padding-left: 30px;
+        padding-right: 30px;
+    }
+
+    .form-control {
+        background-color: rgba(175, 175, 175, 0.3);
+    }
+</style>
+
+<div class="container-fluid">
+    
+    <div class="d-flex justify-content-center">
+        <div class="">
+            <div class="card card-body text-center" style="padding-left: 40px; padding-right: 40px;">
+                <h3>ระบบจัดการข้อมูลบัตร vip ของลูกค้า : <%= db_cust[0].f_name %> <%= db_cust[0].l_name %></h3>
+            </div>
+        </div>
+    </div>
+
+    <div class="d-flex  justify-content-start mb-2" style="gap: 5px;">
+        <a href="manage_cust" class="btn btn-info">กลับไปที่จัดการข้อมูลลูกค้า</a>
+        <button  type="button" class="btn btn-success" data-toggle="modal" data-target="#modal-add" onclick="">
+            เพิ่มบัตร
+        </button>
+    </div>
+
+    <div class="row">
+        <div class="col-12">
+            <div class="card card-body">
+                
+                <table id="vip-card" class="table table-bordered table-hover " >
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>คอร์ส</th>
+                            <th>วันที่เข้าเป็น</th>
+                            <th>วันที่หมดอายุ</th>
+                            <th>ราคาที่ใช้ไป</th>
+                            <th>ราคาคงเหลือ</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% for(let i of db_cust_vip) {%>
+                            <tr>
+                                <td><%= i.id%></td>
+                                <td><%= i.course_name%></td>
+                                <% if(i.join_date){ %>
+                                    <% let f_join_date = new Intl.DateTimeFormat('id-ID',{ day:'2-digit', month:'2-digit', year:'numeric', hour: 'numeric', minute: 'numeric', second: 'numeric', timeZoneName: 'short'}).format(i.join_date) %>
+                                    <td><%= f_join_date%></td>
+                                <% } else{ %>  
+                                    <td>-</td>
+                                <% } %>
+                                <% if(i.expire_date){ %>
+                                    <% let f_expire_date = new Intl.DateTimeFormat('id-ID',{ day:'2-digit', month:'2-digit', year:'numeric', hour: 'numeric', minute: 'numeric', second: 'numeric', timeZoneName: 'short'}).format(i.expire_date) %>
+                                    <td><%= f_expire_date%></td>
+                                <% } else{ %>  
+                                    <td>-</td>
+                                <% } %>
+                                <td><%= i.acc_val%></td>
+                                <td><%= i.remain_val%></td>
+                                <td>
+                                    <div class="">
+                                        <button  type="button" class="btn btn-warning p-1 px-1" data-toggle="modal" data-target="#modal-update"onclick="update('<%=JSON.stringify(i)%>') ">แก้
+                                        </button>
+                                        <button  type="button" class="btn btn-danger p-1 px-1" onclick="del('<%=i.id%>')" >ลบ</button>
+                                    </div>
+                                </td>
+                                
+                            </tr>
+                        <% } %>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<form id="delete" action="manage_cust/delete" method="post" class="d-inline">
+    <input type="number" name="id_del" class="d-none" value="">
+</form>
+
+<!-- =================== Modal Insert ===================-->
+<div class="modal fade" id="modal-add">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header bg-purple">
+          <h4 class="modal-title ">เพิ่มบัตร</h4>
+          <button type="button " class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true" class="text-light">&times;</span>
+          </button>
+        </div>
+        <form id="mange_add" action="manage_cust/add" method="post">
+            <div class="modal-body">
+            <!-- ============================== Form ==============================-->
+                <div class="form-group">
+                    <label>คอร์ส</label>
+                    <select class="form-control" name="course_id" value="">
+                        <option id="course_none" value="" ></option>
+                        <% for(i of db_course){%> 
+                            <option  id="course_<%=i.id%>" value="<%=i.id%>"><%=i.name%> - <%=i.price%> บาท</option>
+                        <%} %> 
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label >วันที่เข้าเป็น</label>
+                    <input type="datetime-local" class="form-control" name="join_date" step="60">
+                </div>
+                <div class="form-group">
+                    <label >วันที่หมดอายุ</label>
+                    <input type="datetime-local" class="form-control" name="expire_date" step="60">
+                </div>
+                <div class="form-group">
+                    <label >ราคาที่ใช้ไป</label>
+                    <input type="number" class="form-control" name="acc_val">
+                </div>
+                <div class="form-group">
+                    <label >ราคาคงเหลือ</label>
+                    <input type="number" class="form-control" name="remain_val">
+                </div>
+
+            </div>
+            
+            <div class="modal-footer justify-content-between">
+                <button type="button" class="btn btn-default" data-dismiss="modal">ยกเลิก</button>
+                <button type="submit" class="btn btn-primary" onclick="return vali('add')">ยืนยัน</button>
+            </div>
+
+        </form>
+
+      </div>
+    </div>
+</div>
+
+
+<!-- =================== Modal Update ===================-->
+<div class="modal fade" id="modal-update">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header bg-purple">
+          <h4 class="modal-title ">แก้ไขข้อมูลลูกค้า</h4>
+          <button type="button " class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true" class="text-light">&times;</span>
+          </button>
+        </div>
+
+        <form id="mange_update" action="manage_cust/update" method="post">
+            <div class="modal-body">
+            <!-- ============================== Form ==============================-->
+                <div class="form-group">
+                    <label >คอร์ส</label>
+                    <input type="datetime-local" class="form-control" name="Ucourse_id" step="60">
+                </div>
+                <div class="form-group">
+                    <label >วันที่เข้าเป็น</label>
+                    <input type="datetime-local" class="form-control" name="Ujoin_date" step="60">
+                </div>
+                <div class="form-group">
+                    <label >วันที่หมดอายุ</label>
+                    <input type="datetime-local" class="form-control" name="Uexpire_date" step="60">
+                </div>
+                <div class="form-group">
+                    <label >ราคาที่ใช้ไป</label>
+                    <input type="number" class="form-control" name="Uacc_val">
+                </div>
+                <div class="form-group">
+                    <label >ราคาคงเหลือ</label>
+                    <input type="number" class="form-control" name="Uremain_val">
+                </div>
+                <input type="number" name="id_update" class="d-none" value="">
+            </div>
+
+            <div class="modal-footer justify-content-between">
+                <button type="button" class="btn btn-default" data-dismiss="modal">ยกเลิก</button>
+                <button type="submit" class="btn btn-primary" onclick="return vali('update')">ยืนยัน</button>
+            </div>
+
+        </form>
+
+      </div>
+    </div>
+</div>
+
+
+
+
+
+
+<script src="/axios/axios.min.js"></script>
+<script>
+    function axios_validation(url,params,form_id,error_text){
+        axios({
+            url:url,
+            method:'get',
+            params:params,
+            timeout:3000
+        }).then((result)=>{
+            if( result.data.status == 1){
+                $(form_id).submit();
+            }else{
+                toastr.error(error_text)
+            }
+        }).catch(()=>{
+            toastr.error("404 Error Not Found")
+        });
+    }
+</script>
+
+
+
+<script>
+    
+    
+    $(function () {
+      $('#vip-card').DataTable({
+        "paging": true,
+        "lengthMenu": [[5, 10, 20], [5, 10, 20]],
+        "searching": true,
+        "ordering": true,
+        "info": true,
+        "autoWidth": false,
+        "responsive": true,
+      });
+      
+    });
+
+    let oldOp ="";
+    function update(data){
+        data = JSON.parse(data)
+        $("input[name=Uf_name]").val(data.f_name);
+        $("input[name=Ul_name]").val(data.l_name)
+        $("input[name=Ugender]").val(data.gender)
+        $("input[name=Uaddress]").val(data.address)
+        $("input[name=Utel]").val(data.tel) 
+        $("input[name=Uemail]").val(data.email)
+        $("input[name=Utype]").val(data.cus_type)
+        $("input[name=Upoint]").val(data.member_point)           
+        $("input[name=id_update]").val(data.id)
+
+        // let new_select = data.position;
+        // $(`option[id=${new_select}]`).attr("selected","true");
+        // if(oldOp !== new_select ){
+        //     if(oldOp != ""){
+        //         $(`option[id=${oldOp}]`).removeAttr("selected");
+        //     }
+        //     oldOp = new_select ;
+        // }
+
+    }
+
+    function del(id){
+        $("input[name=id_del]").val(parseInt(id))
+        if(confirm("ยืนยันการลบข้อมูล") == true){
+            $("#delete").submit();
+        }
+    }
+
+    function vali(mode){
+        /*
+            Mode insert , update 
+        */
+        // (document.querySelector("input[name=Fname]").innerText).trim()
+        if(mode === "add"){
+            let f_name = ($("input[name=f_name]").val()).trim();
+            let l_name = ($("input[name=l_name]").val()).trim();
+            let gender = ($("input[name=gender]").val()).trim();
+            let address = ($("input[name=address]").val()).trim();
+            let tel = ($("input[name=tel]").val()).trim();
+            let email = ($("input[name=email]").val()).trim();
+            let cus_type = ($("input[name=type]").val()).trim();
+            let member_point = ($("input[name=point]").val()).trim();
+    
+            if( f_name !== "" && l_name !== "" && gender !== "" && address !== "" && 
+                tel !== "" && email !== "" && cus_type !== "" && member_point !== ""
+            ){
+                let params= {
+                    f_name:f_name,
+                    l_name:l_name,
+                }
+                axios_validation(
+                    'manage_cust/check_can_add',
+                    params,
+                    '#mange_add',
+                    'มีชื่อ/นามสุกลลูกค้านี้อยู่เเล้ว'
+                );
+                
+            }else{
+                toastr.error("! กรุณาใส่ข้อมูลให้ครบ")
+            }
+            return false;
+
+
+        }else if(mode === "update"){
+            let f_name = ($("input[name=Uf_name]").val()).trim();
+            let l_name = ($("input[name=Ul_name]").val()).trim();
+            let gender = ($("input[name=Ugender]").val()).trim();
+            let address = ($("input[name=Uaddress]").val()).trim();
+            let tel = ($("input[name=Utel]").val()).trim();
+            let email = ($("input[name=Uemail]").val()).trim();
+            let cus_type = ($("input[name=Utype]").val()).trim();
+            let member_point = ($("input[name=Upoint]").val()).trim();
+    
+            if( f_name !== "" && l_name !== "" && gender !== "" && address !== "" && 
+                tel !== "" && email !== "" && cus_type !== "" && member_point !== ""
+            ){
+                let params= {
+                    f_name:f_name,
+                    l_name:l_name,
+                    id:$("input[name=id_update]").val()
+                }
+                axios_validation(
+                    'manage_cust/check_can_update',
+                    params,
+                    '#mange_update',
+                    'มีชื่อ/นามสุกลลูกค้านี้อยู่เเล้ว'
+                );
+            }else{
+                toastr.error("! กรุณาใส่ข้อมูลให้ครบ")
+            }
+            return false;
+        }
+        
+    }
+
+    function req_detail(type, input){
+        if (type=="vip") {
+            window.location = `manage_cust_vip?cust_id=${input}`
+        }
+        
+    }
+  
+</script>
+
+
+<!-- ============================= ERROR Zone =============================-->
+<!-- toastr.success('Lorem ipsum dolor sit amet, consetetur sadipscing elitr.')
+toastr.info('Lorem ipsum dolor sit amet, consetetur sadipscing elitr.')
+toastr.error('Lorem ipsum dolor sit amet, consetetur sadipscing elitr.')
+toastr.warning('Lorem ipsum dolor sit amet, consetetur sadipscing elitr.') -->
+<!-- ============================= ERROR Zone =============================-->

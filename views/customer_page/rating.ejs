@@ -1,0 +1,316 @@
+<style>
+    .container-fluid {
+        padding: 12px;
+    }
+
+    .modal-body {
+        padding-left: 30px;
+        padding-right: 30px;
+    }
+
+    .modal-footer {
+        padding-left: 30px;
+        padding-right: 30px;
+    }
+
+    .form-control {
+        background-color: rgba(175, 175, 175, 0.3);
+    }
+
+    td.alert {
+        border-radius: 0%;
+        border-color: black; 
+        color: red;
+        
+    }
+
+    .rate {
+        float: left;
+        height: 46px;
+        padding: 0 10px;
+    }
+    .rate:not(:checked) > input {
+        position:absolute;
+        top:-9999px;
+    }
+    .rate:not(:checked) > label {
+        float:right;
+        width:1em;
+        overflow:hidden;
+        white-space:nowrap;
+        cursor:pointer;
+        font-size:30px;
+        color:#ccc;
+    }
+    .rate:not(:checked) > label:before {
+        content: '★ ';
+    }
+    .rate > input:checked ~ label {
+        color: #ffc700;    
+    }
+    .rate:not(:checked) > label:hover,
+    .rate:not(:checked) > label:hover ~ label {
+        color: #deb217;  
+    }
+    .rate > input:checked + label:hover,
+    .rate > input:checked + label:hover ~ label,
+    .rate > input:checked ~ label:hover,
+    .rate > input:checked ~ label:hover ~ label,
+    .rate > label:hover ~ input:checked ~ label {
+        color: #c59b08;
+    }
+
+</style>
+
+<div class="container-fluid">
+    
+    
+    <div class="d-flex justify-content-center">
+        <div class="">
+            <div class="card card-body text-center" style="padding-left: 40px; padding-right: 40px;">
+                <h3>ให้คะแนนความพึงพอใจ</h3>
+            </div>
+        </div>
+    </div>
+
+    <div class="d-flex justify-content-center pt-2" >
+        <form class="w-100" id="make_appointment" action="make_appointment_vip" method="post">
+            <div class="card card-body w-100">
+                <div class="form-group row">
+                    <label class="col-sm-2 col-form-label d-flex justify-content-end">หมายเลขใบเสร็จ:</label>
+                    <div class="col-sm-8 ">
+                        <input type="text" class="form-control" id="vip" name="vip" placeholder="หมายเลขใบเสร็จ">
+                    </div>
+                    <div class="col-sm-2 ">
+                        <button type="button" class="btn btn-info" onclick="return checkCode()">ตรวจสอบ</button>
+                    </div>
+                </div>
+            </div>
+            <div class="card card-body w-100">
+                <div class="form-group row">
+                    <label class="col-sm-2 col-form-label">หมายเลขใบเสร็จ:</label>
+                    <label id="vip" name="vip" class="col-sm-9 col-form-label">หมายเลขใบเสร็จ</label>
+                </div>
+                <div class="form-group row">
+                    <label class="col-sm-2 col-form-label">บริการที่ซื้อ:</label>
+                    <div class="col-sm-10">
+                        <div class="rate">
+                            <input type="radio" id="star5" name="rate" value="5" />
+                            <label for="star5" title="text">5 stars</label>
+                            <input type="radio" id="star4" name="rate" value="4" />
+                            <label for="star4" title="text">4 stars</label>
+                            <input type="radio" id="star3" name="rate" value="3" />
+                            <label for="star3" title="text">3 stars</label>
+                            <input type="radio" id="star2" name="rate" value="2" />
+                            <label for="star2" title="text">2 stars</label>
+                            <input type="radio" id="star1" name="rate" value="1" />
+                            <label for="star1" title="text">1 star</label>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label class="col-sm-2 col-form-label">ผู้ให้บริการ:</label>
+                    <div class="col-sm-10">
+                        <div class="rate">
+                            <input type="radio" id="star5" name="rate" value="5" />
+                            <label for="star5" title="text">5 stars</label>
+                            <input type="radio" id="star4" name="rate" value="4" />
+                            <label for="star4" title="text">4 stars</label>
+                            <input type="radio" id="star3" name="rate" value="3" />
+                            <label for="star3" title="text">3 stars</label>
+                            <input type="radio" id="star2" name="rate" value="2" />
+                            <label for="star2" title="text">2 stars</label>
+                            <input type="radio" id="star1" name="rate" value="1" />
+                            <label for="star1" title="text">1 star</label>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label class="col-sm-2 col-form-label">ห้องที่ให้บริการ:</label>
+                    <div class="col-sm-10">
+                        <div class="rate">
+                            <input type="radio" id="star5" name="rate" value="5" />
+                            <label for="star5" title="text">5 stars</label>
+                            <input type="radio" id="star4" name="rate" value="4" />
+                            <label for="star4" title="text">4 stars</label>
+                            <input type="radio" id="star3" name="rate" value="3" />
+                            <label for="star3" title="text">3 stars</label>
+                            <input type="radio" id="star2" name="rate" value="2" />
+                            <label for="star2" title="text">2 stars</label>
+                            <input type="radio" id="star1" name="rate" value="1" />
+                            <label for="star1" title="text">1 star</label>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label class="col-sm-2 col-form-label">ข้อเสนอแนะ:</label>
+                    <div class="col-sm-10 ">
+                        <textarea id="comment" name="comment" rows="5" cols="40" maxlength="200"></textarea>
+                    </div>
+                </div>
+                <div class="form-group row pt-2">
+                    <div class="col-sm-12">
+                        <button type="button" class="btn btn-info w-100" style="padding: 10px;"
+                            onclick="return ">ยืนยันการให้คะแนนความพึงพอใจ
+                        </button>
+                    </div>
+                </div>
+            </div>
+        
+        </form>
+    </div>
+
+</div>
+
+<script src="/axios/axios.min.js"></script>
+<script>
+    
+    function axios_validation(url,params,form_id,error_text){
+        axios({
+            url:url,
+            method:'get',
+            params:params,
+            timeout:3000
+        }).then((result)=>{
+            if( result.data.status == 1){
+                $(form_id).submit();
+            }else{
+                toastr.error(error_text)
+            }
+        }).catch(()=>{
+            toastr.error("404 Error Not Found")
+        });
+    }
+</script>
+
+<script>
+    $(function () {
+      $('#product_alert').DataTable({
+        "paging": true,
+        "lengthMenu": [[5, 10, 20], [5, 10, 20]],
+        "searching": true,
+        "ordering": true,
+        "info": true,
+        "autoWidth": false,
+        "responsive": true,
+      }); 
+    });
+
+    $(function () {
+      $('#product').DataTable({
+        "paging": true,
+        "lengthMenu": [[5, 10, 20], [5, 10, 20]],
+        "searching": true,
+        "ordering": true,
+        "info": true,
+        "autoWidth": false,
+        "responsive": true,
+      }); 
+    });
+
+    $(function () {
+      $('#product_reuse').DataTable({
+        "paging": true,
+        "lengthMenu": [[5, 10, 20], [5, 10, 20]],
+        "searching": true,
+        "ordering": true,
+        "info": true,
+        "autoWidth": false,
+        "responsive": true,
+      }); 
+    });
+
+    function select(){
+        const selectedOption = document.querySelector("select[name=data_add_reuse] option:checked");
+        $("input[name=prod_id]").val(selectedOption.getAttribute("data-id"));
+        $("input[name=stock]").val(selectedOption.getAttribute("data-id"));
+        $("input[name=can_used]").val(selectedOption.getAttribute("data-used"));
+    }
+
+    function update(mode,data){
+        data = JSON.parse(data)
+        if (mode === "add"){
+            $("input[name=Iid]").val(data.id);
+            $("input[name=Iname]").val(data.name);
+            $("input[name=Itype]").val(data.type);
+            $("input[name=Istock]").val(data.stock);
+            $("input[name=Iamount]").val(0);
+        }
+        else if (mode === "remove"){
+            $("input[name=Did]").val(data.id);
+            $("input[name=Dname]").val(data.name);
+            $("input[name=Dtype]").val(data.type);
+            $("input[name=Dstock]").val(data.stock);
+            $("input[name=Damount]").val(0);
+        }
+        else if (mode === "update_reuse"){
+            $("input[name=Uid]").val(data.id);
+            $("input[name=Uprod_id]").val(data.prod_id);
+            $("input[name=Uprod_name]").val(data.prod_name);
+            $("input[name=Uprod_type]").val(data.type_name);
+            $("input[name=Umax_used]").val(data.max_used);
+            $("input[name=Uremaining]").val(data.remaining);
+            $("input[name=Uremaining_backup]").val(data.remaining);
+        }
+    }
+    
+    function del(id){
+        $("input[name=id_del_reuse]").val(parseInt(id))
+        if(confirm("ยืนยันการลบข้อมูล") == true){
+            $("#delete_reuse").submit();
+        }
+    }
+
+    function vali(mode){
+        /*
+            Mode insert , update 
+        */
+        // (document.querySelector("input[name=Fname]").innerText).trim()
+        if(mode === "add_stock"){
+            let amount = parseInt(($("input[name=Iamount]").val()));
+            if( amount > 0){
+                $("#mange_add_stock").submit();
+                
+            }else{
+                toastr.error("จำนวนต้องมากกว่า 0")
+            }
+            return false;
+        }else if(mode === "remove_stock"){
+            let stock = parseInt(($("input[name=Dstock]").val()));
+            let amount = parseInt(($("input[name=Damount]").val()));
+            // console.log(stock,amount)
+            if( amount > 0 && amount <= stock){
+                $("#mange_remove_stock").submit();
+            }else{
+                toastr.error(`จำนวนต้องมากกว่า 0 และ ไม่เกิน ${stock}`)
+            }
+            return false;
+        }else if (mode === "add_reuse"){
+            let prod_id = parseInt(($("input[name=prod_id]").val()));
+            let stock = parseInt(($("input[name=stock]").val()));
+            let can_used = parseInt(($("input[name=can_used]").val()));
+            if( prod_id !== undefined, prod_id !== undefined, prod_id !== undefined){
+                $("#mange_add_reuse").submit();
+            }else{
+                toastr.error(`! กรุณาเลือกสินค้า`)
+            }
+            return false;
+        }else if (mode === "update_reuse"){
+            let max_used = parseInt(($("input[name=Umax_used]").val()));
+            let remaining = parseInt(($("input[name=Uremaining]").val()));
+            let remaining_backup = parseInt(($("input[name=Uremaining_backup]").val()));
+            if( remaining === remaining_backup){
+                $("#modal-update-reuse").modal("hide")
+            }
+            else if( remaining !== "" && remaining >= 0 && remaining <= max_used){
+                $("#mange_update_reuse").submit();
+            }
+            else{
+                toastr.error(`จำนวนต้องไม่น้อยกว่า 0 และไม่เกิน ${max_used}`)
+            }
+            return false;
+        }
+        
+    }
+  
+</script>

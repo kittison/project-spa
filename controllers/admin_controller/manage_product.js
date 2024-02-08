@@ -13,7 +13,7 @@ exports.Manage_product_type = async (req, res) => {
             file:'admin_page/manage_product_type'
         });
     }else{
-        res.redirect('/');
+        res.redirect('/admin');
     }
 
 };
@@ -32,7 +32,7 @@ exports.setProductType =async (req, res) => {
             res.redirect("../manage_product_type");
         }
     }else{
-        res.redirect("/");
+        res.redirect("/admin");
     }
 };
 
@@ -68,7 +68,7 @@ exports.manage_product = async (req, res) => {
         });
         
     }else{
-        res.redirect('/');
+        res.redirect('/admin');
     }
 
 };
@@ -86,7 +86,7 @@ exports.setProduct =async (req, res) => {
             res.redirect(`../manage_product?type_id=${req.body.type_id}`);
         }
     }else{
-        res.redirect("/");  
+        res.redirect("/admin");  
     }
 };
 

@@ -6,6 +6,12 @@ exports.get_cust = async () => {
     return result;
 };
 
+exports.get_cust_byID = async (input) => {
+    let sql = ` SELECT * FROM customer where id = '${input.id}' and flag = 1`
+    let result = await con.query(sql)
+    return result;
+};
+
 exports.insert_cust = async (input) => {
     let sql = ` INSERT INTO customer( f_name, l_name, gender, address, tel, email, cus_type, member_point, is_member, is_walkin, flag) 
                 VALUES ("${input.f_name}", "${input.l_name}", "${input.gender}", "${input.address}", "${input.tel}", "${input.email}",
@@ -42,4 +48,29 @@ exports.is_duplicate_name_self = async (input) => {
     }else{
         return false;
     }
+};
+
+exports.get_vip = async () => {
+    let sql = ` SELECT c.*, v.id as vip_id, v.serv_course_id, v.join_date, v.expire_date, v.service_times, v.acc_val, v.remain_val
+                FROM vip_member as v JOIN customer as c on v.cust_id = c.id 
+                where v.flag = 1 and c.flag = 1`
+    let result = await con.query(sql)
+    return result;
+};
+
+exports.get_vip_byID = async (input) => {
+    let sql = ` SELECT c.*, v.id as vip_id, v.serv_course_id, v.join_date, v.expire_date, v.service_times, v.acc_val, v.remain_val
+                FROM vip_member as v JOIN customer as c on v.cust_id = c.id 
+                where v.id = '${input.id}' and v.flag = 1 and c.flag = 1`
+    let result = await con.query(sql)
+    return result;
+};
+
+exports.get_cust_vip = async (input) => {
+    let sql = ` SELECT v.*, sc.id as course_id, sc.name as course_name FROM vip_member as v 
+                JOIN customer as c on v.cust_id = c.id 
+                JOIN service_course as sc on v.serv_course_id = sc.id
+                where c.id = '${input.id}' and v.flag = 1 and c.flag = 1`
+    let result = await con.query(sql)
+    return result;
 };

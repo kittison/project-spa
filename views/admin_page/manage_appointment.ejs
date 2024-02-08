@@ -1,0 +1,842 @@
+<style>
+    .container-fluid {
+        padding: 12px;
+    }
+
+    .modal-body {
+        padding-left: 30px;
+        padding-right: 30px;
+    }
+
+    .modal-footer {
+        padding-left: 30px;
+        padding-right: 30px;
+    }
+
+    .form-control {
+        background-color: rgba(175, 175, 175, 0.3);
+    }
+</style>
+
+<div class="container-fluid">
+    
+    <div class="d-flex justify-content-center">
+        <div class="">
+            <div class="card card-body text-center" style="padding-left: 40px; padding-right: 40px;">
+                <h3>ระบบจัดการการนัดหมาย</h3>
+            </div>
+        </div>
+    </div>
+
+    <div class="d-flex  justify-content-start mb-2" style="gap: 10px;">
+        <h5 style="margin-top: 10px; padding-left: 10px; font-weight: bold;">รายการนัดหมายของลูกค้า Vip</h5>
+        <button  type="button" class="btn btn-success" data-toggle="modal" data-target="#modal-add-vip" onclick="">
+            เพิ่มนัดหมาย
+        </button>
+    </div>
+
+    <div class="row">
+        <div class="col-12">
+            <div class="card card-body">
+                
+                <table id="appointment_vip" class="table table-bordered table-hover " >
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>เวลาเริ่ม</th>
+                            <th>เวลาสิ้นสุด</th>
+                            <th>ลูกค้า</th>
+                            <th>คอร์ส</th>
+                            <th>บริการ</th>
+                            <th>ร้าน</th>
+                            <th>พนักงาน</th>
+                            <th>ห้อง</th>
+                            <th>สถานะ</th>
+                            <th>การยืนยัน</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% for(let i of db_appt_vip) {%>
+                            <tr>
+                                <td><%= i.id%></td>
+                                <% if(i.start_date){ %>
+                                    <% let f_date_start = new Intl.DateTimeFormat('id-ID',{ day:'2-digit', month:'2-digit', year:'numeric', hour: 'numeric', minute: 'numeric', second: 'numeric', timeZoneName: 'short'}).format(i.start_date) %>
+                                    <td><%= f_date_start%></td>
+                                <% } else{ %>  
+                                    <td>-</td>
+                                <% } %>
+                                <% if(i.end_date){ %>
+                                    <% let f_date_end = new Intl.DateTimeFormat('id-ID',{ day:'2-digit', month:'2-digit', year:'numeric', hour: 'numeric', minute: 'numeric', second: 'numeric', timeZoneName: 'short'}).format(i.end_date) %>
+                                    <td><%= f_date_end%></td>
+                                <% } else{ %>  
+                                    <td>-</td>
+                                <% } %>
+                                <td><%= i.cust_fname%> <%= i.cust_lname%></td>
+                                <td><%= i.course_name%> </td>
+                                <td><%= i.serv_name%> </td>
+                                <td><%= i.shop_name%></td>
+                                <td><%= i.emp_fname%> <%= i.emp_lname%></td>
+                                <td><%= i.room_name%></td>
+                                <td><%= i.status%></td>
+                                <td> <% if (i.is_confirmed==1) { %>
+                                    Confirmed
+                                  <% } else { %>
+                                    -
+                                  <% } %></td>
+                               
+                                <td>
+                                    <div class="" style="display: flex; gap: 5px;">
+                                        <button  type="button" class="btn btn-success p-1 px-1" data-toggle="modal" data-target="#modal-sale"
+                                        onclick="update('sale','<%=JSON.stringify(i)%>') ">ขาย</button>
+                                        <button  type="button" class="btn btn-warning p-1 px-1" data-toggle="modal" data-target="#modal-update-vip"
+                                        onclick="update('standard_update','<%=JSON.stringify(i)%>') ">แก้</button>
+                                        <button  type="button" class="btn btn-danger p-1 px-1" 
+                                        onclick="del('<%=i.id%>')" disabled>ลบ</button>
+                                    </div>
+                                </td>
+                                
+                            </tr>
+                        <% } %>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div class="d-flex  justify-content-start mb-2" style="gap: 10px; padding-top: 10px;">
+        <h5 style="margin-top: 10px; padding-left: 10px; font-weight: bold;">รายการนัดหมายของลูกค้าทั่วไป</h5>
+        <button  type="button" class="btn btn-success" data-toggle="modal" data-target="#modal-add-standard-old" onclick="">
+            เพิ่มนัดหมายรายเก่า
+        </button>
+        <button  type="button" class="btn btn-success" data-toggle="modal" data-target="#modal-add-standard-new" onclick="">
+            เพิ่มนัดหมายรายใหม่
+        </button>
+    </div>
+
+    <div class="row">
+        <div class="col-12">
+            <div class="card card-body">
+                
+                <table id="appointment_standard" class="table table-bordered table-hover " >
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>เวลาเริ่ม</th>
+                            <th>เวลาสิ้นสุด</th>
+                            <th>ลูกค้า</th>
+                            <th>บริการ</th>
+                            <th>ร้าน</th>
+                            <th>พนักงาน</th>
+                            <th>ห้อง</th>
+                            <th>สถานะ</th>
+                            <th>การยืนยัน</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% for(let i of db_appt_standard) {%>
+                            <tr>
+                                <td><%= i.id%></td>
+                                <% if(i.start_date){ %>
+                                    <% let f_date_start = new Intl.DateTimeFormat('id-ID',{ day:'2-digit', month:'2-digit', year:'numeric', hour: 'numeric', minute: 'numeric', second: 'numeric', timeZoneName: 'short'}).format(i.start_date) %>
+                                    <td><%= f_date_start%></td>
+                                <% } else{ %>  
+                                    <td>-</td>
+                                <% } %>
+                                <% if(i.end_date){ %>
+                                    <% let f_date_end = new Intl.DateTimeFormat('id-ID',{ day:'2-digit', month:'2-digit', year:'numeric', hour: 'numeric', minute: 'numeric', second: 'numeric', timeZoneName: 'short'}).format(i.end_date) %>
+                                    <td><%= f_date_end%></td>
+                                <% } else{ %>  
+                                    <td>-</td>
+                                <% } %>
+                                <td><%= i.cust_fname%> <%= i.cust_lname%></td>
+                                <td><%= i.serv_name%></td>
+                                <td><%= i.shop_name%></td>
+                                <td><%= i.emp_fname%> <%= i.emp_lname%></td>
+                                <td><%= i.room_name%></td>
+                                <td><%= i.status%></td>
+                                <td> <% if (i.is_confirmed==1) { %>
+                                    Confirmed
+                                  <% } else { %>
+                                    -
+                                  <% } %></td>
+                               
+                                <td>
+                                    <div class="" style="display: flex; gap: 5px;">
+                                        <button  type="button" class="btn btn-success p-1 px-1" data-toggle="modal" data-target="#modal-sale"
+                                        onclick="update('sale','<%=JSON.stringify(i)%>') ">ขาย</button>
+                                        <button  type="button" class="btn btn-warning p-1 px-1" data-toggle="modal" data-target="#modal-update-standard"
+                                        onclick="update('vip_update','<%=JSON.stringify(i)%>') ">แก้</button>
+                                        <button  type="button" class="btn btn-danger p-1 px-1" onclick="del('<%=i.id%>')" disabled>ลบ</button>
+                                    </div>
+                                </td>
+                                
+                            </tr>
+                        <% } %>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- =================== Modal Delete Standard Appointment ===================-->
+
+<form id="delete" action="manage_appointment/delete" method="post" class="d-inline">
+    <input type="number" name="id_del" class="d-none" value="">
+</form>
+
+<!-- =================== Modal Insert Standard Appointment New Customer ===================-->
+<div class="modal fade" id="modal-add-standard-new">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header bg-purple">
+          <h4 class="modal-title ">เพิ่มการนัดหมายรายใหม่</h4>
+          <button type="button " class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true" class="text-light">&times;</span>
+          </button>
+        </div>
+        <form id="mange_add" action="manage_appointment/add" method="post">
+            <div class="modal-body">
+            <!-- ============================== Form ==============================-->
+                <div class="form-group row">
+                    <label class="col-sm-2 col-form-label">ชื่อ:</label>
+                    <div class="col-sm-10">
+                        <input type="text" class="form-control" id="fname" name="fname" placeholder="ชื่อ">
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label class="col-sm-2 col-form-label">นามสกุล:</label>
+                    <div class="col-sm-10">
+                        <input type="text" class="form-control" id="lname" name="lname" placeholder="นามสกุล">
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label class="col-sm-2 col-form-label">เพศ:</label>
+                    <div class="col-sm-10">
+                        <input type="text" class="form-control" id="gender" name="gender" placeholder="เพศ">
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label class="col-sm-2 col-form-label">ที่อยู่:</label>
+                    <div class="col-sm-10">
+                        <input type="text" class="form-control" id="address" name="address" placeholder="ที่อยู่">
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label class="col-sm-2 col-form-label">เบอร์โทร:</label>
+                    <div class="col-sm-10">
+                        <input type="tel" class="form-control" id="tel" name="tel" placeholder="เบอร์โทร">
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label class="col-sm-2 col-form-label">อีเมล:</label>
+                    <div class="col-sm-10">
+                        <input type="email" class="form-control" id="email" name="email" placeholder="อีเมล">
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label class="col-sm-2 col-form-label">วัน เวลา:</label>
+                    <div class="col-sm-10">
+                        <input type="datetime-local" class="form-control" id="datetime" name="datetime_appt" value="<%= datetime_appt %>" step="60"
+                        onchange="{selectDatetime(this.value)}">
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label class="col-sm-2 col-form-label">บริการ:</label>
+                    <div class="col-sm-10">
+                        <select class="form-control" id="service" name="service" value="" disabled
+                        onchange="selectService(this.value)">
+                            <option id="service_none" value="" ></option>
+                            <% for(i of db_service){%> 
+                                <option  id="service_<%=i.id%>" value="<%=i.id%>"><%=i.name%> - <%=i.time%> นาที - <%=i.price%> บาท</option>
+                            <%} %> 
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label class="col-sm-2 col-form-label">ร้าน:</label>
+                    <div class="col-sm-10">
+                        <select class="form-control" id="shop" name="shop" value="" disabled
+                        onchange="selectService(this.value)">
+                            <option id="shop_none" value="" ></option>
+                            <% for(i of db_shop){%> 
+                                <option  id="shop_<%=i.id%>" value="<%=i.id%>"><%=i.name%></option>
+                            <%} %> 
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label class="col-sm-2 col-form-label">พนักงาน:</label>
+                    <div class="col-sm-10">
+                        <select class="form-control" id="employee" name="employee" disabled
+                        onchange="selectService(this.value)">
+                            <option id="employee_none" value="" ></option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label class="col-sm-2 col-form-label">ห้อง:</label>
+                    <div class="col-sm-10">
+                        <select class="form-control" id="room" name="room" disabled
+                        onchange="selectService(this.value)">
+                            <option id="room_none" value="" ></option>
+                        </select>
+                    </div>
+                </div>
+
+            </div>
+            
+            <div class="modal-footer justify-content-between">
+                <button type="button" class="btn btn-default" data-dismiss="modal">ยกเลิก</button>
+                <button type="submit" class="btn btn-primary" onclick="return vali('add')" disabled>ยืนยัน</button>
+            </div>
+
+        </form>
+
+      </div>
+    </div>
+</div>
+
+<!-- =================== Modal Insert Standard Appointment Old Customer ===================-->
+<div class="modal fade" id="modal-add-standard-old">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header bg-purple">
+          <h4 class="modal-title ">เพิ่มการนัดหมายรายเก่า</h4>
+          <button type="button " class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true" class="text-light">&times;</span>
+          </button>
+        </div>
+        <form id="mange_add" action="manage_appointment/add" method="post">
+            <div class="modal-body">
+            <!-- ============================== Form ==============================-->
+                <div class="form-group row">
+                    <label class="col-sm-2 col-form-label">ID ลูกค้า</label>
+                    <div class="col-sm-10">
+                        <input type="number" class="form-control" id="cust_id" name="cust_id" min="1">
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label class="col-sm-2 col-form-label">วัน เวลา:</label>
+                    <div class="col-sm-10">
+                        <input type="datetime-local" class="form-control" id="datetime_appt" name="datetime_appt" value="<%= datetime_appt %>" step="60"
+                        onchange="{selectDatetime(this.value)}">
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label class="col-sm-2 col-form-label">บริการ:</label>
+                    <div class="col-sm-10">
+                        <select class="form-control" id="service" name="service" value="" disabled
+                        onchange="selectService(this.value)">
+                            <option id="service_none" value="" ></option>
+                            <% for(i of db_service){%> 
+                                <option  id="service_<%=i.id%>" value="<%=i.id%>"><%=i.name%> - <%=i.time%> นาที - <%=i.price%> บาท</option>
+                            <%} %> 
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label class="col-sm-2 col-form-label">ร้าน:</label>
+                    <div class="col-sm-10">
+                        <select class="form-control" id="shop" name="shop" value="" disabled
+                        onchange="selectService(this.value)">
+                            <option id="shop_none" value="" ></option>
+                            <% for(i of db_shop){%> 
+                                <option  id="shop_<%=i.id%>" value="<%=i.id%>"><%=i.name%></option>
+                            <%} %> 
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label class="col-sm-2 col-form-label">พนักงาน:</label>
+                    <div class="col-sm-10">
+                        <select class="form-control" id="employee" name="employee" disabled
+                        onchange="selectService(this.value)">
+                            <option id="employee_none" value="" ></option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label class="col-sm-2 col-form-label">ห้อง:</label>
+                    <div class="col-sm-10">
+                        <select class="form-control" id="room" name="room" disabled
+                        onchange="selectService(this.value)">
+                            <option id="room_none" value="" ></option>
+                        </select>
+                    </div>
+                </div>
+
+            </div>
+            
+            <div class="modal-footer justify-content-between">
+                <button type="button" class="btn btn-default" data-dismiss="modal">ยกเลิก</button>
+                <button type="submit" class="btn btn-primary" onclick="return vali('add')" disabled>ยืนยัน</button>
+            </div>
+
+        </form>
+
+      </div>
+    </div>
+</div>
+
+<!-- =================== Modal Insert Appointment Vip ===================-->
+<div class="modal fade" id="modal-add-vip">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header bg-purple">
+          <h4 class="modal-title ">เพิ่มการนัดหมายลูกค้า Vip</h4>
+          <button type="button " class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true" class="text-light">&times;</span>
+          </button>
+        </div>
+        <form id="mange_add" action="manage_appointment/add" method="post">
+            <div class="modal-body">
+            <!-- ============================== Form ==============================-->
+                <div class="form-group row">
+                    <label class="col-sm-2 col-form-label">ID บัตร</label>
+                    <div class="col-sm-10">
+                        <input type="number" class="form-control" id="vip_id" name="vipt_id" min="1">
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label class="col-sm-2 col-form-label">วัน เวลา:</label>
+                    <div class="col-sm-10">
+                        <input type="datetime-local" class="form-control" id="datetime" name="datetime_appt" value="<%= datetime_appt %>" step="60"
+                        onchange="{selectDatetime(this.value)}">
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label class="col-sm-2 col-form-label">บริการ:</label>
+                    <div class="col-sm-10">
+                        <select class="form-control" id="service" name="service" value="" disabled
+                        onchange="selectService(this.value)">
+                            <option id="service_none" value="" ></option>
+                            <% for(i of db_service){%> 
+                                <option  id="service_<%=i.id%>" value="<%=i.id%>"><%=i.name%> - <%=i.time%> นาที - <%=i.price%> บาท</option>
+                            <%} %> 
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label class="col-sm-2 col-form-label">ร้าน:</label>
+                    <div class="col-sm-10">
+                        <select class="form-control" id="shop" name="shop" value="" disabled
+                        onchange="selectService(this.value)">
+                            <option id="shop_none" value="" ></option>
+                            <% for(i of db_shop){%> 
+                                <option  id="shop_<%=i.id%>" value="<%=i.id%>"><%=i.name%></option>
+                            <%} %> 
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label class="col-sm-2 col-form-label">พนักงาน:</label>
+                    <div class="col-sm-10">
+                        <select class="form-control" id="employee" name="employee" disabled
+                        onchange="selectService(this.value)">
+                            <option id="employee_none" value="" ></option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label class="col-sm-2 col-form-label">ห้อง:</label>
+                    <div class="col-sm-10">
+                        <select class="form-control" id="room" name="room" disabled
+                        onchange="selectService(this.value)">
+                            <option id="room_none" value="" ></option>
+                        </select>
+                    </div>
+                </div>
+
+            </div>
+            
+            <div class="modal-footer justify-content-between">
+                <button type="button" class="btn btn-default" data-dismiss="modal">ยกเลิก</button>
+                <button type="submit" class="btn btn-primary" onclick="return vali('add')" disabled>ยืนยัน</button>
+            </div>
+
+        </form>
+
+      </div>
+    </div>
+</div>
+
+
+<!-- =================== Modal Update Vip Appointment ===================-->
+<div class="modal fade" id="modal-update-vip">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header bg-purple">
+          <h4 class="modal-title ">แก้ไขข้อมูลนัดหมายลูกค้า Vip</h4>
+          <button type="button " class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true" class="text-light">&times;</span>
+          </button>
+        </div>
+
+        <form id="mange_update" action="manage_appointment/update_vip" method="post">
+            <div class="modal-body">
+            <!-- ============================== Form ==============================-->
+                <div class="form-group row">
+                    <label class="col-sm-2 col-form-label">ID บัตร</label>
+                    <div class="col-sm-10">
+                        <input type="number" class="form-control" id="vip_id" name="vipt_id" min="1" readonly>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label class="col-sm-2 col-form-label">ลูกค้า</label>
+                    <div class="col-sm-10">
+                        <input type="number" class="form-control" id="name" name="name" min="1" readonly>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label class="col-sm-2 col-form-label">วัน เวลา:</label>
+                    <div class="col-sm-10">
+                        <input type="datetime-local" class="form-control" id="datetime" name="datetime_appt" value="<%= datetime_appt %>" step="60"
+                        onchange="{selectDatetime(this.value)}">
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label class="col-sm-2 col-form-label">บริการ:</label>
+                    <div class="col-sm-10">
+                        <select class="form-control" id="service" name="service" value="" disabled
+                        onchange="selectService(this.value)">
+                            <option id="service_none" value="" ></option>
+                            <% for(i of db_service){%> 
+                                <option  id="service_<%=i.id%>" value="<%=i.id%>"><%=i.name%> - <%=i.time%> นาที - <%=i.price%> บาท</option>
+                            <%} %> 
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label class="col-sm-2 col-form-label">ร้าน:</label>
+                    <div class="col-sm-10">
+                        <select class="form-control" id="shop" name="shop" value="" disabled
+                        onchange="selectService(this.value)">
+                            <option id="shop_none" value="" ></option>
+                            <% for(i of db_shop){%> 
+                                <option  id="shop_<%=i.id%>" value="<%=i.id%>"><%=i.name%></option>
+                            <%} %> 
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label class="col-sm-2 col-form-label">พนักงาน:</label>
+                    <div class="col-sm-10">
+                        <select class="form-control" id="employee" name="employee" disabled
+                        onchange="selectService(this.value)">
+                            <option id="employee_none" value="" ></option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label class="col-sm-2 col-form-label">ห้อง:</label>
+                    <div class="col-sm-10">
+                        <select class="form-control" id="room" name="room" disabled
+                        onchange="selectService(this.value)">
+                            <option id="room_none" value="" ></option>
+                        </select>
+                    </div>
+                </div>
+                <input type="number" name="id_update" class="d-none" value="">
+            </div>
+
+            <div class="modal-footer justify-content-between">
+                <button type="button" class="btn btn-default" data-dismiss="modal">ยกเลิก</button>
+                <button type="submit" class="btn btn-primary" onclick="return vali('update')" disabled>ยืนยัน</button>
+            </div>
+
+        </form>
+
+      </div>
+    </div>
+</div>
+
+<!-- =================== Modal Update Standard Appointment ===================-->
+<div class="modal fade" id="modal-update-standard">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header bg-purple">
+          <h4 class="modal-title ">แก้ไขข้อมูลนัดหมายลูกค้า</h4>
+          <button type="button " class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true" class="text-light">&times;</span>
+          </button>
+        </div>
+
+        <form id="mange_update" action="manage_appointment/update_vip" method="post">
+            <div class="modal-body">
+            <!-- ============================== Form ==============================-->
+                <div class="form-group row">
+                    <label class="col-sm-2 col-form-label">ลูกค้า</label>
+                    <div class="col-sm-10">
+                        <input type="number" class="form-control" id="name" name="name" min="1" readonly>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label class="col-sm-2 col-form-label">วัน เวลา:</label>
+                    <div class="col-sm-10">
+                        <input type="datetime-local" class="form-control" id="datetime" name="datetime_appt" value="<%= datetime_appt %>" step="60"
+                        onchange="{selectDatetime(this.value)}">
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label class="col-sm-2 col-form-label">บริการ:</label>
+                    <div class="col-sm-10">
+                        <select class="form-control" id="service" name="service" value="" disabled
+                        onchange="selectService(this.value)">
+                            <option id="service_none" value="" ></option>
+                            <% for(i of db_service){%> 
+                                <option  id="service_<%=i.id%>" value="<%=i.id%>"><%=i.name%> - <%=i.time%> นาที - <%=i.price%> บาท</option>
+                            <%} %> 
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label class="col-sm-2 col-form-label">ร้าน:</label>
+                    <div class="col-sm-10">
+                        <select class="form-control" id="shop" name="shop" value="" disabled
+                        onchange="selectService(this.value)">
+                            <option id="shop_none" value="" ></option>
+                            <% for(i of db_shop){%> 
+                                <option  id="shop_<%=i.id%>" value="<%=i.id%>"><%=i.name%></option>
+                            <%} %> 
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label class="col-sm-2 col-form-label">พนักงาน:</label>
+                    <div class="col-sm-10">
+                        <select class="form-control" id="employee" name="employee" disabled
+                        onchange="selectService(this.value)">
+                            <option id="employee_none" value="" ></option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label class="col-sm-2 col-form-label">ห้อง:</label>
+                    <div class="col-sm-10">
+                        <select class="form-control" id="room" name="room" disabled
+                        onchange="selectService(this.value)">
+                            <option id="room_none" value="" ></option>
+                        </select>
+                    </div>
+                </div>
+                <input type="number" name="id_update" class="d-none" value="">
+            </div>
+
+            <div class="modal-footer justify-content-between">
+                <button type="button" class="btn btn-default" data-dismiss="modal">ยกเลิก</button>
+                <button type="submit" class="btn btn-primary" onclick="return vali('update')" disabled>ยืนยัน</button>
+            </div>
+
+        </form>
+      </div>
+    </div>
+</div>
+
+
+<!-- =================== Modal sale ===================-->
+<div class="modal fade" id="modal-sale">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header bg-purple">
+          <h4 class="modal-title ">บันทึกการขาย</h4>
+          <button type="button " class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true" class="text-light">&times;</span>
+          </button>
+        </div>
+
+        <form id="mange_update" action="manage_appointment/sale" method="post">
+            <div class="modal-body">
+            <!-- ============================== Form ==============================-->
+                <div class="form-group">
+                    <label >ID การนัดหมาย</label>
+                    <input type="text" class="form-control" name="Sappt_id" readonly>
+                </div>
+                <div class="form-group">
+                    <label >วันเวลา</label>
+                    <input type="datetime-local" class="form-control" name="Sdatetime" step="60">
+                </div>
+                <div class="form-group">
+                    <label >ราคา</label>
+                    <input type="number" class="form-control" name="Sprice">
+                </div>
+                <input type="number" name="id_update" class="d-none" value="">
+            </div>
+
+            <div class="modal-footer justify-content-between">
+                <button type="button" class="btn btn-default" data-dismiss="modal">ยกเลิก</button>
+                <button type="submit" class="btn btn-primary" onclick="return vali('update')" disabled>ยืนยัน</button>
+            </div>
+
+        </form>
+
+      </div>
+    </div>
+</div>
+
+
+
+<script src="/axios/axios.min.js"></script>
+<script>
+    function axios_validation(url,params,form_id,error_text){
+        axios({
+            url:url,
+            method:'get',
+            params:params,
+            timeout:3000
+        }).then((result)=>{
+            if( result.data.status == 1){
+                $(form_id).submit();
+            }else{
+                toastr.error(error_text)
+            }
+        }).catch(()=>{
+            toastr.error("404 Error Not Found")
+        });
+    }
+</script>
+
+
+
+<script>
+    
+    
+    $(function () {
+      $('#appointment_standard').DataTable({
+        "paging": true,
+        "lengthMenu": [[5, 10, 20], [5, 10, 20]],
+        "searching": true,
+        "ordering": true,
+        "info": true,
+        "autoWidth": false,
+        "responsive": true,
+      });
+      
+    });
+
+    $(function () {
+      $('#appointment_vip').DataTable({
+        "paging": true,
+        "lengthMenu": [[5, 10, 20], [5, 10, 20]],
+        "searching": true,
+        "ordering": true,
+        "info": true,
+        "autoWidth": false,
+        "responsive": true,
+      });
+      
+    });
+
+    let oldOp ="";
+    function update(mode,data){
+        data = JSON.parse(data)
+        if (mode == "update") {
+            $("input[name=Uf_name]").val(data.f_name);
+            $("input[name=Ul_name]").val(data.l_name)
+            $("input[name=Ugender]").val(data.gender)
+            $("input[name=Uaddress]").val(data.address)
+            $("input[name=Utel]").val(data.tel) 
+            $("input[name=Uemail]").val(data.email)
+            $("input[name=Utype]").val(data.cus_type)
+            $("input[name=Upoint]").val(data.member_point)           
+            $("input[name=id_update]").val(data.id)
+
+            // let new_select = data.position;
+            // $(`option[id=${new_select}]`).attr("selected","true");
+            // if(oldOp !== new_select ){
+            //     if(oldOp != ""){
+            //         $(`option[id=${oldOp}]`).removeAttr("selected");
+            //     }
+            //     oldOp = new_select ;
+            // }
+        } else if (mode == "sale") {
+            $("input[name=Sappt_id]").val(data.id);
+        }
+    }
+
+    function del(id){
+        $("input[name=id_del]").val(parseInt(id))
+        if(confirm("ยืนยันการลบข้อมูล") == true){
+            $("#delete").submit();
+        }
+    }
+
+    function vali(mode){
+        /*
+            Mode insert , update 
+        */
+        // (document.querySelector("input[name=Fname]").innerText).trim()
+        if(mode === "add"){
+            let f_name = ($("input[name=f_name]").val()).trim();
+            let l_name = ($("input[name=l_name]").val()).trim();
+            let gender = ($("input[name=gender]").val()).trim();
+            let address = ($("input[name=address]").val()).trim();
+            let tel = ($("input[name=tel]").val()).trim();
+            let email = ($("input[name=email]").val()).trim();
+            let cus_type = ($("input[name=type]").val()).trim();
+            let member_point = ($("input[name=point]").val()).trim();
+    
+            if( f_name !== "" && l_name !== "" && gender !== "" && address !== "" && 
+                tel !== "" && email !== "" && cus_type !== "" && member_point !== ""
+            ){
+                let params= {
+                    f_name:f_name,
+                    l_name:l_name,
+                }
+                axios_validation(
+                    'manage_cust/check_can_add',
+                    params,
+                    '#mange_add',
+                    'มีชื่อ/นามสุกลลูกค้านี้อยู่เเล้ว'
+                );
+                
+            }else{
+                toastr.error("! กรุณาใส่ข้อมูลให้ครบ")
+            }
+            return false;
+
+
+        }else if(mode === "update"){
+            let f_name = ($("input[name=Uf_name]").val()).trim();
+            let l_name = ($("input[name=Ul_name]").val()).trim();
+            let gender = ($("input[name=Ugender]").val()).trim();
+            let address = ($("input[name=Uaddress]").val()).trim();
+            let tel = ($("input[name=Utel]").val()).trim();
+            let email = ($("input[name=Uemail]").val()).trim();
+            let cus_type = ($("input[name=Utype]").val()).trim();
+            let member_point = ($("input[name=Upoint]").val()).trim();
+    
+            if( f_name !== "" && l_name !== "" && gender !== "" && address !== "" && 
+                tel !== "" && email !== "" && cus_type !== "" && member_point !== ""
+            ){
+                let params= {
+                    f_name:f_name,
+                    l_name:l_name,
+                    id:$("input[name=id_update]").val()
+                }
+                axios_validation(
+                    'manage_cust/check_can_update',
+                    params,
+                    '#mange_update',
+                    'มีชื่อ/นามสุกลลูกค้านี้อยู่เเล้ว'
+                );
+            }else{
+                toastr.error("! กรุณาใส่ข้อมูลให้ครบ")
+            }
+            return false;
+        }
+        
+    }
+  
+</script>
+
+
+<!-- ============================= ERROR Zone =============================-->
+<!-- toastr.success('Lorem ipsum dolor sit amet, consetetur sadipscing elitr.')
+toastr.info('Lorem ipsum dolor sit amet, consetetur sadipscing elitr.')
+toastr.error('Lorem ipsum dolor sit amet, consetetur sadipscing elitr.')
+toastr.warning('Lorem ipsum dolor sit amet, consetetur sadipscing elitr.') -->
+<!-- ============================= ERROR Zone =============================-->

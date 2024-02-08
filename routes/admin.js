@@ -10,6 +10,10 @@ const manage_prod_controller = require('../controllers/admin_controller/manage_p
 const manage_stor_controller = require('../controllers/admin_controller/manage_storage');
 const manage_serv_controller = require('../controllers/admin_controller/manage_service');
 const create_invoice_receipt_controller = require('../controllers/admin_controller/create_invoice_receipt');
+const manage_course_controller = require('../controllers/admin_controller/manage_course');
+const manage_appointment_controller = require('../controllers/admin_controller/manage_appointment');
+const manage_vip_controller = require('../controllers/admin_controller/manage_vip');
+const manage_sale_controller = require('../controllers/admin_controller/manage_sale');
 
 const manage_role_controller = require('../controllers/admin_controller/manage_privileges');
 
@@ -28,6 +32,12 @@ router.get('/manage_shop/check_can_add', manage_shop_controller.check_can_add);
 router.get('/manage_shop/check_can_update', manage_shop_controller.check_can_update);
 
 router.get('/manage_shop_emp/check_can_add_emp', manage_shop_controller.check_can_add_emp);
+
+router.get('/manage_shop_room', manage_shop_controller.manage_shop_room);
+router.post('/manage_shop_room/:action', manage_shop_controller.setShopRoom);
+
+router.get('/manage_shop_room/check_can_add', manage_shop_controller.check_can_add_room);
+router.get('/manage_shop_room/check_can_update', manage_shop_controller.check_can_update_room);
 
 // ---------------  manage-emp ---------------
 router.get('/manage_emp', manage_emp_controller.Manage_emp);
@@ -54,6 +64,8 @@ router.post('/manage_cust/:action', manage_cust_controller.setCustomer);
 
 router.get('/manage_cust/check_can_add', manage_cust_controller.check_can_add);
 router.get('/manage_cust/check_can_update', manage_cust_controller.check_can_update);
+
+router.get('/manage_cust_vip', manage_cust_controller.Manage_customer_vip);
 
 // ---------------  manage-product ---------------
 router.get('/manage_product_type', manage_prod_controller.Manage_product_type);
@@ -107,9 +119,38 @@ router.get('/manage_emp_queue', manage_emp_controller.Manage_emp_queue);
 router.post('/manage_emp_queue/:action', manage_emp_controller.setEmployeeQueue);
 
 // ---------------  invoice-receipt ---------------
-router.get('/create_invoice_receipt', create_invoice_receipt_controller.Create_invoice_receipt);
-router.get('/create_invoice_receipt/save_invoice', create_invoice_receipt_controller.Save_invoice);
-router.get('/create_invoice_receipt/save_receipt', create_invoice_receipt_controller.Save_receipt);
+router.get('/invoice', create_invoice_receipt_controller.Create_invoice);
+router.get('/invoice_save', create_invoice_receipt_controller.Save_invoice);
+router.get('/receipt', create_invoice_receipt_controller.Create_receipt);
+router.get('/receipt_save', create_invoice_receipt_controller.Save_receipt);
+
+// ---------------  manage-course ---------------
+router.get('/manage_course', manage_course_controller.Manage_course);
+router.post('/manage_course/:action', manage_course_controller.setCourse);
+
+router.get('/manage_course_service', manage_course_controller.manage_course_service);
+router.post('/manage_course_service/:action', manage_course_controller.setCourseService);
+
+router.get('/manage_course/check_can_add', manage_course_controller.check_can_add);
+router.get('/manage_course/check_can_update', manage_course_controller.check_can_update);
+
+router.get('/manage_course_service/check_can_add_service', manage_course_controller.check_can_add_service);
+
+
+// ---------------  manage-appointment ---------------
+router.get('/manage_appointment', manage_appointment_controller.Manage_appointment);
+
+
+
+
+// ---------------  manage-vip ---------------
+router.get('/manage_vip', manage_vip_controller.Manage_vip);
+
+
+
+// ---------------  manage-sale ---------------
+router.get('/manage_sale', manage_sale_controller.Manage_sale);
+
 
 
 

@@ -79,7 +79,7 @@
                                 </div>
                                 <td style="border-color: black;">
                                     <!-- <input type="text" class="form-control" name="data_<%= i.id %>" value="<%=i.stock%>"> -->
-                                    <div class="">
+                                    <div class="" style="display: flex; gap: 5px;">
                                         <button  type="button" class="btn btn-success p-1 px-1" data-toggle="modal" data-target="#modal-add-stock"
                                                 onclick="update('add','<%=JSON.stringify(i)%>') ">เพิ่มจำนวน
                                         </button>
@@ -143,15 +143,13 @@
                                     <td>0</td>
                                 <% } %>
                                 <td>
-                                    <div class="">
-                                        <div class="">
-                                            <button  type="button" class="btn btn-success p-1 px-1" data-toggle="modal" data-target="#modal-add-stock"
-                                                onclick="update('add','<%=JSON.stringify(i)%>') ">เพิ่มจำนวน
-                                            </button>
-                                            <button  type="button" class="btn btn-danger p-1 px-1" data-toggle="modal" data-target="#modal-remove-stock"
-                                                onclick="update('remove','<%=JSON.stringify(i)%>') ">ลดจำนวน
-                                            </button>
-                                        </div>
+                                    <div class="" style="display: flex; gap: 5px;">
+                                        <button  type="button" class="btn btn-success p-1 px-1" data-toggle="modal" data-target="#modal-add-stock"
+                                            onclick="update('add','<%=JSON.stringify(i)%>') ">เพิ่มจำนวน
+                                        </button>
+                                        <button  type="button" class="btn btn-danger p-1 px-1" data-toggle="modal" data-target="#modal-remove-stock"
+                                            onclick="update('remove','<%=JSON.stringify(i)%>') ">ลดจำนวน
+                                        </button>
                                     </div>
                                 </td>
                                 
@@ -199,7 +197,7 @@
                                     <td><%= i.max_used%></td>
                                     <td><%= i.remaining%></td>
                                     <td>
-                                        <div class="">
+                                        <div class="" style="display: flex; gap: 5px;">
                                             <button  type="button" class="btn btn-warning p-1 px-1" data-toggle="modal" data-target="#modal-update-reuse"onclick="update('update_reuse','<%=JSON.stringify(i)%>') ">แก้
                                             </button>
                                             <button  type="button" class="btn btn-danger p-1 px-1" onclick="del('<%=i.id%>')" >ลบ</button>

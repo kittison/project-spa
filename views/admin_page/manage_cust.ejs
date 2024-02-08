@@ -50,6 +50,7 @@
                             <th>อีเมล</th>
                             <th>ประเภทลูกค้า</th>
                             <th>แต้มสมาชิก</th>
+                            <th>บัตรสมาชิก</th>
                             <th></th>
                         </tr>
                     </thead>
@@ -65,7 +66,11 @@
                                 <td><%= i.email%></td>
                                 <td><%= i.cus_type%></td>
                                 <td><%= i.member_point%></td>
-                               
+                                <td>
+                                    <div class="">
+                                        <button  type="button" class="btn btn-secondary p-1 px-1" onclick="req_detail('vip','<%=i.id%>')" >ดูรายละเอียด</button>
+                                    </div>
+                                </td>
                                 <td>
                                     <div class="">
                                         <button  type="button" class="btn btn-warning p-1 px-1" data-toggle="modal" data-target="#modal-update"onclick="update('<%=JSON.stringify(i)%>') ">แก้
@@ -119,7 +124,7 @@
                 </div>
                 <div class="form-group">
                     <label >เบอร์โทร</label>
-                    <input type="number" class="form-control" name="tel">
+                    <input type="tel" class="form-control" name="tel">
                 </div>
                 <div class="form-group">
                     <label >อีเมล</label>
@@ -180,7 +185,7 @@
             </div>
             <div class="form-group">
                 <label >เบอร์โทร</label>
-                <input type="number" class="form-control" name="Utel">
+                <input type="tel" class="form-control" name="Utel">
             </div>
             <div class="form-group">
                 <label >อีเมล</label>
@@ -345,6 +350,13 @@
                 toastr.error("! กรุณาใส่ข้อมูลให้ครบ")
             }
             return false;
+        }
+        
+    }
+
+    function req_detail(type, input){
+        if (type=="vip") {
+            window.location = `manage_cust_vip?cust_id=${input}`
         }
         
     }

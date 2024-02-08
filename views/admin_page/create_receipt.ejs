@@ -1,0 +1,60 @@
+<style>
+    .container-fluid {
+        padding: 12px;
+    }
+
+    .form-control {
+        background-color: rgba(175, 175, 175, 0.3);
+    }
+
+    .display-tiltle {
+        padding-left: 40px; 
+        padding-right: 40px;
+    }
+
+    .display-header {
+        gap: 5px; 
+        padding-top: 20px; 
+        padding-left: 30px; 
+        padding-right: 30px;
+    }
+
+    .display-body {
+        padding: 20px;
+    }
+
+    .display-subbody {
+        width: 80%;
+    }
+
+</style>
+
+<div class="container-fluid">
+
+    <div class="display-header d-flex justify-content-between">
+        <a href="manage_sale" class="btn btn-info">กลับไปที่จัดการการขาย</a>
+        <button  type="button" class="btn btn-primary"
+        onclick="save('<%=i.id%>') ">บันทึก</button>
+    </div>
+
+    <div class="display-body d-flex justify-content-center">
+        <div class="display-subbody d-flex justify-content-center">
+            <%- include('./display_receipt'); %>
+        </div>
+    </div>
+
+</div>
+
+<script>
+    function save(sale_id){
+        window.location = `/admin/receipt_save?sale_id=${sale_id}`;
+    }
+</script>
+
+
+<!-- ============================= ERROR Zone =============================-->
+<!-- toastr.success('Lorem ipsum dolor sit amet, consetetur sadipscing elitr.')
+toastr.info('Lorem ipsum dolor sit amet, consetetur sadipscing elitr.')
+toastr.error('Lorem ipsum dolor sit amet, consetetur sadipscing elitr.')
+toastr.warning('Lorem ipsum dolor sit amet, consetetur sadipscing elitr.') -->
+<!-- ============================= ERROR Zone =============================-->

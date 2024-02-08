@@ -7,6 +7,13 @@ exports.get_emp = async () => {
     let result = await con.query(sql)
     return result;
 };
+exports.get_emp_service = async () => {
+    let sql = ` SELECT em.id,em.f_name,em.l_name,em.n_name,em.address,em.tel,em.date_start,em.date_end,em.bank_account,em.wage,
+                em.is_service,em.emp_type_id,em_type.name as emp_type,em.job_level_id,job_level.description, job_level.responsibilities  FROM employee em , employee_type em_type, job_level
+                where em.job_level_id != 1 and em_type.id = em.emp_type_id and job_level.id = em.job_level_id and em.flag = 1`
+    let result = await con.query(sql)
+    return result;
+};
 exports.get_position = async () => {
     let sql = ` SELECT * FROM employee_type where flag = 1`
     let result = await con.query(sql)

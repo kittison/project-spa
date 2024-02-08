@@ -49,12 +49,18 @@
             <h1>ใบแจ้งหนี้</h1>
         </div>
         <div class="invoice-details">
-            <p><strong>ชื่อร้าน:</strong> <%= data.shop.shop_name %></p>
-            <p><strong>ที่อยู่:</strong> <%= data.shop.location %></p>
-            <p><strong>ติตต่อ:</strong> <%= data.shop.contact %></p>
+            <p><strong>ชื่อร้าน:</strong> <%= data.shop_name %></p>
+            <p><strong>ที่อยู่:</strong> <%= data.shop_location %></p>
+            <p><strong>ติตต่อ:</strong> <%= data.shop_contact %></p>
             <p></p>
-            <p><strong>เลขที่:</strong> <%= data.invoice_number %></p>
-            <p><strong>วันที่:</strong> <%= data.date %></p>
+            <p><strong>เลขที่:</strong> <%= data.id %></p>
+            <% if(data.datetime){ %>
+                <% let f_datetime = new Intl.DateTimeFormat('id-ID',{ day:'2-digit', month:'2-digit', year:'numeric', hour: 'numeric', minute: 'numeric', second: 'numeric', timeZoneName: 'short'}).format(data.datetime) %>
+                <p><strong>วันที่:</strong> <%= f_datetime%>
+            <% } else{ %>  
+                -
+            <% } %>
+            <!-- <p><strong>วันที่:</strong> <%= data.datetime %></p> -->
         </div>
         <table class="invoice-table">
             <thead>
@@ -67,21 +73,19 @@
                 </tr>
             </thead>
             <tbody>
-                <% for (const [i, value] of data.services.entries()) { %>
-                    <tr>
-                        <td><%= i %></td>
-                        <td><%= value.name %> <%= value.type %> (<%= value.function.time %> นาที)</td>
-                        <td><%= value.function.price %></td>
-                        <td><%= value.quantity %></td>
-                        <td><%= value.total %></td>
-                    </tr>
-                <% } %>
+                <tr>
+                    <td>1</td>
+                    <td><%= data.serv_name %> (<%= data.serv_time %> นาที)</td>
+                    <td><%= data.serv_price %></td>
+                    <td>1</td>
+                    <td><%= data.serv_price %></td>
+                </tr>
             </tbody>
         </table>
         <div class="invoice-footer">
-            <p><strong>จำนวนเงินรวม:</strong> <%= data.amount %> บาท</p>
-            <p><strong>ส่วนลด:</strong> <%= data.discount %> บาท</p>
-            <p><strong>รวมทั้งสิ้น:</strong> <%= data.total %> บาท</p>
+            <p><strong>จำนวนเงินรวม:</strong> <%= data.serv_price %> บาท</p>
+            <p><strong>ส่วนลด:</strong> 0.00 บาท</p>
+            <p><strong>รวมทั้งสิ้น:</strong> <%= data.serv_price %> บาท</p>
         </div>
     </div>
 </body>

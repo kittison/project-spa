@@ -500,7 +500,7 @@ CREATE TABLE `appointment` (
   `shop_id` int(11) NOT NULL,
   `status` text NOT NULL,
   `is_vip` int(11) NOT NULL,
-  `is_comfirmed` int(11) NOT NULL,
+  `is_confirmed` int(11) NOT NULL,
   `flag` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
@@ -509,9 +509,9 @@ CREATE TABLE `appointment` (
 --
 
 INSERT INTO `appointment` (`id`, `start_date`, `end_date`, `cust_id`, `serv_id`, `emp_id`, `room_id`, `vip_id`, `shop_id`, 
-`status`, `is_vip`, `is_comfirmed`, `flag`) VALUES
+`status`, `is_vip`, `is_confirmed`, `flag`) VALUES
 (1, '2023-10-01 13:00:00', '2023-10-04 14:00:00', 1, 1, 2, 1, NULL, 1, "Completed", 0, 1, 1),
-(2, '2023-10-01 13:00:00', '2023-10-04 14:00:00', 2, 1, 3, 2, NULL, 2, "Completed", 0, 1, 1),
+(2, '2023-10-01 13:00:00', '2023-10-04 14:00:00', 2, 1, 3, 2, NULL, 1, "Completed", 0, 1, 1),
 (3, '2023-10-10 14:00:00', '2023-10-04 15:00:00', 2, 1, 2, 2, NULL, 1, "Onprocess", 0, 0, 1),
 (4, '2023-10-10 14:00:00', '2023-10-04 15:00:00', 1, 1, 1, 1, NULL, 1, "Cancelled", 0, 0, 1),
 (5, '2023-10-10 14:30:00', '2023-10-04 15:30:00', 1, 1, 1, 1, NULL, 1, "Scheduled", 0, 0, 1)
@@ -524,6 +524,7 @@ INSERT INTO `appointment` (`id`, `start_date`, `end_date`, `cust_id`, `serv_id`,
 
 CREATE TABLE `room` (
   `id` int(11) NOT NULL,
+  `shop_id` int(11) NOT NULL,
   `name` text NOT NULL,
   `type` text NOT NULL,
   `status` int(11) NULL,
@@ -534,10 +535,10 @@ CREATE TABLE `room` (
 -- Dumping data for table `room`
 --
 
-INSERT INTO `room` (`id`, `name`, `type`, `status`, `flag`) VALUES
-(1, 'room1', 'standard', 0, 1),
-(2, 'room2', 'standard', 0, 1),
-(3, 'vip1', 'vip', 0, 1),
+INSERT INTO `room` (`id`, `shop_id`, `name`, `type`, `status`, `flag`) VALUES
+(1, 1, 'room1', 'standard', 0, 1),
+(2, 1, 'room2', 'standard', 0, 1),
+(3, 1, 'vip1', 'vip', 0, 1),
 
 -- --------------------------------------------------------
 
@@ -550,10 +551,11 @@ CREATE TABLE `vip_member` (
   `cust_id` int(11) NOT NULL,
   `serv_course_id` int(11) NOT NULL,
   `join_date` DATETIME NOT NULL,
-  `expire_date` DATETIME NULL,
-  `service_times` int(11) NULL,
+  `expire_date` DATETIME NOT NULL,
+  `service_times` int(11) NOT NULL,
   `acc_val` int(11) NOT NULL,
-  `remain_val` int(11) NULL,
+  `remain_val` int(11) NOT NULL,
+  `password` text NOT NULL,
   `flag` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
@@ -561,9 +563,9 @@ CREATE TABLE `vip_member` (
 -- Dumping data for table `vip_member`
 --
 
--- INSERT INTO `vip_member` (`id`, `cust_id`, `serv_course_id`, `join_date`, `expire_date`, `service_times`, 
--- `acc_val`, `remain_val`, `flag`) VALUES
--- (1, )
+INSERT INTO `vip_member` (`id`, `cust_id`, `serv_course_id`, `join_date`, `expire_date`, `service_times`, 
+`acc_val`, `remain_val`, `flag`) VALUES
+(1, 1, 1, '2024-01-04 14:00:00', '2024-04-04 14:00:00', 0, 0, 2000, '8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92', 1)
 
 -- --------------------------------------------------------
 
@@ -585,8 +587,8 @@ CREATE TABLE `service_course` (
 --
 
 INSERT INTO `service_course` (`id`, `name`, `description`, `times`, `price`, `flag`) VALUES
-(1, 'course1', 'description course1', 90, 2000, 1),
-(2, 'course2', 'description course2', 90, 2000, 1),
+(1, 'course1', 'description course1', 90, 600, 1),
+(2, 'course2', 'description course2', 90, 780, 1),
 
 -- --------------------------------------------------------
 
@@ -595,8 +597,9 @@ INSERT INTO `service_course` (`id`, `name`, `description`, `times`, `price`, `fl
 --
 
 CREATE TABLE `service_in_course` (
+  `id` int(11) NOT NULL,
   `serv_course_id` int(11) NOT NULL,
-  `serv_id` int(11) NOT NULL,
+  `serv_func_id` int(11) NOT NULL,
   `flag` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
@@ -604,13 +607,112 @@ CREATE TABLE `service_in_course` (
 -- Dumping data for table `service_in_course`
 --
 
-INSERT INTO `service_in_course` (`serv_course_id`, `serv_id`, `flag`) VALUES
-(1, 1, 1),
-(1, 2, 1),
-(1, 3, 1),
-(2, 4, 1),
-(2, 5, 1),
-(2, 6, 1),
+INSERT INTO `service_in_course` (`id`, `serv_course_id`, `serv_func_id`, `flag`) VALUES
+(1, 1, 1, 1),
+(2, 1, 3, 1),
+(3, 1, 5, 1),
+(4, 2, 4, 1),
+(5, 2, 5, 1),
+(6, 2, 6, 1),
+
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `sale`
+--
+
+CREATE TABLE `sale` (
+  `id` int(11) NOT NULL,
+  `appt_id` int(11) NOT NULL,
+  `cust_id` int(11) NOT NULL,
+  `shop_id` int(11) NOT NULL,
+  `emp_id` int(11) NOT NULL,
+  `serv_id` int(11) NULL,
+  `prod_id` int(11) NULL,
+  `prom_id` int(11) NULL,
+  `quantity` int(11) NULL,
+  `datetime` DATETIME NOT NULL,
+  `total_price` int(11) NOT NULL,
+  `flag` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `sale`
+--
+
+INSERT INTO `sale` (`id`, `appt_id`, `cust_id`, `shop_id`, `emp_id`, `serv_id`, `prod_id`, `prom_id`, 
+`quantity`, `datetime`, `total_price`, `flag`) VALUES
+(1, 1, 1, 1, 2, null, null, null, null, '2023-10-04 14:00:00', 500, 1),
+(2, 2, 2, 1, 3, null, null, null, null, '2023-10-04 14:00:00', 500, 1),
+
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `satisfaction_rating`
+--
+
+CREATE TABLE `satisfaction_rating` (
+  `id` int(11) NOT NULL,
+  `sale_id` int(11) NOT NULL,
+  `serv_rating` int(11) NOT NULL,
+  `emp_rating` int(11) NOT NULL,
+  `room_rating` int(11) NOT NULL,
+  `datetime` DATETIME NOT NULL,
+  `comment` text NOT NULL,
+  `flag` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `satisfaction_rating`
+--
+
+INSERT INTO `satisfaction_rating` (`id`, `sale_id`, `serv_rating`, `emp_rating`, `room_rating`, `datetime`, `comment`, `flag`) VALUES
+(1, 1, 5, 5, 5, '2023-10-04 14:00:00', '', 1)
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `payment_method`
+--
+
+CREATE TABLE `payment_method` (
+  `id` int(11) NOT NULL,
+  `name` text NOT NULL,
+  `flag` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `payment_method`
+--
+
+INSERT INTO `payment_method` (`id`, `name`, `flag`) VALUES
+(1, 'เงินสด', 1)
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `payment`
+--
+
+CREATE TABLE `payment` (
+  `id` int(11) NOT NULL,
+  `sale_id` int(11) NOT NULL,
+  `payment_meth_id` int(11) NULL,
+  `amount` int(11) NULL,
+  `datetime` DATETIME NULL,
+  `status` text NOT NULL,
+  `flag` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `payment`
+--
+
+INSERT INTO `payment` (`id`, `sale_id`, `payment_meth_id`, `amount`, `datetime`, `status`, `flag`) VALUES
+(1, 1, 1, 500, '2023-10-04 14:00:00', 'PAID', 1),
+(2, 2, NULL, NULL, NULL, 'PENDING', 1)
 
 
 
@@ -774,9 +876,40 @@ ALTER TABLE `service_course`
 ALTER TABLE `service_in_course`
   ADD PRIMARY KEY (`id`),
   ADD KEY `serv_course_id` (`serv_course_id`),
-  ADD KEY `serv_id` (`serv_id`)
+  ADD KEY `serv_func_id` (`serv_func_id`)
 
+--
+-- Indexes for table `sale`
+--
+ALTER TABLE `sale`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `appt_id` (`appt_id`),
+  ADD KEY `cust_id` (`cust_id`),
+  ADD KEY `emp_id` (`emp_id`),
+  ADD KEY `shop_id` (`shop_id`),
+  ADD KEY `serv_id` (`serv_id`),
+  ADD KEY `prod_id` (`prod_id`),
+  ADD KEY `prom_id` (`prom_id`)
 
+--
+-- Indexes for table `satisfaction_rating`
+--
+ALTER TABLE `satisfaction_rating`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `sale_id` (`sale_id`)
+
+--
+-- Indexes for table `payment_method`
+--
+ALTER TABLE `payment_method`
+  ADD PRIMARY KEY (`id`)
+
+--
+-- Indexes for table `payment`
+--
+ALTER TABLE `payment`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `payment_meth_id` (`payment_meth_id`)
 
 
 --
@@ -903,6 +1036,41 @@ ALTER TABLE `room`
 ALTER TABLE `service_course`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3
 
+--
+-- AUTO_INCREMENT for table `service_in_course`
+--
+ALTER TABLE `service_in_course`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7
+
+--
+-- AUTO_INCREMENT for table `sale`
+--
+ALTER TABLE `sale`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3
+
+--
+-- AUTO_INCREMENT for table `satisfaction_rating`
+--
+ALTER TABLE `satisfaction_rating`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3
+
+--
+-- AUTO_INCREMENT for table `vip_member`
+--
+ALTER TABLE `vip_member`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2
+
+--
+-- AUTO_INCREMENT for table `vip_member`
+--
+ALTER TABLE `payment_method`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2
+
+--
+-- AUTO_INCREMENT for table `vip_member`
+--
+ALTER TABLE `payment`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3
 
 
 
@@ -981,7 +1149,7 @@ ALTER TABLE `employee_queue`
 --
 ALTER TABLE `service_in_course`
   ADD CONSTRAINT `service_in_course_ibfk_1` FOREIGN KEY (`serv_course_id`) REFERENCES `service_course` (`id`),
-  ADD CONSTRAINT `service_in_course_ibfk_2` FOREIGN KEY (`serv_id`) REFERENCES `service` (`id`)
+  ADD CONSTRAINT `service_in_course_ibfk_2` FOREIGN KEY (`serv_func_id`) REFERENCES `service_function` (`id`)
 
 --
 -- Constraints for table `vip_member`
@@ -1001,7 +1169,28 @@ ALTER TABLE `appointment`
   ADD CONSTRAINT `appointment_ibfk_5` FOREIGN KEY (`vip_id`) REFERENCES `vip_member` (`id`),
   ADD CONSTRAINT `appointment_ibfk_6` FOREIGN KEY (`shop_id`) REFERENCES `employee` (`id`)
 
+--
+-- Constraints for table `sale`
+--
+ALTER TABLE `sale`
+  ADD CONSTRAINT `sale_ibfk_1` FOREIGN KEY (`appt_id`) REFERENCES `appointment` (`id`),
+  ADD CONSTRAINT `sale_ibfk_2` FOREIGN KEY (`cust_id`) REFERENCES `customer` (`id`),
+  ADD CONSTRAINT `sale_ibfk_3` FOREIGN KEY (`emp_id`) REFERENCES `employee` (`id`),
+  ADD CONSTRAINT `sale_ibfk_4` FOREIGN KEY (`shop_id`) REFERENCES `shop` (`id`),
+  ADD CONSTRAINT `sale_ibfk_5` FOREIGN KEY (`serv_id`) REFERENCES `service` (`id`),
+  ADD CONSTRAINT `sale_ibfk_6` FOREIGN KEY (`prod_id`) REFERENCES `product` (`id`)
 
+--
+-- Constraints for table `satisfaction_rating`
+--
+ALTER TABLE `satisfaction_rating`
+  ADD CONSTRAINT `satisfaction_rating_ibfk_1` FOREIGN KEY (`sale_id`) REFERENCES `sale` (`id`)
+
+--
+-- Constraints for table `payment`
+--
+ALTER TABLE `payment`
+  ADD CONSTRAINT `payment_ibfk_1` FOREIGN KEY (`payment_meth_id`) REFERENCES `payment_method` (`id`)
 
 
 

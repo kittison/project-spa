@@ -9,7 +9,7 @@ exports.getAdmin = (req, res) => {
             header:"Admin"
         });
     }else{
-        res.redirect('/');
+        res.redirect('/login');
     }
 
 };

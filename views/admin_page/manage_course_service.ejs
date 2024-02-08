@@ -1,0 +1,194 @@
+<style>
+    .container-fluid {
+        padding: 12px;
+    }
+
+    .modal-body {
+        padding-left: 30px;
+        padding-right: 30px;
+    }
+
+    .modal-footer {
+        padding-left: 30px;
+        padding-right: 30px;
+    }
+
+    .form-control {
+        background-color: rgba(175, 175, 175, 0.3);
+    }
+</style>
+
+<div class="container-fluid">
+    
+    <div class="d-flex justify-content-center">
+        <div class="">
+            <div class="card card-body text-center" style="padding-left: 40px; padding-right: 40px;">
+                <h3>บริการของคอร์ส : <%= db_course[0].name %></h3>
+            </div>
+        </div>
+    </div>
+  
+    
+
+    <div class="d-flex justify-content-start mb-2" style="gap: 5px">
+        <a href="manage_course" class="btn btn-info">กลับไปที่จัดการข้อมูลคอร์ส</a>
+        <button  type="button" class="btn btn-success" data-toggle="modal" data-target="#modal-add" onclick="">
+            เพิ่มบริการ
+        </button>
+    </div>
+
+    <div class="row">
+        <div class="col-12">
+            <div class="card card-body">
+                
+                <table id="service" class="table table-bordered table-hover " >
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>ชื่อ</th>
+                            <th>เวลา</th>
+                            <th>ราคา</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% for(let i of db_course_service) {%>
+                            <tr>
+                                <td><%= i.serv_func_id%></td>
+                                <td><%= i.name%></td>
+                                <td><%= i.time%></td>
+                                <td><%= i.price%></td>
+                                <td>
+                                    <div class="d-flex">
+                                        <button  type="button" class="btn btn-danger p-1 px-1" onclick="del('<%=i.id%>')" >ลบ</button>
+                                    </div>
+                                </td>
+                                
+                            </tr>
+                        <% } %>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+
+<form id="delete" action="manage_course_service/delete" method="post" class="d-inline">
+    <input type="number" name="course_id" class="d-none" value="<%= db_course[0].id %>">
+    <input type="number" name="id_del" class="d-none" value="">
+</form>
+
+<!-- =================== Modal Insert Service ===================-->
+<div class="modal fade" id="modal-add">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header bg-purple">
+          <h4 class="modal-title ">เพิ่มบริการ</h4>
+          <button type="button " class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true" class="text-light">&times;</span>
+          </button>
+        </div>
+        <form id="mange_add" action="manage_course_service/add" method="post">
+            <input type="number" class="form-control d-none" name="course_id" value="<%= db_course[0].id %>" >
+            <div class="modal-body">
+            <!-- ============================== Form ==============================-->
+                <div class="form-group">
+                    <label > เลือกบริการ</label>
+                    <select class="form-control" name="serv_func_id">
+                        <% for(let i of db_service) {%>
+                            <option value="<%= i.id%>"><%= i.name%> - <%= i.time%> นาที <%= i.price%> บาท</option>
+                        <%}%>
+                    </select>
+                </div>
+            </div>
+            <div class="modal-footer justify-content-between">
+                <button type="button" class="btn btn-default" data-dismiss="modal">ยกเลิก</button>
+                <button type="submit" class="btn btn-primary" onclick="return vali('add')">ยืนยัน</button>
+            </div>
+
+        </form>
+
+      </div>
+    </div>
+</div>
+
+<script src="/axios/axios.min.js"></script>
+<script>
+    
+    function axios_validation(url,params,form_id,error_text){
+        axios({
+            url:url,
+            method:'get',
+            params:params,
+            timeout:3000
+        }).then((result)=>{
+            if( result.data.status == 1){
+                $(form_id).submit();
+            }else{
+                toastr.error(error_text)
+            }
+        }).catch(()=>{
+            toastr.error("404 Error Not Found")
+        });
+    }
+</script>
+<script>
+    
+    $(function () {
+      $('#service').DataTable({
+        "paging": true,
+        "lengthMenu": [[5, 10, 20], [5, 10, 20]],
+        "searching": true,
+        "ordering": true,
+        "info": true,
+        "autoWidth": false,
+        "responsive": true,
+      }); 
+    });
+
+    function del(id){
+        $("input[name=id_del]").val(parseInt(id))
+        if(confirm("ยืนยันการลบข้อมูล") == true){
+            $("#delete").submit();
+        }
+    }
+
+    function vali(mode){
+        /*
+            Mode insert , update 
+        */
+        // (document.querySelector("input[name=Fname]").innerText).trim()
+        if(mode === "add"){
+            let course_id = $("input[name=course_id]").val();
+            let serv_func_id = $("select[name=serv_func_id]").val();
+    
+            if( serv_func_id !== ""){
+                let params= {
+                    course_id:course_id,
+                    serv_func_id:serv_func_id,
+                }
+                axios_validation(
+                    'manage_course_service/check_can_add_service',
+                    params,
+                    '#mange_add',
+                    'มีบริการนี้ในคอร์สเเล้ว'
+                );
+                
+            }else{
+                toastr.error("! กรุณาเลือกบริการ")
+            }
+            return false;
+        }
+        
+    }
+  
+</script>
+
+<!-- ============================= ERROR Zone =============================-->
+<!-- toastr.success('Lorem ipsum dolor sit amet, consetetur sadipscing elitr.')
+toastr.info('Lorem ipsum dolor sit amet, consetetur sadipscing elitr.')
+toastr.error('Lorem ipsum dolor sit amet, consetetur sadipscing elitr.')
+toastr.warning('Lorem ipsum dolor sit amet, consetetur sadipscing elitr.') -->
+<!-- ============================= ERROR Zone =============================-->

@@ -235,3 +235,16 @@ exports.is_duplicate_service_product = async (input) => {
         return false;
     }
 };
+
+
+// -------------------- Service and Function --------------------
+
+exports.get_service_and_func = async () => {
+    let sql = ` SELECT sf.id, sf.serv_id, s.name, sf.time, sf.price 
+                FROM service_function as sf JOIN service as s ON s.id = sf.serv_id
+                where s.flag = 1 and sf.flag = 1;`
+    let result = await con.query(sql)
+    return result;
+};
+
+

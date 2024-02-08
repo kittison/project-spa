@@ -15,7 +15,7 @@ exports.Manage_service_group = async (req, res) => {
             file:'admin_page/manage_service_group'
         });
     }else{
-        res.redirect('/');
+        res.redirect('/admin');
     }
 
 };
@@ -33,7 +33,7 @@ exports.setServiceGroup =async (req, res) => {
             res.redirect("../manage_service_group");
         }
     }else{
-        res.redirect("/");
+        res.redirect("/admin");
     } 
 };
 
@@ -66,7 +66,7 @@ exports.Manage_service_type = async (req, res) => {
             file:'admin_page/manage_service_type'
         });
     }else{
-        res.redirect('/');
+        res.redirect('/admin');
     }
 
 };
@@ -85,7 +85,7 @@ exports.setServiceType =async (req, res) => {
             res.redirect(`../manage_service_type?group_id=${req.body.group_id}`);
         }
     }else{
-        res.redirect("/");
+        res.redirect("/admin");
     }
 };
 
@@ -122,7 +122,7 @@ exports.manage_service = async (req, res) => {
         });
         
     }else{
-        res.redirect('/');
+        res.redirect('/admin');
     }
 
 };
@@ -140,7 +140,7 @@ exports.setService =async (req, res) => {
             res.redirect(`../manage_service?group_id=${req.body.group_id}&type_id=${req.body.type_id}`);
         }
     }else{
-        res.redirect("/");
+        res.redirect("/admin");
     }
 };
 
@@ -184,7 +184,7 @@ exports.manage_service_function = async (req, res) => {
         });
         
     }else{
-        res.redirect('/');
+        res.redirect('/admin');
     }
 
 };
@@ -211,7 +211,7 @@ exports.setServiceFunction =async (req, res) => {
             res.redirect(`../manage_service_function?group_id=${req.body.group_id}&type_id=${req.body.type_id}&service_id=${req.body.service_id}`);
         }
     }else{
-        res.redirect("/");
+        res.redirect("/admin");
     }
 };
 

@@ -1,0 +1,530 @@
+<style>
+    .container-fluid {
+        padding: 12px;
+    }
+
+    .modal-body {
+        padding-left: 30px;
+        padding-right: 30px;
+    }
+
+    .modal-footer {
+        padding-left: 30px;
+        padding-right: 30px;
+    }
+
+    .form-control {
+        background-color: rgba(175, 175, 175, 0.3);
+    }
+</style>
+
+<div class="container-fluid">
+    
+    <div class="d-flex justify-content-center">
+        <div class="">
+            <div class="card card-body text-center" style="padding-left: 40px; padding-right: 40px;">
+                <h3>ระบบจัดการการขาย</h3>
+            </div>
+        </div>
+    </div>
+
+    <div class="d-flex  justify-content-start mb-2" style="gap: 10px;">
+        <h5 style="margin-top: 10px; padding-left: 10px; font-weight: bold;">รายการขายทั้งหมด</h5>
+    </div>
+
+    <div class="row">
+        <div class="col-12">
+            <div class="card card-body">
+                
+                <table id="sale" class="table table-bordered table-hover " >
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>ID นัดหมาย</th>
+                            <th>วันเวลาที่ขาย</th>
+                            <th>ราคารวม</th>
+                            <th>สถานะการจ่าย</th>
+                            <th>วันเวลาที่จ่าย</th>
+                            <th>ราคาที่จ่าย</th>
+                            <th>วิธีที่จ่าย</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% for(let i of db_sale) {%>
+                            <tr>
+                                <td><%= i.id%></td>
+                                <td><%= i.appt_id%></td>
+                                <% if(i.datetime){ %>
+                                    <% let f_datetime = new Intl.DateTimeFormat('id-ID',{ day:'2-digit', month:'2-digit', year:'numeric', hour: 'numeric', minute: 'numeric', second: 'numeric', timeZoneName: 'short'}).format(i.datetime) %>
+                                    <td><%= f_datetime%></td>
+                                <% } else{ %>  
+                                    <td>-</td>
+                                <% } %>
+                                <td><%= i.total_price%></td>
+                                <td><%= i.status%></td>
+                                <% if(i.pay_datetime){ %>
+                                    <% let f_pay_datetime = new Intl.DateTimeFormat('id-ID',{ day:'2-digit', month:'2-digit', year:'numeric', hour: 'numeric', minute: 'numeric', second: 'numeric', timeZoneName: 'short'}).format(i.pay_datetime) %>
+                                    <td><%= f_pay_datetime%></td>
+                                <% } else{ %>  
+                                    <td></td>
+                                <% } %>
+                                <td><%= i.amount%></td>
+                                <td><%= i.pay_meth%></td>
+                                <td>
+                                    <div class="" style="display: grid; gap: 5px;">
+                                        <button  type="button" class="btn btn-secondary p-1 px-1" data-toggle="modal" data-target="#modal-display-appointment"
+                                            onclick="update('<%=JSON.stringify(i)%>') ">ข้อมูลนัดหมาย</button>
+                                        <button  type="button" class="btn btn-primary p-1 px-1"
+                                            onclick="go('invoice','<%=JSON.stringify(i)%>') ">ออกใบแจ้งหนี้</button>
+                                        <% if(i.status=="PENDING"){ %>
+                                            <button  type="button" class="btn btn-success p-1 px-1" data-toggle="modal" data-target="#modal-manage-payment"
+                                            onclick="update('<%=JSON.stringify(i)%>') ">จ่าย</button>
+                                        <% } else if(i.status=="PAID"){%>
+                                            <button  type="button" class="btn btn-primary p-1 px-1"
+                                            onclick="go('receipt','<%=JSON.stringify(i)%>') ">ออกใบเสร็จ</button>
+                                        <% } %>
+                                    </div>
+                                </td>
+                                
+                            </tr>
+                        <% } %>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div class="d-flex  justify-content-start mb-2 pt-" style="gap: 10px;">
+        <h5 style="margin-top: 10px; padding-left: 10px; font-weight: bold;">คะแนนความพึงพอใจจากลูกค้า</h5>
+    </div>
+
+    <div class="row">
+        <div class="col-12">
+            <div class="card card-body">
+                
+                <table id="rating" class="table table-bordered table-hover " >
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>ID นัดหมาย</th>
+                            <th>วันเวลาที่ให้คะแนน</th>
+                            <th style="width: 10%;">คะแนนบริการ</th>
+                            <th style="width: 10%;">คะแนนผู้ให้บริการ</th>
+                            <th style="width: 10%;">คะแนนห้องที่ให้บริการ</th>
+                            <th style="width: 30%;">ข้อเสนอแนะ</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% for(let i of db_sale_rating) {%>
+                            <tr>
+                                <td><%= i.id%></td>
+                                <td><%= i.appt_id%></td>
+                                <% if(i.rate_datetime){ %>
+                                    <% let f_rate_datetime = new Intl.DateTimeFormat('id-ID',{ day:'2-digit', month:'2-digit', year:'numeric', hour: 'numeric', minute: 'numeric', second: 'numeric', timeZoneName: 'short'}).format(i.rate_datetime) %>
+                                    <td><%= f_rate_datetime%></td>
+                                <% } else{ %>  
+                                    <td>-</td>
+                                <% } %>
+                                <td><%= i.serv_rating%></td>
+                                <td><%= i.emp_rating%></td>
+                                <td><%= i.room_rating%></td>
+                                <td><%= i.comment%></td>
+                                <td>
+                                    <div class="">
+                                        <button  type="button" class="btn btn-secondary p-1 px-1" data-toggle="modal" data-target="#modal-display-appointment"
+                                        onclick="update('<%=JSON.stringify(i)%>') ">ข้อมูลนัดหมาย</button>
+                                    </div>
+                                </td>
+                                
+                            </tr>
+                        <% } %>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+
+<!-- =================== Modal Delete Standard Appointment ===================-->
+
+<form id="delete" action="manage_appointment/delete" method="post" class="d-inline">
+    <input type="number" name="id_del" class="d-none" value="">
+</form>
+
+
+<!-- =================== Modal Update Vip Appointment ===================-->
+<div class="modal fade" id="modal-update-standard">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header bg-purple">
+          <h4 class="modal-title ">แก้ไขข้อมูลนัดหมายลูกค้า Vip</h4>
+          <button type="button " class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true" class="text-light">&times;</span>
+          </button>
+        </div>
+
+        <form id="mange_update" action="manage_appointment/update_vip" method="post">
+            <div class="modal-body">
+            <!-- ============================== Form ==============================-->
+            <div class="form-group">
+                <label >ลูกค้า</label>
+                <input type="text" class="form-control" name="Uf_name">
+            </div>
+            <div class="form-group">
+                <label >วันเวลา</label>
+                <input type="text" class="form-control" name="Ul_name">
+            </div>
+            <div class="form-group">
+                <label >บริการ</label>
+                <input type="text" class="form-control" name="Ugender">
+            </div>
+            <div class="form-group">
+                <label >ที่อยู่</label>
+                <input type="text" class="form-control" name="Uaddress">
+            </div>
+            <div class="form-group">
+                <label >เบอร์โทร</label>
+                <input type="number" class="form-control" name="Utel">
+            </div>
+            <div class="form-group">
+                <label >อีเมล</label>
+                <input type="text" class="form-control" name="Uemail">
+            </div>
+            <div class="form-group">
+                <label >ประเภทลูกค้า</label>
+                <input type="text" class="form-control" name="Utype">
+            </div>
+            <div class="form-group">
+                <label >แต้มสมาชิก</label>
+                <input type="number" class="form-control" name="Upoint" >
+            </div>
+                <input type="number" name="id_update" class="d-none" value="">
+            </div>
+
+            <div class="modal-footer justify-content-between">
+                <button type="button" class="btn btn-default" data-dismiss="modal">ยกเลิก</button>
+                <button type="submit" class="btn btn-primary" onclick="return vali('update')">ยืนยัน</button>
+            </div>
+
+        </form>
+
+      </div>
+    </div>
+</div>
+
+
+<!-- =================== Modal manage paymemt ===================-->
+<div class="modal fade" id="modal-manage-payment">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header bg-purple">
+          <h4 class="modal-title ">บันทึกการจ่าย</h4>
+          <button type="button " class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true" class="text-light">&times;</span>
+          </button>
+        </div>
+
+        <form id="mange_update" action="manage_sale/pay" method="post">
+            <div class="modal-body">
+            <!-- ============================== Form ==============================-->
+                <div class="form-group">
+                    <label >ID รายการขาย</label>
+                    <input type="text" class="form-control" name="Sappt_id" readonly>
+                </div>
+                <div class="form-group">
+                    <label>วิธีการจ่าย</label>
+                    <select class="form-control" name="Spayment_meth" value="">
+                        <% for(i of db_payment_meth){%> 
+                            <option  id="payment_meth_<%=i.id%>" value="<%=i.id%>"><%=i.name%></option>
+                        <%} %> 
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label >วันเวลาที่จ่าย</label>
+                    <input type="datetime-local" class="form-control" name="Sdatetime" step="60">
+                </div>
+                <div class="form-group">
+                    <label >จำนวนเงิน</label>
+                    <input type="number" class="form-control" name="Sprice">
+                </div>
+                <input type="number" name="id_update" class="d-none" value="">
+            </div>
+
+            <div class="modal-footer justify-content-between">
+                <button type="button" class="btn btn-default" data-dismiss="modal">ยกเลิก</button>
+                <button type="submit" class="btn btn-primary" onclick="return vali('update')" disabled>ยืนยัน</button>
+            </div>
+
+        </form>
+
+      </div>
+    </div>
+</div>
+
+<!-- =================== Modal Display Appointment ===================-->
+<div class="modal fade" id="modal-display-appointment">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header bg-purple">
+          <h4 class="modal-title ">ข้อมูลนัดหมาย</h4>
+          <button type="button " class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true" class="text-light">&times;</span>
+          </button>
+        </div>
+
+        <form id="mange_update" action="manage_appointment/update_vip" method="post">
+            <div class="modal-body pb-4">
+            <!-- ============================== Form ==============================-->
+            <div class="form-group">
+                <label >ลูกค้า</label>
+                <input type="text" class="form-control" name="Dcustomer" readonly>
+            </div>
+            <div class="form-group">
+                <label >วันเวลาเรื่ม</label>
+                <input type="text" class="form-control" name="Dstart_date" readonly>
+            </div>
+            <div class="form-group">
+                <label >วันเวลาสิ้นสุด</label>
+                <input type="text" class="form-control" name="Dend_date" readonly>
+            </div>
+            <div class="form-group">
+                <label >บริการ</label>
+                <input type="text" class="form-control" name="Dservice" readonly>
+            </div>
+            <div class="form-group">
+                <label >ร้าน</label>
+                <input type="text" class="form-control" name="Dshop" readonly>
+            </div>
+            <div class="form-group">
+                <label >พนักงาน</label>
+                <input type="text" class="form-control" name="Demployee" readonly>
+            </div>
+            <div class="form-group">
+                <label >ห้อง</label>
+                <input type="text" class="form-control" name="Droom" readonly>
+            </div>
+            </div>
+
+        </form>
+      </div>
+    </div>
+</div>
+
+<!-- =================== Modal manage paymemt ===================-->
+<div class="modal fade" id="modal-manage-payment">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header bg-purple">
+          <h4 class="modal-title ">บันทึกการจ่าย</h4>
+          <button type="button " class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true" class="text-light">&times;</span>
+          </button>
+        </div>
+
+        <form id="mange_update" action="manage_sale/pay" method="post">
+            <div class="modal-body">
+            <!-- ============================== Form ==============================-->
+                <div class="form-group">
+                    <label >ID รายการขาย</label>
+                    <input type="text" class="form-control" name="Sappt_id" readonly>
+                </div>
+                <div class="form-group">
+                    <label>วิธีการจ่าย</label>
+                    <select class="form-control" name="Spayment_meth" value="">
+                        <% for(i of db_payment_meth){%> 
+                            <option  id="payment_meth_<%=i.id%>" value="<%=i.id%>"><%=i.name%></option>
+                        <%} %> 
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label >วันเวลาที่จ่าย</label>
+                    <input type="datetime-local" class="form-control" name="Sdatetime" step="60">
+                </div>
+                <div class="form-group">
+                    <label >จำนวนเงิน</label>
+                    <input type="number" class="form-control" name="Sprice">
+                </div>
+                <input type="number" name="id_update" class="d-none" value="">
+            </div>
+
+            <div class="modal-footer justify-content-between">
+                <button type="button" class="btn btn-default" data-dismiss="modal">ยกเลิก</button>
+                <button type="submit" class="btn btn-primary" onclick="return vali('update')" disabled>ยืนยัน</button>
+            </div>
+
+        </form>
+
+      </div>
+    </div>
+</div>
+
+
+<script src="/axios/axios.min.js"></script>
+<script>
+    function axios_validation(url,params,form_id,error_text){
+        axios({
+            url:url,
+            method:'get',
+            params:params,
+            timeout:3000
+        }).then((result)=>{
+            if( result.data.status == 1){
+                $(form_id).submit();
+            }else{
+                toastr.error(error_text)
+            }
+        }).catch(()=>{
+            toastr.error("404 Error Not Found")
+        });
+    }
+</script>
+
+
+
+<script>
+    
+    
+    $(function () {
+      $('#sale').DataTable({
+        "paging": true,
+        "lengthMenu": [[5, 10, 20], [5, 10, 20]],
+        "searching": true,
+        "ordering": true,
+        "info": true,
+        "autoWidth": false,
+        "responsive": true,
+      });
+      
+    });
+
+    $(function () {
+      $('#rating').DataTable({
+        "paging": true,
+        "lengthMenu": [[5, 10, 20], [5, 10, 20]],
+        "searching": true,
+        "ordering": true,
+        "info": true,
+        "autoWidth": false,
+        "responsive": true,
+      });
+      
+    });
+
+    let oldOp ="";
+    function update(data){
+        data = JSON.parse(data)
+        let f_start_date = new Intl.DateTimeFormat('id-ID',{ day:'2-digit', month:'2-digit', year:'numeric', hour: 'numeric', minute: 'numeric', second: 'numeric', timeZoneName: 'short'}).format(new Date(data.start_date))
+        let f_end_date = new Intl.DateTimeFormat('id-ID',{ day:'2-digit', month:'2-digit', year:'numeric', hour: 'numeric', minute: 'numeric', second: 'numeric', timeZoneName: 'short'}).format(new Date(data.end_date))
+        $("input[name=Dcustomer]").val(`${data.cust_fname} ${data.cust_lname}`)
+        $("input[name=Dstart_date]").val(f_start_date)
+        $("input[name=Dend_date]").val(f_end_date)
+        $("input[name=Dservice]").val(`${data.serv_name} - ${data.serv_time} นาที ${data.serv_price} บาท`) 
+        $("input[name=Dshop]").val(data.shop_name)
+        $("input[name=Demployee]").val(`${data.emp_fname} ${data.emp_lname}`)
+        $("input[name=Droom]").val(data.room_name)           
+        $("input[name=id_update]").val(data.id)
+
+        // let new_select = data.position;
+        // $(`option[id=${new_select}]`).attr("selected","true");
+        // if(oldOp !== new_select ){
+        //     if(oldOp != ""){
+        //         $(`option[id=${oldOp}]`).removeAttr("selected");
+        //     }
+        //     oldOp = new_select ;
+        // }
+
+    }
+
+    function del(id){
+        $("input[name=id_del]").val(parseInt(id))
+        if(confirm("ยืนยันการลบข้อมูล") == true){
+            $("#delete").submit();
+        }
+    }
+
+    function vali(mode){
+        /*
+            Mode insert , update 
+        */
+        // (document.querySelector("input[name=Fname]").innerText).trim()
+        if(mode === "add"){
+            let f_name = ($("input[name=f_name]").val()).trim();
+            let l_name = ($("input[name=l_name]").val()).trim();
+            let gender = ($("input[name=gender]").val()).trim();
+            let address = ($("input[name=address]").val()).trim();
+            let tel = ($("input[name=tel]").val()).trim();
+            let email = ($("input[name=email]").val()).trim();
+            let cus_type = ($("input[name=type]").val()).trim();
+            let member_point = ($("input[name=point]").val()).trim();
+    
+            if( f_name !== "" && l_name !== "" && gender !== "" && address !== "" && 
+                tel !== "" && email !== "" && cus_type !== "" && member_point !== ""
+            ){
+                let params= {
+                    f_name:f_name,
+                    l_name:l_name,
+                }
+                axios_validation(
+                    'manage_cust/check_can_add',
+                    params,
+                    '#mange_add',
+                    'มีชื่อ/นามสุกลลูกค้านี้อยู่เเล้ว'
+                );
+                
+            }else{
+                toastr.error("! กรุณาใส่ข้อมูลให้ครบ")
+            }
+            return false;
+
+
+        }else if(mode === "update"){
+            let f_name = ($("input[name=Uf_name]").val()).trim();
+            let l_name = ($("input[name=Ul_name]").val()).trim();
+            let gender = ($("input[name=Ugender]").val()).trim();
+            let address = ($("input[name=Uaddress]").val()).trim();
+            let tel = ($("input[name=Utel]").val()).trim();
+            let email = ($("input[name=Uemail]").val()).trim();
+            let cus_type = ($("input[name=Utype]").val()).trim();
+            let member_point = ($("input[name=Upoint]").val()).trim();
+    
+            if( f_name !== "" && l_name !== "" && gender !== "" && address !== "" && 
+                tel !== "" && email !== "" && cus_type !== "" && member_point !== ""
+            ){
+                let params= {
+                    f_name:f_name,
+                    l_name:l_name,
+                    id:$("input[name=id_update]").val()
+                }
+                axios_validation(
+                    'manage_cust/check_can_update',
+                    params,
+                    '#mange_update',
+                    'มีชื่อ/นามสุกลลูกค้านี้อยู่เเล้ว'
+                );
+            }else{
+                toastr.error("! กรุณาใส่ข้อมูลให้ครบ")
+            }
+            return false;
+        }
+        
+    }
+
+    function go(mode,data){
+        data = JSON.parse(data)
+        window.location = `/admin/${mode}?sale_id=${data.id}`;
+        // window.open( `/admin/${mode}?sale_id=${data.id}`, "_blank");
+    }
+  
+</script>
+
+
+<!-- ============================= ERROR Zone =============================-->
+<!-- toastr.success('Lorem ipsum dolor sit amet, consetetur sadipscing elitr.')
+toastr.info('Lorem ipsum dolor sit amet, consetetur sadipscing elitr.')
+toastr.error('Lorem ipsum dolor sit amet, consetetur sadipscing elitr.')
+toastr.warning('Lorem ipsum dolor sit amet, consetetur sadipscing elitr.') -->
+<!-- ============================= ERROR Zone =============================-->

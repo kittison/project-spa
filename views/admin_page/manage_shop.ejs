@@ -50,6 +50,7 @@
                             <th>ติดต่อ</th>
                             <th>เวลาเปิด</th>
                             <th>เวลาปิด</th>
+                            <th>ห้อง</th>
                             <th>พนักงาน</th>
                             <th></th>
                         </tr>
@@ -65,7 +66,12 @@
                                 <td><%= i.closing_time%></td>
                                 <td>
                                     <div class="">
-                                        <button  type="button" class="btn btn-secondary p-1 px-1" onclick="req_detail('<%=i.id%>')" >จัดการพนักงาน</button>
+                                        <button  type="button" class="btn btn-secondary p-1 px-1" onclick="req_detail('room','<%=i.id%>')" >จัดการห้อง</button>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="">
+                                        <button  type="button" class="btn btn-secondary p-1 px-1" onclick="req_detail('emp','<%=i.id%>')" >จัดการพนักงาน</button>
                                     </div>
                                 </td>
                                 <td>
@@ -301,8 +307,14 @@
         }
         
     }
-    function req_detail(input){
-        window.location = `manage_shop_emp?shop_id=${input}`
+    function req_detail(type, input){
+        if (type=="room") {
+            window.location = `manage_shop_room?shop_id=${input}`
+        }
+        else if (type=="emp") {
+            window.location = `manage_shop_emp?shop_id=${input}`
+        }
+        
     }
   
 </script>

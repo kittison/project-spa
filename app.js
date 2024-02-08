@@ -17,6 +17,8 @@ app.use(express.static(path.join(__dirname, 'public')))
 
 app.use('/admin', express.static(path.join(__dirname, 'public')))
 app.use('/emp', express.static(path.join(__dirname, 'public')))
+app.use('/customer', express.static(path.join(__dirname, 'public')))
+app.use('/webhook', express.static(path.join(__dirname, 'public')))
 
 
 app.use("/axios",express.static('node_modules/axios/dist'));
@@ -30,14 +32,16 @@ app.use(session({
 const loginRoutes = require('./routes/login');
 const adminRoutes = require('./routes/admin');
 const empRoutes = require('./routes/emp');
+const customerRoutes = require('./routes/customer');
+const webhookRoutes = require('./routes/webhook');
 
 
 
 app.use('/admin',adminRoutes);
 app.use('/emp',empRoutes);
-app.use('/',loginRoutes);
-
-
-
+app.use('/',customerRoutes);
+app.use('/login',loginRoutes);
+app.use('/customer',customerRoutes);
+app.use('/webhook',webhookRoutes);
 
 app.listen(3000);
