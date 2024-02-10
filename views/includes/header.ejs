@@ -200,7 +200,7 @@
                     <%- include('../menu/manage_sale'); %>
                     <!-- <%- include('../menu/manage_privileges'); %> -->
                     <!-- <%- include('../menu/manu_product',{role:session_role}); %> -->
-                    <% } else{ %>
+                  <% } else{ %>
                     <%- include('../menu/customer/make_appointment'); %>
                     <%- include('../menu/customer/manage_appointment'); %>
                     <%- include('../menu/customer/buy_vip'); %>
@@ -237,7 +237,23 @@
                   </ul>
                 </nav>
               </div>
-              <% } %>
+            <% } else{ %>
+              <div class="">
+                <nav class="pt-2 pb-2">
+                  <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu"
+                    data-accordion="false">
+                    <li class="nav-item menu-open">
+                    <li class="nav-item">
+                      <a href="/login" class="nav-link">
+                        <i class="nav-icon fas fa-sign-in-alt"></i>
+                        <p>เข้าสู่ระบบ admin</p>
+                      </a>
+                    </li>
+                    </li>
+                  </ul>
+                </nav>
+              </div>
+            <% } %>
 
                 <!-- /.sidebar -->
     </aside>
