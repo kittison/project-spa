@@ -164,7 +164,8 @@
     <!-- <div class="d-flex flex-wrap justify-content-start" style="gap: 10px; padding-top: 10px;"> -->
     <div class="d-flex justify-content-between" style="gap: 5px; padding-top: 20px;">
         <h5 style="margin-top: 10px; padding-left: 10px;">สินค้าที่ใช้ได้หลายครั้ง (เปิดใช้งานแล้ว)</h5>
-        <button  type="button" class="btn btn-primary mb-2 mr-2" data-toggle="modal" data-target="#modal-add-reuse" onclick="">
+        <button  type="button" class="btn btn-primary mb-2 mr-2" data-toggle="modal" data-target="#modal-add-reuse" 
+        onclick="checkEmpty('<%= db_prod_reuse_list%>')">
             เปิดใช้งานสินค้า
         </button>
     </div>
@@ -321,6 +322,7 @@
 </form>
 
 <!-- =================== Modal Insert Product Reuse ===================-->
+<% if (db_prod_reuse_list.length > 0) {%>
 <div class="modal fade" id="modal-add-reuse">
     <div class="modal-dialog modal-lg">
       <div class="modal-content">
@@ -333,19 +335,19 @@
         <form id="mange_add_reuse" action="manage_storage/add_reuse" method="post">
             <div class="modal-body">
             <!-- ============================== Form ==============================-->
-                <div class="form-group">
-                    <label > เลือกสินค้า</label>
-                    <select class="form-control" name="data_add_reuse" onchange="select()">
-                        <% for (let i of db_prod_reuse_list) {%>
-                            <option data-id="<%= i.id %>" data-used="<%= i.can_used %>" data-stock="<%= i.stock %>">
-                                <%= i.id%> - <%= i.name%> (<%= i.stock%>)
-                            </option>
-                        <%}%>
-                    </select>
-                </div>
-                <input type="number" name="prod_id" class="d-none" value="<%= db_prod_reuse_list[0].id%>">
-                <input type="number" name="stock" class="d-none" value="<%= db_prod_reuse_list[0].stock%>">
-                <input type="number" name="can_used" class="d-none" value="<%= db_prod_reuse_list[0].can_used%>">
+                    <div class="form-group">
+                        <label > เลือกสินค้า</label>
+                        <select class="form-control" name="data_add_reuse" onchange="select()">
+                            <% for (let i of db_prod_reuse_list) {%>
+                                <option data-id="<%= i.id %>" data-used="<%= i.can_used %>" data-stock="<%= i.stock %>">
+                                    <%= i.id%> - <%= i.name%> (<%= i.stock%>)
+                                </option>
+                            <%}%>
+                        </select>
+                    </div>
+                    <input type="number" name="prod_id" class="d-none" value="<%= db_prod_reuse_list[0].id%>">
+                    <input type="number" name="stock" class="d-none" value="<%= db_prod_reuse_list[0].stock%>">
+                    <input type="number" name="can_used" class="d-none" value="<%= db_prod_reuse_list[0].can_used%>">
             </div>
             <div class="modal-footer justify-content-between">
                 <button type="button" class="btn btn-default" data-dismiss="modal">ยกเลิก</button>
@@ -357,6 +359,7 @@
       </div>
     </div>
 </div>
+<%}%>
 
 <!-- =================== Modal Update Product Reuse ===================-->
 <div class="modal fade" id="modal-update-reuse">
@@ -559,6 +562,12 @@
             return false;
         }
         
+    }
+
+    function checkEmpty(data){
+        if (data.length==0){
+            toastr.error("ไม่พบข้อมูล");
+        }
     }
   
 </script>

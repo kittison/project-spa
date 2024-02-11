@@ -91,3 +91,22 @@ exports.get_appt_for_sale = async () => {
     let result = await con.query(sql)
     return result;
 };
+
+exports.get_employee_available = async (input) => {
+    let sql = `SELECT e.*
+                FROM shop_employee AS se
+                JOIN employee AS e ON e.id = se.emp_id
+                WHERE se.shop_id = '${input.shop_id}' and e.emp_type_id != 1 and se.flag = 1 and e.flag = 1`
+    let result = await con.query(sql)
+    // console.log('!',result)
+    return result;
+};
+
+exports.get_room_available = async (input) => {
+    let sql = `SELECT * 
+                FROM room AS r
+                WHERE r.shop_id = '${input.shop_id}' AND r.flag = 1`
+    let result = await con.query(sql)
+    // console.log('!',result)
+    return result;
+};

@@ -31,7 +31,7 @@ exports.get_product_reuse_list = async () => {
     let sql = ` SELECT p.id, p.type_id, pt.name as type, p.name, p.price, p.stock, p.min_stock, p.max_stock, p.can_used
                 FROM product as p
                 JOIN product_type as pt ON p.type_id = pt.id
-                where p.flag = 1 and pt.flag = 1 and p.can_used > 1 and p.stock > 0;`
+                where p.flag = 1 and pt.flag = 1 and p.can_used > 1 and p.stock > 0  and p.flag = 1;`
     let result = await con.query(sql)
     return result;
 };

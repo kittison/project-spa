@@ -18,6 +18,7 @@ app.use(express.static(path.join(__dirname, 'public')))
 app.use('/admin', express.static(path.join(__dirname, 'public')))
 app.use('/emp', express.static(path.join(__dirname, 'public')))
 app.use('/customer', express.static(path.join(__dirname, 'public')))
+app.use('/services', express.static(path.join(__dirname, 'public')))
 app.use('/webhook', express.static(path.join(__dirname, 'public')))
 
 
@@ -34,7 +35,7 @@ const adminRoutes = require('./routes/admin');
 const empRoutes = require('./routes/emp');
 const customerRoutes = require('./routes/customer');
 const webhookRoutes = require('./routes/webhook');
-
+const serviceRoutes = require('./routes/service');
 
 
 app.use('/admin',adminRoutes);
@@ -43,5 +44,6 @@ app.use('/',customerRoutes);
 app.use('/login',loginRoutes);
 app.use('/customer',customerRoutes);
 app.use('/webhook',webhookRoutes);
+app.use('/services',serviceRoutes);
 
 app.listen(3000);

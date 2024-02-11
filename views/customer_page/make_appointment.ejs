@@ -66,9 +66,13 @@
                 <label class="col-sm-2 col-form-label">บริการ:</label>
                 <div class="col-sm-10">
                     <select class="form-control" id="service" name="service" value="" disabled onchange="selectService(this.value)">
-                        <option id="service_none" value="" ></option>
-                        <% for(i of data_service){%> 
-                            <option  id="service_<%=i.id%>" value="<%=i.id%>"><%=i.name%> - <%=i.time%> นาที - <%=i.price%> บาท</option>
+                        <% if(data_service.length > 0) {%>
+                            <option value="" disabled selected>เลือกบริการ</option>
+                            <% for(i of data_service){%> 
+                                <option  id="service_<%=i.id%>" value="<%=i.id%>"><%=i.name%> - <%=i.time%> นาที - <%=i.price%> บาท</option>
+                            <%} %> 
+                        <% } else{%>  
+                            <option value="" disabled selected>ไม่พบข้อมูล</option>
                         <%} %> 
                     </select>
                 </div>
@@ -76,10 +80,14 @@
             <div class="form-group row">
                 <label class="col-sm-2 col-form-label">ร้าน:</label>
                 <div class="col-sm-10">
-                    <select class="form-control" id="shop" name="shop" value="" disabled onchange="selectService(this.value)">
-                        <option id="shop_none" value="" ></option>
-                        <% for(i of data_shop){%> 
-                            <option  id="shop_<%=i.id%>" value="<%=i.id%>"><%=i.shop_name%></option>
+                    <select class="form-control" id="shop" name="shop" value="" disabled onchange="selectShop(this.value)">
+                        <% if(data_shop.length > 0) {%>
+                            <option value="" disabled selected>เลือกร้าน</option>
+                            <% for(i of data_shop){%> 
+                                <option  id="shop_<%=i.id%>" value="<%=i.id%>"><%=i.shop_name%></option>
+                            <%} %> 
+                        <% } else{%>  
+                            <option value="" disabled selected>ไม่พบข้อมูล</option>
                         <%} %> 
                     </select>
                 </div>
@@ -88,9 +96,13 @@
                 <label class="col-sm-2 col-form-label">พนักงาน:</label>
                 <div class="col-sm-10">
                     <select class="form-control" id="employee" name="employee" value="" disabled onchange="selectService(this.value)">
-                        <option id="employee_none" value="" ></option>
-                        <% for(i of data_employee){%> 
-                            <option  id="employee_<%=i.id%>" value="<%=i.id%>"><%=i.name%></option>
+                        <% if(data_employee.length > 0) {%>
+                            <option value="" disabled selected>เลือกพนักงาน</option>
+                            <% for(i of data_employee){%> 
+                                <option  id="employee_<%=i.id%>" value="<%=i.id%>"><%=i.name%></option>
+                            <%} %> 
+                        <% } else{%>  
+                            <option value="" disabled selected>ไม่พบข้อมูล</option>
                         <%} %> 
                     </select>
                 </div>
@@ -99,9 +111,13 @@
                 <label class="col-sm-2 col-form-label">ห้อง:</label>
                 <div class="col-sm-10">
                     <select class="form-control" id="room" name="room" value="" disabled onchange="selectService(this.value)">
-                        <option id="room_none" value="" ></option>
-                        <% for(i of data_room){%> 
-                            <option  id="room_<%=i.id%>" value="<%=i.id%>"><%=i.name%></option>
+                        <% if(data_room.length > 0) {%>
+                            <option value="" disabled selected>เลือกห้อง</option>
+                            <% for(i of data_room){%> 
+                                <option  id="room_<%=i.id%>" value="<%=i.id%>"><%=i.name%></option>
+                            <%} %> 
+                        <% } else{%>  
+                            <option value="" disabled selected>ไม่พบข้อมูล</option>
                         <%} %> 
                     </select>
                 </div>
@@ -136,18 +152,55 @@
             toastr.error("404 Error Not Found")
         });
     }
+
+    function getServiceData(datetime, shop_id) {
+        // console.log(datetime, shop_id)
+        // axios({
+        //     url:'/services/get_employee_room_available',
+        //     method:'get',
+        //     params:{
+        //         datetime:datetime,
+        //         shop_id:shop_id,
+        //     },
+        //     timeout:3000
+        // }).then((result)=>{
+        //     console.log(result.data)
+        //     if( result.data.status == 1){
+        //         $(form_id).submit();
+        //     }else{
+        //         toastr.error(error_text)
+        //     }
+        // }).catch(()=>{
+        //     toastr.error("404 Error Not Found")
+        // });
+        // return [], []
+    }
 </script>
 
 <script>
     function selectDatetime(value){
         document.getElementById('service').removeAttribute("disabled");
         document.getElementById('shop').removeAttribute("disabled");
+        checkAvailable()
+    }
+
+    function selectShop(value){
         document.getElementById('employee').removeAttribute("disabled");
         document.getElementById('room').removeAttribute("disabled");
+        checkAvailable()
     }
 
     function selectService(value){
         console.log(value);
+    }
+
+    function checkAvailable(){
+        let datetime = $("input[name=datetime]").val();
+        let shop = $("select[name=shop]").val();
+        console.log(datetime,shop);
+        if (datetime && shop){
+            getServiceData(datetime,shop)
+        }
     }
 
     function select(){

@@ -15,3 +15,12 @@ exports.Make_appointment = async (req, res) => {
         datetime: null
     });
 };
+
+exports.check_can_remove_stock = async (req, res) => {
+    let is_same = await model.compare_4_dec_stock(req.query).then((data)=>{return data})
+    if(is_same === false){
+        res.send({status:1});
+    }else{
+        res.send({status:-1});
+    }
+};
