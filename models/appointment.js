@@ -93,19 +93,25 @@ exports.get_appt_for_sale = async () => {
 };
 
 exports.get_employee_available = async (input) => {
-    let sql = `SELECT e.*
-                FROM shop_employee AS se
-                JOIN employee AS e ON e.id = se.emp_id
-                WHERE se.shop_id = '${input.shop_id}' and e.emp_type_id != 1 and se.flag = 1 and e.flag = 1`
+    let sql = ` SELECT e.* FROM employee e
+                LEFT JOIN shop_employee s on e.id = s.emp_id 
+                LEFT JOIN appointment a ON e.id = a.emp_id
+                AND a.start_date <= '${input.datetime}'
+                AND a.end_date >= '${input.datetime}'
+                AND a.status not in ('Cancelled','Complete')
+                WHERE a.start_date IS NULL and s.shop_id = ${input.shop_id} and e.emp_type_id != 1 and e.flag = 1`
     let result = await con.query(sql)
     // console.log('!',result)
     return result;
 };
 
 exports.get_room_available = async (input) => {
-    let sql = `SELECT * 
-                FROM room AS r
-                WHERE r.shop_id = '${input.shop_id}' AND r.flag = 1`
+    let sql = ` SELECT r.* FROM room r
+                LEFT JOIN appointment a ON r.id = a.room_id
+                AND a.start_date <= '${input.datetime}'
+                AND a.end_date >= '${input.datetime}'
+                AND a.status not in ('Cancelled','Complete')
+                WHERE a.start_date IS NULL and r.shop_id = ${input.shop_id} and r.flag = 1`
     let result = await con.query(sql)
     // console.log('!',result)
     return result;

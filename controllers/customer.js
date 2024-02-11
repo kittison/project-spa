@@ -5,6 +5,7 @@ exports.getMain = (req, res) => {
         // session_user_id:req.session.user_id,
         // session_user:req.session.user,
         session_role:"customer",
-        header:"Customer"
+        header:"Customer",
+        image:"/images/bg-01.jpg"
     });
 };
