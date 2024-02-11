@@ -84,5 +84,5 @@ exports.vertify_ensure_password = async (req, res) => {
 
 exports.logout = (req, res) => {
     req.session.destroy(function(err){});
-    res.redirect('/');
+    res.redirect('/admin');
 };
