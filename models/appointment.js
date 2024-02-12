@@ -36,9 +36,10 @@ exports.get_appt_vip = async () => {
 };
 
 exports.insert_appt = async (input) => {
-    let sql = ` INSERT INTO customer( f_name, l_name, gender, address, tel, email, cus_type, member_point, is_member, is_walkin, flag) 
-                VALUES ("${input.f_name}", "${input.l_name}", "${input.gender}", "${input.address}", "${input.tel}", "${input.email}",
-                "${input.type}", ${parseInt(input.point)}, 0, 0, 1);`
+    let sql = ` INSERT INTO appointment( start_date, end_date, cust_id, serv_id, emp_id, room_id, shop_id, vip_id, status, is_vip,
+                is_confirmed, flag) 
+                VALUES ("${input.start_date}", "${input.end_date}", ${input.cust_id}, ${input.serv_id}, ${input.emp_id}, 
+                ${input.room_id}, ${input.shop_id}, NULL, "Scheduled", 0, 0, 1);`
     let result = await con.query(sql)
 };
 exports.update_appt = async (input) => {

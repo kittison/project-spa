@@ -18,17 +18,17 @@
     </div>
 
     <div class="d-flex justify-content-center pt-2" >
-        <form class="card card-body w-100">
+        <form class="card card-body w-100" id="make_appointment" action="make_appointment/add" method="post">
             <div class="form-group row">
                 <label class="col-sm-2 col-form-label">ชื่อ:</label>
                 <div class="col-sm-10">
-                    <input type="text" class="form-control" id="fname" name="fname" placeholder="ชื่อ">
+                    <input type="text" class="form-control" id="fname" name="f_name" placeholder="ชื่อ">
                 </div>
             </div>
             <div class="form-group row">
                 <label class="col-sm-2 col-form-label">นามสกุล:</label>
                 <div class="col-sm-10">
-                    <input type="text" class="form-control" id="lname" name="lname" placeholder="นามสกุล">
+                    <input type="text" class="form-control" id="lname" name="l_name" placeholder="นามสกุล">
                 </div>
             </div>
             <div class="form-group row">
@@ -58,18 +58,18 @@
             <div class="form-group row">
                 <label class="col-sm-2 col-form-label">วัน เวลา:</label>
                 <div class="col-sm-10">
-                    <input type="datetime-local" class="form-control" id="datetime" name="datetime" value="<%= datetime %>" step="60"
+                    <input type="datetime-local" class="form-control" id="start_date" name="start_date" step="60"
                     onchange="{selectDatetime(this.value)}">
                 </div>
             </div>
             <div class="form-group row">
                 <label class="col-sm-2 col-form-label">บริการ:</label>
                 <div class="col-sm-10">
-                    <select class="form-control" id="service" name="service" value="" disabled onchange="selectService(this.value)">
+                    <select class="form-control" id="serv_data" name="serv_data" value="" disabled>
                         <% if(data_service.length > 0) {%>
                             <option value="" disabled selected>เลือกบริการ</option>
                             <% for(i of data_service){%> 
-                                <option  id="service_<%=i.id%>" value="<%=i.id%>"><%=i.name%> - <%=i.time%> นาที - <%=i.price%> บาท</option>
+                                <option  id="service_<%=i.id%>" value="<%=i.id%>_<%=i.time%>"><%=i.name%> - <%=i.time%> นาที - <%=i.price%> บาท</option>
                             <%} %> 
                         <% } else{%>  
                             <option value="" disabled selected>ไม่พบข้อมูล</option>
@@ -80,7 +80,7 @@
             <div class="form-group row">
                 <label class="col-sm-2 col-form-label">ร้าน:</label>
                 <div class="col-sm-10">
-                    <select class="form-control" id="shop" name="shop" value="" disabled onchange="selectShop(this.value)">
+                    <select class="form-control" id="shop_id" name="shop_id" value="" disabled onchange="selectShop(this.value)">
                         <% if(data_shop.length > 0) {%>
                             <option value="" disabled selected>เลือกร้าน</option>
                             <% for(i of data_shop){%> 
@@ -95,7 +95,7 @@
             <div class="form-group row">
                 <label class="col-sm-2 col-form-label">พนักงาน:</label>
                 <div class="col-sm-10">
-                    <select class="form-control" id="employee" name="employee" value="" disabled onchange="selectService(this.value)">
+                    <select class="form-control" id="emp_id" name="emp_id" value="" disabled>
                         <% if(data_employee.length > 0) {%>
                             <option value="" disabled selected>เลือกพนักงาน</option>
                             <% for(i of data_employee){%> 
@@ -110,7 +110,7 @@
             <div class="form-group row">
                 <label class="col-sm-2 col-form-label">ห้อง:</label>
                 <div class="col-sm-10">
-                    <select class="form-control" id="room" name="room" value="" disabled onchange="selectService(this.value)">
+                    <select class="form-control" id="room_id" name="room_id" value="" disabled>
                         <% if(data_room.length > 0) {%>
                             <option value="" disabled selected>เลือกห้อง</option>
                             <% for(i of data_room){%> 
@@ -124,7 +124,7 @@
             </div>
             <div class="form-group row pt-2">
                 <div class="col-sm-12">
-                    <button  class="btn btn-primary w-100" style="padding: 10px;"
+                    <button type="submit" class="btn btn-primary w-100" style="padding: 10px;"
                         onclick="return vali('add')">ยืนยันการนัดหมาย
                     </button>
                 </div>
@@ -155,92 +155,89 @@
 
     function getServiceData(datetime, shop_id) {
         // console.log(datetime, shop_id)
-        // axios({
-        //     url:'/services/get_employee_room_available',
-        //     method:'get',
-        //     params:{
-        //         datetime:datetime,
-        //         shop_id:shop_id,
-        //     },
-        //     timeout:3000
-        // }).then((result)=>{
-        //     console.log(result.data)
-        //     if( result.data.status == 1){
-        //         $(form_id).submit();
-        //     }else{
-        //         toastr.error(error_text)
-        //     }
-        // }).catch(()=>{
-        //     toastr.error("404 Error Not Found")
-        // });
-        // return [], []
+        axios({
+            url:'/services/get_employee_room_available',
+            method:'get',
+            params:{
+                datetime:datetime,
+                shop_id:shop_id,
+            },
+            timeout:3000
+        }).then((result)=>{
+            // console.log(result.data)
+            let employees = result.data.employees;
+            let rooms = result.data.rooms;
+            // console.log(employees,rooms);
+            const selectEmployee = document.getElementById('emp_id');
+            const selectRoom = document.getElementById('room_id');
+
+            // Clear the existing options of the select
+            selectEmployee.innerHTML = '';
+            selectRoom.innerHTML = '';
+
+            if (employees.length > 0) {
+                const optionElement = document.createElement('option');
+                optionElement.text = `เลือกพนักงาน`;
+                optionElement.disabled = true;
+                optionElement.selected = true;
+                selectEmployee.appendChild(optionElement);
+                employees.forEach(item => {
+                    const optionElement = document.createElement('option');
+                    optionElement.value = item.id;
+                    optionElement.text = `${item.f_name} ${item.l_name}`;
+                    selectEmployee.appendChild(optionElement);
+                });
+            }
+            else{
+                selectEmployee.disabled = true;
+                const optionElement = document.createElement('option');
+                optionElement.text = `ไม่พบข้อมูล`;
+                selectEmployee.appendChild(optionElement);
+            }
+            if (rooms.length > 0) {
+                const optionElement = document.createElement('option');
+                optionElement.text = `เลือกห้อง`;
+                optionElement.disabled = true;
+                optionElement.selected = true;
+                selectRoom.appendChild(optionElement);
+                rooms.forEach(item => {
+                    const optionElement = document.createElement('option');
+                    optionElement.value = item.id;
+                    optionElement.text = `${item.name}`;
+                    selectRoom.appendChild(optionElement);
+                });
+            }
+            else{
+                selectRoom.disabled = true
+                const optionElement = document.createElement('option');
+                optionElement.text = `ไม่พบข้อมูล`;
+                selectRoom.appendChild(optionElement);
+            }
+        }).catch(()=>{
+            toastr.error("404 Error Not Found")
+        });
     }
 </script>
 
 <script>
     function selectDatetime(value){
-        document.getElementById('service').removeAttribute("disabled");
-        document.getElementById('shop').removeAttribute("disabled");
+        document.getElementById('serv_data').removeAttribute("disabled");
+        document.getElementById('shop_id').removeAttribute("disabled");
         checkAvailable()
     }
 
     function selectShop(value){
-        document.getElementById('employee').removeAttribute("disabled");
-        document.getElementById('room').removeAttribute("disabled");
+        document.getElementById('emp_id').removeAttribute("disabled");
+        document.getElementById('room_id').removeAttribute("disabled");
         checkAvailable()
     }
 
-    function selectService(value){
-        console.log(value);
-    }
-
     function checkAvailable(){
-        let datetime = $("input[name=datetime]").val();
-        let shop = $("select[name=shop]").val();
+        let datetime = $("input[name=start_date]").val();
+        let shop = $("select[name=shop_id]").val();
         console.log(datetime,shop);
         if (datetime && shop){
-            getServiceData(datetime,shop)
-        }
-    }
-
-    function select(){
-        const selectedOption = document.querySelector("select[name=data_add_reuse] option:checked");
-        $("input[name=prod_id]").val(selectedOption.getAttribute("data-id"));
-        $("input[name=stock]").val(selectedOption.getAttribute("data-id"));
-        $("input[name=can_used]").val(selectedOption.getAttribute("data-used"));
-    }
-
-    function update(mode,data){
-        data = JSON.parse(data)
-        if (mode === "add"){
-            $("input[name=Iid]").val(data.id);
-            $("input[name=Iname]").val(data.name);
-            $("input[name=Itype]").val(data.type);
-            $("input[name=Istock]").val(data.stock);
-            $("input[name=Iamount]").val(0);
-        }
-        else if (mode === "remove"){
-            $("input[name=Did]").val(data.id);
-            $("input[name=Dname]").val(data.name);
-            $("input[name=Dtype]").val(data.type);
-            $("input[name=Dstock]").val(data.stock);
-            $("input[name=Damount]").val(0);
-        }
-        else if (mode === "update_reuse"){
-            $("input[name=Uid]").val(data.id);
-            $("input[name=Uprod_id]").val(data.prod_id);
-            $("input[name=Uprod_name]").val(data.prod_name);
-            $("input[name=Uprod_type]").val(data.type_name);
-            $("input[name=Umax_used]").val(data.max_used);
-            $("input[name=Uremaining]").val(data.remaining);
-            $("input[name=Uremaining_backup]").val(data.remaining);
-        }
-    }
-    
-    function del(id){
-        $("input[name=id_del_reuse]").val(parseInt(id))
-        if(confirm("ยืนยันการลบข้อมูล") == true){
-            $("#delete_reuse").submit();
+            getServiceData(datetime,shop);
         }
     }
 
@@ -249,47 +246,24 @@
             Mode insert , update 
         */
         // (document.querySelector("input[name=Fname]").innerText).trim()
-        if(mode === "add_stock"){
-            let amount = parseInt(($("input[name=Iamount]").val()));
-            if( amount > 0){
-                $("#mange_add_stock").submit();
-                
+        if(mode === "add"){
+            let f_name = $("input[name=fname]").val();
+            let l_name = $("input[name=lname]").val();
+            let gender = $("input[name=gender]").val();
+            let address = $("input[name=address]").val();
+            let tel = $("input[name=tel]").val();
+            let email = $("input[name=email]").val();
+            let datetime = $("input[name=start_date]").val();
+            let serv_id = $("select[name=serv_data]").val();
+            let shop_id = $("select[name=shop_id]").val();
+            let emp_id = $("select[name=emp_id]").val();
+            let room_id = $("select[name=room_id]").val();
+            if( f_name !== "" && l_name !== "" && gender !== "" && address !== "" && tel !== "" && email !== "" && 
+                datetime !== "" && serv_id !== "" && shop_id !== "" && emp_id !== "" && room_id !== ""
+            ){
+                $("#make_appointment").submit();
             }else{
-                toastr.error("จำนวนต้องมากกว่า 0")
-            }
-            return false;
-        }else if(mode === "remove_stock"){
-            let stock = parseInt(($("input[name=Dstock]").val()));
-            let amount = parseInt(($("input[name=Damount]").val()));
-            // console.log(stock,amount)
-            if( amount > 0 && amount <= stock){
-                $("#mange_remove_stock").submit();
-            }else{
-                toastr.error(`จำนวนต้องมากกว่า 0 และ ไม่เกิน ${stock}`)
-            }
-            return false;
-        }else if (mode === "add_reuse"){
-            let prod_id = parseInt(($("input[name=prod_id]").val()));
-            let stock = parseInt(($("input[name=stock]").val()));
-            let can_used = parseInt(($("input[name=can_used]").val()));
-            if( prod_id !== undefined, prod_id !== undefined, prod_id !== undefined){
-                $("#mange_add_reuse").submit();
-            }else{
-                toastr.error(`! กรุณาเลือกสินค้า`)
-            }
-            return false;
-        }else if (mode === "update_reuse"){
-            let max_used = parseInt(($("input[name=Umax_used]").val()));
-            let remaining = parseInt(($("input[name=Uremaining]").val()));
-            let remaining_backup = parseInt(($("input[name=Uremaining_backup]").val()));
-            if( remaining === remaining_backup){
-                $("#modal-update-reuse").modal("hide")
-            }
-            else if( remaining !== "" && remaining >= 0 && remaining <= max_used){
-                $("#mange_update_reuse").submit();
-            }
-            else{
-                toastr.error(`จำนวนต้องไม่น้อยกว่า 0 และไม่เกิน ${max_used}`)
+                toastr.error("กรุณากรอก/เลือกข้อมูลให้ครบถ้วน")
             }
             return false;
         }

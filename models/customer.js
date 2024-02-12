@@ -17,6 +17,7 @@ exports.insert_cust = async (input) => {
                 VALUES ("${input.f_name}", "${input.l_name}", "${input.gender}", "${input.address}", "${input.tel}", "${input.email}",
                 "${input.type}", ${parseInt(input.point)}, 0, 0, 1);`
     let result = await con.query(sql)
+    return result.insertId
 };
 exports.update_cust = async (input) => {
     let sql = ` UPDATE customer SET f_name=  "${input.Uf_name}", l_name= "${input.Ul_name}", gender= "${input.Ugender}",
@@ -71,6 +72,13 @@ exports.get_cust_vip = async (input) => {
                 JOIN customer as c on v.cust_id = c.id 
                 JOIN service_course as sc on v.serv_course_id = sc.id
                 where c.id = '${input.id}' and v.flag = 1 and c.flag = 1`
+    let result = await con.query(sql)
+    return result;
+};
+
+exports.search_cust = async (input) => {
+    let sql = ` SELECT * FROM customer where f_name = '${input.f_name}' and l_name = '${input.l_name}' and gender = '${input.gender}' and 
+    address = '${input.address}' and tel = ${input.tel} and email = '${input.email}' and flag = 1`
     let result = await con.query(sql)
     return result;
 };

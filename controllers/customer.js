@@ -6,6 +6,6 @@ exports.getMain = (req, res) => {
         // session_user:req.session.user,
         session_role:"customer",
         header:"Customer",
-        image:"/images/bg-01.jpg"
+        images:["/images/bg-01.jpg","/images/1.jpg","/images/bg-02.jpg"]
     });
 };

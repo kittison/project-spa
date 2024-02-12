@@ -12,6 +12,8 @@ const rating_controller = require('../controllers/customer_controller/rating');
 router.get('/', customer_controller.getMain);
 
 router.get('/make_appointment', make_appointment_controller.Make_appointment);
+router.post('/make_appointment/:action', make_appointment_controller.setMakeAppointment);
+
 router.get('/manage_appointment', manage_appointment_controller.Manage_appointment);
 router.get('/buy_vip', buy_vip_controller.Buy_vip);
 router.get('/manage_vip', manage_vip_controller.Manage_vip);

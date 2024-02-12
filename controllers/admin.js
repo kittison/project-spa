@@ -7,7 +7,7 @@ exports.getAdmin = (req, res) => {
             session_user:req.session.user,
             session_role:req.session.role,
             header:"Admin",
-            image:"/images/bg-01.jpg"
+            images:["/images/bg-01.jpg","/images/1.jpg","/images/bg-02.jpg"]
         });
     }else{
         res.redirect('/login');
