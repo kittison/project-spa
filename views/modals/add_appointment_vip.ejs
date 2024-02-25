@@ -1,0 +1,101 @@
+<div class="modal fade" id="modal-add-vip">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header bg-purple">
+          <h4 class="modal-title ">เพิ่มการนัดหมายลูกค้า Vip</h4>
+          <button type="button " class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true" class="text-light">&times;</span>
+          </button>
+        </div>
+        <form id="<%=mode%>" action="manage_appointment/<%=mode%>" method="post">
+            <div class="modal-body">
+            <!-- ============================== Form ==============================-->
+                <input type="number" name="cust_id<%=keyword%>" class="d-none" value="">
+                <div class="form-group row">
+                    <label class="col-sm-2 col-form-label">ID บัตร</label>
+                    <div class="col-sm-10">
+                        <input type="number" class="form-control" id="vip_id" name="vip_id" min="1" readonly>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label class="col-sm-2 col-form-label">วัน เวลา:</label>
+                    <div class="col-sm-10">
+                        <input type="datetime-local" class="form-control" id="start_date<%=keyword%>" name="start_date<%=keyword%>" step="60"
+                        onchange="{selectDatetime('<%=mode%>','<%=keyword%>',this.value)}">
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label class="col-sm-2 col-form-label">บริการ:</label>
+                    <div class="col-sm-10">
+                        <select class="form-control" id="serv_data<%=keyword%>" name="serv_data<%=keyword%>" value="" disabled>
+                            <% if(db_service.length > 0) {%>
+                                <option value="" disabled selected>เลือกบริการ</option>
+                                <% for(i of db_service){%> 
+                                    <option  id="service<%=keyword%>_<%=i.serv_func_id%>" value="<%=i.serv_func_id%>_<%=i.time%>"><%=i.name%> - <%=i.time%> นาที - <%=i.price%> บาท</option>
+                                <%} %> 
+                            <% } else{%>  
+                                <option value="" disabled selected>ไม่พบข้อมูล</option>
+                            <%} %> 
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label class="col-sm-2 col-form-label">ร้าน:</label>
+                    <div class="col-sm-10">
+                        <select class="form-control" id="shop_id<%=keyword%>" name="shop_id<%=keyword%>" value="" disabled 
+                        onchange="selectShop('<%=mode%>','<%=keyword%>',this.value)">
+                            <% if(db_shop.length > 0) {%>
+                                <option value="" disabled selected>เลือกร้าน</option>
+                                <% for(i of db_shop){%> 
+                                    <option  id="shop<%=keyword%>_<%=i.id%>" value="<%=i.id%>"><%=i.shop_name%></option>
+                                <%} %> 
+                            <% } else{%>  
+                                <option value="" disabled selected>ไม่พบข้อมูล</option>
+                            <%} %> 
+                        </select>
+                    </div>
+                </div>
+               
+                <div class="form-group row">
+                    <label for="employee" class="col-sm-2 col-form-label">พนักงาน:</label>
+                    <div class="col-sm-10">
+                        <select class="form-control" id="emp_id<%=keyword%>" name="emp_id<%=keyword%>" value="" disabled>
+                            <% if(db_employee.length > 0) {%>
+                                <option value="" disabled selected>เลือกพนักงาน</option>
+                                <% for(i of db_employee){%> 
+                                    <option  id="employee<%=keyword%>_<%=i.id%>" value="<%=i.id%>"><%=i.name%></option>
+                                <%} %> 
+                            <% } else{%>  
+                                <option value="" disabled selected>ไม่พบข้อมูล</option>
+                            <%} %> 
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label for="room" class="col-sm-2 col-form-label">ห้อง:</label>
+                    <div class="col-sm-10">
+                        <select class="form-control" id="room_id<%=keyword%>" name="room_id<%=keyword%>" value="" disabled>
+                            <% if(db_room.length > 0) {%>
+                                <option value="" disabled selected>เลือกห้อง</option>
+                                <% for(i of db_room){%> 
+                                    <option  id="room<%=keyword%>_<%=i.id%>" value="<%=i.id%>"><%=i.name%></option>
+                                <%} %> 
+                            <% } else{%>  
+                                <option value="" disabled selected>ไม่พบข้อมูล</option>
+                            <%} %> 
+                        </select>
+                    </div>
+                </div>
+
+            </div>
+            
+            <div class="modal-footer justify-content-between">
+                <button type="button" class="btn btn-default" data-dismiss="modal">ยกเลิก</button>
+                <button type="submit" class="btn btn-primary" onclick="return vali('<%=mode%>')">ยืนยัน</button>
+            </div>
+
+        </form>
+
+      </div>
+    </div>
+</div>

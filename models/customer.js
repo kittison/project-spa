@@ -82,3 +82,8 @@ exports.search_cust = async (input) => {
     let result = await con.query(sql)
     return result;
 };
+
+exports.setIsService = async (input) => {
+    let sql = ` UPDATE customer SET is_service=  "${input.is_service}" WHERE id = ${input.cust_id} `
+    let result = await con.query(sql)
+};

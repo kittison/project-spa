@@ -1,0 +1,168 @@
+<style>
+    .container-fluid {
+        padding: 12px;
+    }
+
+    .modal-body {
+        padding-left: 30px;
+        padding-right: 30px;
+    }
+
+    .modal-footer {
+        padding-left: 30px;
+        padding-right: 30px;
+    }
+
+    .form-control {
+        background-color: rgba(175, 175, 175, 0.3);
+    }
+
+    td.alert {
+        border-radius: 0%;
+        border-color: black; 
+        color: red;
+        
+    }
+
+</style>
+
+<div class="container-fluid">
+    
+    
+    <div class="d-flex justify-content-center">
+        <div class="">
+            <div class="card card-body text-center" style="padding-left: 40px; padding-right: 40px;">
+                <h3>ระบบออกรายงานข้อมูล</h3>
+            </div>
+            <div class="text-center" style="padding-left: 40px; padding-right: 40px;">
+                <button class="btn btn-success btn-lg" onclick="goto('used_service')">การใช้บริการ</button>
+                <button class="btn btn-success btn-lg" onclick="goto('used_product')">การใช้สินค้า</button>
+                <button class="btn btn-success btn-lg" onclick="goto('used_product_reuse')">การใช้สินค้าใช้ได้หลายครั้ง</button>
+                <button class="btn btn-success btn-lg" onclick="goto('work_employee')">ค่าแรงพนักงาน</button>
+                <button class="btn btn-success btn-lg" onclick="goto('summary_sale')">สรุปการขาย</button>
+            </div>
+            
+        </div>
+    </div>
+
+    <% if (mode && key && value && data && file) {%>
+        <div class="d-flex justify-content-center">
+            <div class="">
+                <div class="text-center" style="padding: 10px; padding-top: 20px;">
+                    <h3>
+                        <% if (mode=="used_service") {%>
+                            รายงานข้อมูลการใช้บริการ
+                        <% } else if (mode=="used_product") {%>
+                            รายงานข้อมูลการใช้สินค้า
+                        <% } else if (mode=="used_product_reuse") {%>
+                            รายงานข้อมูลการใช้สินค้าใช้ได้หลายครั้ง
+                        <% } else if (mode=="work_employee") {%>
+                            รายงานข้อมูลค่าแรงพนักงาน
+                        <% } else if (mode=="summary_sale") {%>
+                            รายงานสรุปข้อมูลการขาย
+                        <% }%>
+                    </h3>
+                </div>
+            </div>
+        </div>
+
+        <div class="d-flex flex-warp justify-content-center w-100" style="gap: 20px;">
+            <% if (["used_service","used_product","used_product_reuse","work_employee"].includes(mode)) {%>
+                <div>
+                    <label >รายวัน:</label>
+                    <input type="date" id="dateInput" min="2023-01-01" title="เลือกวัน" value="<%=value%>"/>
+                    <button class="btn-primary" onclick="getDate('<%=mode%>')">เรียกรายงาน</button>
+                </div>
+                <div>
+                    <label >รายสัปดาห์:</label>
+                    <input type="week" id="weekInput" min="2023-W1" title="เลือกสัปดาห์" value="<%=value%>"/>
+                    <button class="btn-primary" onclick="getWeekRange('<%=mode%>')">เรียกรายงาน</button>
+                </div>
+                <div>
+                    <label >รายเดือน:</label>
+                    <input type="month" id="monthInput" min="2023-01" title="เลือกเดือน" value="<%=value%>"/>
+                    <button class="btn-primary" onclick="getMonthRange('<%=mode%>')">เรียกรายงาน</button>
+                </div>
+            <% } else if (["summary_sale"].includes(mode)) {%>
+                <div>
+                    <% let split_date = value.split('_')%>
+                    <label >เริ่มต้น:</label>
+                    <input type="date" id="dateStartInput" min="2023-01-01" title="เลือกวันเริ่มต้น" value="<%=split_date[0]%>"/>
+                    <label >ถึง</label>
+                    <input type="date" id="dateEndInput" min="2023-01-01" title="เลือกวันสิ้นสุด" value="<%=split_date[1]%>"/>
+                    <button class="btn-primary" onclick="getDateRange('<%=mode%>')">เรียกรายงาน</button>
+                </div>
+            <% }%>
+        </div>
+
+        <% if (mode=="used_service") {%>
+            <%- include('./display_report_service',{value:value,data:data}); %>
+        <% } else if (mode=="used_product") {%>
+            <%- include('./display_report_product',{value:value,data:data}); %>
+        <% } else if (mode=="used_product_reuse") {%>
+            <%- include('./display_report_product_reuse',{value:value,data:data}); %>
+        <% } else if (mode=="work_employee") {%>
+            <%- include('./display_report_work_employee',{value:value,data:data}); %>
+        <% } else if (mode=="summary_sale") {%>
+            <%- include('./display_report_summary_sale',{value:value,data:data}); %>
+        <% }%>
+        <div class="text-center w-100">
+            <button class="btn btn-primary btn-lg" onclick="save('<%=mode%>','<%=key%>','<%=value%>')">บันทึก</button>
+        </div>
+        
+    <% }%>
+    
+
+</div>
+
+<script>
+
+    function goto(mode) {
+        window.location = `./manage_report?mode=${mode}`
+    }
+
+    function getDate(mode) {
+        var dateInput = document.getElementById("dateInput").value;
+        // console.log(dateInput) // 2024-02-20
+        if (dateInput != ""){
+            window.location = `./manage_report?mode=${mode}&daily=${dateInput}`
+        }
+    }
+
+    function getWeekRange(mode) {
+        var weekInput = document.getElementById("weekInput").value;
+        // console.log(weekInput) // 2024-w08
+        if (weekInput != ""){
+            window.location = `./manage_report?mode=${mode}&weekly=${weekInput}`
+        }
+    }
+
+    function getMonthRange(mode) {
+        var monthInput = document.getElementById("monthInput").value;
+        // console.log(monthInput) // 2024-02
+        if (monthInput != ""){
+            window.location = `./manage_report?mode=${mode}&monthly=${monthInput}`
+        }
+    }
+
+    function getDateRange(mode) {
+        var dateStartInput = document.getElementById("dateStartInput").value;
+        var dateEndInput = document.getElementById("dateEndInput").value;
+        // console.log(dateStartInput) // 2024-02-20
+        if (dateStartInput != "" && dateEndInput != ""){
+            window.location = `./manage_report?mode=${mode}&range_date=${dateStartInput}_${dateEndInput}`
+        }
+    }
+
+    function save(mode,key,value){
+        window.location = `./export_report?mode=${mode}&${key}=${value}`;
+    }
+  
+</script>
+
+<!-- ============================= ERROR Zone =============================-->
+<!-- toastr.success('Lorem ipsum dolor sit amet, consetetur sadipscing elitr.')
+toastr.info('Lorem ipsum dolor sit amet, consetetur sadipscing elitr.')
+toastr.error('Lorem ipsum dolor sit amet, consetetur sadipscing elitr.')
+toastr.warning('Lorem ipsum dolor sit amet, consetetur sadipscing elitr.') -->
+<!-- ============================= ERROR Zone =============================-->

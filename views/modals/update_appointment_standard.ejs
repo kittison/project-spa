@@ -1,0 +1,84 @@
+<div class="modal fade" id="modal-update-standard">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header bg-purple">
+          <h4 class="modal-title ">แก้ไขข้อมูลนัดหมายลูกค้า</h4>
+          <button type="button " class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true" class="text-light">&times;</span>
+          </button>
+        </div>
+
+        <form id="<%=mode%>" action="manage_appointment/<%=mode%>" method="post">
+            <div class="modal-body">
+            <!-- ============================== Form ==============================-->
+            <div class="form-group row">
+                <label for="datetime" class="col-sm-2 col-form-label">วัน เวลา:</label>
+                <div class="col-sm-10">
+                    <input type="datetime-local" class="form-control" id="Ustart_date<%=keyword%>" name="Ustart_date<%=keyword%>" step="60" 
+                    onchange="checkAvailable4update('<%=mode%>','<%=keyword%>')">
+                </div>
+            </div>
+            <div class="form-group row">
+                <label class="col-sm-2 col-form-label">บริการ:</label>
+                <div class="col-sm-10">
+                    <select class="form-control" id="Userv_data<%=keyword%>" name="Userv_data<%=keyword%>" value="">
+                        <% if(db_service.length > 0) {%>
+                            <option value="" disabled selected>เลือกบริการ</option>
+                            <% for(i of db_service){%> 
+                                <option  id="Userv<%=keyword%>_<%=i.id%>" value="<%=i.id%>_<%=i.time%>"><%=i.name%> - <%=i.time%> นาที - <%=i.price%> บาท</option>
+                            <%} %> 
+                        <% } else{%>  
+                            <option value="" disabled selected>ไม่พบข้อมูล</option>
+                        <%} %>
+                    </select>
+                </div>
+            </div>
+            <div class="form-group row">
+                <label class="col-sm-2 col-form-label">ร้าน:</label>
+                <div class="col-sm-10">
+                    <select class="form-control" id="Ushop_id<%=keyword%>" name="Ushop_id<%=keyword%>" value="" 
+                    onchange="checkAvailable4update('<%=mode%>','<%=keyword%>')">
+                        <% if(db_shop.length > 0) {%>
+                            <option value="" disabled selected>เลือกร้าน</option>
+                            <% for(i of db_shop){%> 
+                                <option  id="Ushop<%=keyword%>_<%=i.id%>" value="<%=i.id%>"><%=i.shop_name%></option>
+                            <%} %> 
+                        <% } else{%>  
+                            <option value="" disabled selected>ไม่พบข้อมูล</option>
+                        <%} %> 
+                    </select>
+                </div>
+            </div>
+            <div class="form-group row">
+                <label for="employee" class="col-sm-2 col-form-label">พนักงาน:</label>
+                <div class="col-sm-10">
+                    <select class="form-control" id="Uemp_id<%=keyword%>" name="Uemp_id<%=keyword%>"></select>
+                </div>
+            </div>
+            <div class="form-group row">
+                <label for="room" class="col-sm-2 col-form-label">ห้อง:</label>
+                <div class="col-sm-10">
+                    <select class="form-control" id="Uroom_id<%=keyword%>" name="Uroom_id<%=keyword%>" value="" ></select>
+                </div>
+            </div>
+            <div class="form-group row">
+                <label class="col-sm-2 col-form-label">การยืนยัน:</label>
+                <div class="col-sm-10">
+                    <select class="form-control" id="Uconfirmed<%=keyword%>" name="Uconfirmed<%=keyword%>" value="">
+                        <option id="Uconfirmed<%=keyword%>_0" value="0">-</option>
+                        <option id="Uconfirmed<%=keyword%>_1" value="1">Confirmed</option>
+                    </select>
+                </div>
+            </div>
+            <input type="number" name="id_update<%=keyword%>" class="d-none" value="">
+            </div>
+
+            <div class="modal-footer justify-content-between">
+                <button type="button" class="btn btn-default" data-dismiss="modal">ยกเลิก</button>
+                <button type="submit" class="btn btn-primary" onclick="return vali('<%=mode%>')">ยืนยัน</button>
+            </div>
+
+        </form>
+      </div>
+    </div>
+</div>

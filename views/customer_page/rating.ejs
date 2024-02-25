@@ -31,7 +31,7 @@
     }
     .rate:not(:checked) > input {
         position:absolute;
-        top:-9999px;
+        clip:rect(0,0,0,0);
     }
     .rate:not(:checked) > label {
         float:right;
@@ -60,6 +60,32 @@
         color: #c59b08;
     }
 
+    .show {
+        float: left;
+        height: 46px;
+        padding: 0 10px;
+    }
+    .show:not(:checked) > input {
+        position:absolute;
+        clip:rect(0,0,0,0);
+    }
+    .show:not(:checked) > label {
+        float:right;
+        width:1em;
+        overflow:hidden;
+        white-space:nowrap;
+        cursor:pointer;
+        font-size:30px;
+        color:#ccc;
+    }
+    .show:not(:checked) > label:before {
+        content: '★ ';
+    }
+    .show > input:checked ~ label {
+        color: #ffc700;    
+    }
+
+
 </style>
 
 <div class="container-fluid">
@@ -74,37 +100,103 @@
     </div>
 
     <div class="d-flex justify-content-center pt-2" >
-        <form class="w-100" id="make_appointment" action="make_appointment_vip" method="post">
+        <div class="w-100">
             <div class="card card-body w-100">
                 <div class="form-group row">
                     <label class="col-sm-2 col-form-label d-flex justify-content-end">หมายเลขใบเสร็จ:</label>
                     <div class="col-sm-8 ">
-                        <input type="text" class="form-control" id="vip" name="vip" placeholder="หมายเลขใบเสร็จ">
+                        <input type="text" class="form-control" id="code" name="code" placeholder="หมายเลขใบเสร็จ"
+                        value="<%= search_sale%>">
                     </div>
                     <div class="col-sm-2 ">
-                        <button type="button" class="btn btn-info" onclick="return checkCode()">ตรวจสอบ</button>
+                        <button type="button" class="btn btn-info" onclick="search()">ตรวจสอบ</button>
                     </div>
                 </div>
             </div>
+            <% if (data_sale.length> 0) {%>
             <div class="card card-body w-100">
                 <div class="form-group row">
                     <label class="col-sm-2 col-form-label">หมายเลขใบเสร็จ:</label>
-                    <label id="vip" name="vip" class="col-sm-9 col-form-label">หมายเลขใบเสร็จ</label>
+                    <label id="vip" name="vip" class="col-sm-9 col-form-label"><%= data_sale[0].id%></label>
+                    <input type="number" name="sale_id" class="d-none" value="<%= data_sale[0].id%>">
                 </div>
+                <% if (data_sale[0].serv_rating && data_sale[0].emp_rating && data_sale[0].room_rating) {%>
+                <div class="form-group row">
+                    <label class="col-sm-2 col-form-label">บริการที่ซื้อ:</label>
+                    <div class="col-sm-10">
+                        <div class="show">
+                            <input type="number" name="show_serv" class="d-none" value="<%= data_sale[0].serv_rating%>">
+                            <input type="radio" id="star5_4" name="show_1" value="5" disabled/>
+                            <label for="star5_4" title="text">5 stars</label>
+                            <input type="radio" id="star4_4" name="show_1" value="4" disabled/>
+                            <label for="star4_4" title="text">4 stars</label>
+                            <input type="radio" id="star3_4" name="show_1" value="3" disabled/>
+                            <label for="star3_4" title="text">3 stars</label>
+                            <input type="radio" id="star2_4" name="show_1" value="2" disabled/>
+                            <label for="star2_4" title="text">2 stars</label>
+                            <input type="radio" id="star1_4" name="show_1" value="1" disabled/>
+                            <label for="star1_4" title="text">1 star</label>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label class="col-sm-2 col-form-label">ผู้ให้บริการ:</label>
+                    <div class="col-sm-10">
+                        <div class="show">
+                            <input type="number" name="show_emp" class="d-none" value="<%= data_sale[0].emp_rating%>">
+                            <input type="radio" id="star5_5" name="show_2" value="5" disabled/>
+                            <label for="star5_5" title="text">5 stars</label>
+                            <input type="radio" id="star4_5" name="show_2" value="4" disabled/>
+                            <label for="star4_5" title="text">4 stars</label>
+                            <input type="radio" id="star3_5" name="show_2" value="3" disabled/>
+                            <label for="star3_5" title="text">3 stars</label>
+                            <input type="radio" id="star2_5" name="show_2" value="2" disabled/>
+                            <label for="star2_5" title="text">2 stars</label>
+                            <input type="radio" id="star1_5" name="show_2" value="1" disabled/>
+                            <label for="star1_5" title="text">1 star</label>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label class="col-sm-2 col-form-label">ห้องที่ให้บริการ:</label>
+                    <div class="col-sm-10">
+                        <div class="show">
+                            <input type="number" name="show_room" class="d-none" value="<%= data_sale[0].room_rating%>">
+                            <input type="radio" id="star5_6" name="show_3" value="5" disabled/>
+                            <label for="star5_6" title="text">5 stars</label>
+                            <input type="radio" id="star4_6" name="show_3" value="4" disabled/>
+                            <label for="star4_6" title="text">4 stars</label>
+                            <input type="radio" id="star3_6" name="show_3" value="3" disabled/>
+                            <label for="star3_6" title="text">3 stars</label>
+                            <input type="radio" id="star2_6" name="show_3" value="2" disabled/>
+                            <label for="star2_6" title="text">2 stars</label>
+                            <input type="radio" id="star1_6" name="show_3" value="1" disabled/>
+                            <label for="star1_6" title="text">1 star</label>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label class="col-sm-2 col-form-label">ข้อเสนอแนะ:</label>
+                    <div class="col-sm-10 ">
+                        <textarea id="show_comment" name="show_comment" rows="5" cols="40" maxlength="200" readonly><%= data_sale[0].comment%></textarea>
+                    </div>
+                </div>
+                <% } else {%>
                 <div class="form-group row">
                     <label class="col-sm-2 col-form-label">บริการที่ซื้อ:</label>
                     <div class="col-sm-10">
                         <div class="rate">
-                            <input type="radio" id="star5" name="rate" value="5" />
-                            <label for="star5" title="text">5 stars</label>
-                            <input type="radio" id="star4" name="rate" value="4" />
-                            <label for="star4" title="text">4 stars</label>
-                            <input type="radio" id="star3" name="rate" value="3" />
-                            <label for="star3" title="text">3 stars</label>
-                            <input type="radio" id="star2" name="rate" value="2" />
-                            <label for="star2" title="text">2 stars</label>
-                            <input type="radio" id="star1" name="rate" value="1" />
-                            <label for="star1" title="text">1 star</label>
+                            <input type="number" name="rate_serv" class="d-none" >
+                            <input type="radio" id="star5_1" name="rate_1" value="5" onchange="rate('serv',value)"/>
+                            <label for="star5_1" title="text">5 stars</label>
+                            <input type="radio" id="star4_1" name="rate_1" value="4" onchange="rate('serv',value)"/>
+                            <label for="star4_1" title="text">4 stars</label>
+                            <input type="radio" id="star3_1" name="rate_1" value="3" onchange="rate('serv',value)"/>
+                            <label for="star3_1" title="text">3 stars</label>
+                            <input type="radio" id="star2_1" name="rate_1" value="2" onchange="rate('serv',value)"/>
+                            <label for="star2_1" title="text">2 stars</label>
+                            <input type="radio" id="star1_1" name="rate_1" value="1" onchange="rate('serv',value)"/>
+                            <label for="star1_1" title="text">1 star</label>
                         </div>
                     </div>
                 </div>
@@ -112,16 +204,17 @@
                     <label class="col-sm-2 col-form-label">ผู้ให้บริการ:</label>
                     <div class="col-sm-10">
                         <div class="rate">
-                            <input type="radio" id="star5" name="rate" value="5" />
-                            <label for="star5" title="text">5 stars</label>
-                            <input type="radio" id="star4" name="rate" value="4" />
-                            <label for="star4" title="text">4 stars</label>
-                            <input type="radio" id="star3" name="rate" value="3" />
-                            <label for="star3" title="text">3 stars</label>
-                            <input type="radio" id="star2" name="rate" value="2" />
-                            <label for="star2" title="text">2 stars</label>
-                            <input type="radio" id="star1" name="rate" value="1" />
-                            <label for="star1" title="text">1 star</label>
+                            <input type="number" name="rate_emp" class="d-none" >
+                            <input type="radio" id="star5_2" name="rate_2" value="5" onchange="rate('emp',value)"/>
+                            <label for="star5_2" title="text">5 stars</label>
+                            <input type="radio" id="star4_2" name="rate_2" value="4" onchange="rate('emp',value)"/>
+                            <label for="star4_2" title="text">4 stars</label>
+                            <input type="radio" id="star3_2" name="rate_2" value="3" onchange="rate('emp',value)"/>
+                            <label for="star3_2" title="text">3 stars</label>
+                            <input type="radio" id="star2_2" name="rate_2" value="2" onchange="rate('emp',value)"/>
+                            <label for="star2_2" title="text">2 stars</label>
+                            <input type="radio" id="star1_2" name="rate_2" value="1" onchange="rate('emp',value)"/>
+                            <label for="star1_2" title="text">1 star</label>
                         </div>
                     </div>
                 </div>
@@ -129,16 +222,17 @@
                     <label class="col-sm-2 col-form-label">ห้องที่ให้บริการ:</label>
                     <div class="col-sm-10">
                         <div class="rate">
-                            <input type="radio" id="star5" name="rate" value="5" />
-                            <label for="star5" title="text">5 stars</label>
-                            <input type="radio" id="star4" name="rate" value="4" />
-                            <label for="star4" title="text">4 stars</label>
-                            <input type="radio" id="star3" name="rate" value="3" />
-                            <label for="star3" title="text">3 stars</label>
-                            <input type="radio" id="star2" name="rate" value="2" />
-                            <label for="star2" title="text">2 stars</label>
-                            <input type="radio" id="star1" name="rate" value="1" />
-                            <label for="star1" title="text">1 star</label>
+                            <input type="number" name="rate_room" class="d-none" >
+                            <input type="radio" id="star5_3" name="rate_3" value="5" onchange="rate('room',value)"/>
+                            <label for="star5_3" title="text">5 stars</label>
+                            <input type="radio" id="star4_3" name="rate_3" value="4" onchange="rate('room',value)"/>
+                            <label for="star4_3" title="text">4 stars</label>
+                            <input type="radio" id="star3_3" name="rate_3" value="3" onchange="rate('room',value)"/>
+                            <label for="star3_3" title="text">3 stars</label>
+                            <input type="radio" id="star2_3" name="rate_3" value="2" onchange="rate('room',value)"/>
+                            <label for="star2_3" title="text">2 stars</label>
+                            <input type="radio" id="star1_3" name="rate_3" value="1" onchange="rate('room',value)"/>
+                            <label for="star1_3" title="text">1 star</label>
                         </div>
                     </div>
                 </div>
@@ -151,19 +245,28 @@
                 <div class="form-group row pt-2">
                     <div class="col-sm-12">
                         <button type="button" class="btn btn-info w-100" style="padding: 10px;"
-                            onclick="return ">ยืนยันการให้คะแนนความพึงพอใจ
+                            onclick="return vali('submit')">ยืนยันการให้คะแนนความพึงพอใจ
                         </button>
                     </div>
                 </div>
+                <% }%>
             </div>
-        
-        </form>
+            <% }%>
+        </div>
     </div>
 
 </div>
 
 <script src="/axios/axios.min.js"></script>
 <script>
+    let serv = $("input[name=show_serv]").val();
+    let emp = $("input[name=show_serv]").val();
+    let room = $("input[name=show_serv]").val();
+    if (serv && emp && room){
+        $(`input[id=star${serv}_4]`).attr("checked","true");
+        $(`input[id=star${emp}_5]`).attr("checked","true");
+        $(`input[id=star${room}_6]`).attr("checked","true");
+    }
     
     function axios_validation(url,params,form_id,error_text){
         axios({
@@ -181,136 +284,61 @@
             toastr.error("404 Error Not Found")
         });
     }
+
+    function submit_rating(sale_id, rate_serv, rate_emp, rate_room, comment){
+        axios({
+            url:'/rating/submit',
+            method:'post',
+            data:{
+                sale_id: sale_id,
+                rate_serv: rate_serv, 
+                rate_emp: rate_emp, 
+                rate_room: rate_room, 
+                comment: comment
+            },
+            timeout:3000
+        }).then((result)=>{
+            // console.log(result)
+            if (result.status==200){
+                window.location=`./rating?sale_id=${sale_id}`;
+            }else{
+                toastr.error(result.status)
+            }
+        })
+    }
 </script>
 
 <script>
-    $(function () {
-      $('#product_alert').DataTable({
-        "paging": true,
-        "lengthMenu": [[5, 10, 20], [5, 10, 20]],
-        "searching": true,
-        "ordering": true,
-        "info": true,
-        "autoWidth": false,
-        "responsive": true,
-      }); 
-    });
-
-    $(function () {
-      $('#product').DataTable({
-        "paging": true,
-        "lengthMenu": [[5, 10, 20], [5, 10, 20]],
-        "searching": true,
-        "ordering": true,
-        "info": true,
-        "autoWidth": false,
-        "responsive": true,
-      }); 
-    });
-
-    $(function () {
-      $('#product_reuse').DataTable({
-        "paging": true,
-        "lengthMenu": [[5, 10, 20], [5, 10, 20]],
-        "searching": true,
-        "ordering": true,
-        "info": true,
-        "autoWidth": false,
-        "responsive": true,
-      }); 
-    });
-
-    function select(){
-        const selectedOption = document.querySelector("select[name=data_add_reuse] option:checked");
-        $("input[name=prod_id]").val(selectedOption.getAttribute("data-id"));
-        $("input[name=stock]").val(selectedOption.getAttribute("data-id"));
-        $("input[name=can_used]").val(selectedOption.getAttribute("data-used"));
-    }
-
-    function update(mode,data){
-        data = JSON.parse(data)
-        if (mode === "add"){
-            $("input[name=Iid]").val(data.id);
-            $("input[name=Iname]").val(data.name);
-            $("input[name=Itype]").val(data.type);
-            $("input[name=Istock]").val(data.stock);
-            $("input[name=Iamount]").val(0);
-        }
-        else if (mode === "remove"){
-            $("input[name=Did]").val(data.id);
-            $("input[name=Dname]").val(data.name);
-            $("input[name=Dtype]").val(data.type);
-            $("input[name=Dstock]").val(data.stock);
-            $("input[name=Damount]").val(0);
-        }
-        else if (mode === "update_reuse"){
-            $("input[name=Uid]").val(data.id);
-            $("input[name=Uprod_id]").val(data.prod_id);
-            $("input[name=Uprod_name]").val(data.prod_name);
-            $("input[name=Uprod_type]").val(data.type_name);
-            $("input[name=Umax_used]").val(data.max_used);
-            $("input[name=Uremaining]").val(data.remaining);
-            $("input[name=Uremaining_backup]").val(data.remaining);
-        }
-    }
-    
-    function del(id){
-        $("input[name=id_del_reuse]").val(parseInt(id))
-        if(confirm("ยืนยันการลบข้อมูล") == true){
-            $("#delete_reuse").submit();
-        }
-    }
 
     function vali(mode){
         /*
             Mode insert , update 
         */
         // (document.querySelector("input[name=Fname]").innerText).trim()
-        if(mode === "add_stock"){
-            let amount = parseInt(($("input[name=Iamount]").val()));
-            if( amount > 0){
-                $("#mange_add_stock").submit();
-                
+        if(mode === "submit"){
+            let sale_id = $("input[name=sale_id]").val();
+            let rate_serv = $("input[name=rate_serv]").val();
+            let rate_emp = $("input[name=rate_emp]").val();
+            let rate_room = $("input[name=rate_room]").val();
+            let comment = $("textarea[name=comment]").val();
+            if( sale_id && rate_serv && rate_emp && rate_room){
+                submit_rating(sale_id, rate_serv, rate_emp, rate_room, comment);
             }else{
-                toastr.error("จำนวนต้องมากกว่า 0")
-            }
-            return false;
-        }else if(mode === "remove_stock"){
-            let stock = parseInt(($("input[name=Dstock]").val()));
-            let amount = parseInt(($("input[name=Damount]").val()));
-            // console.log(stock,amount)
-            if( amount > 0 && amount <= stock){
-                $("#mange_remove_stock").submit();
-            }else{
-                toastr.error(`จำนวนต้องมากกว่า 0 และ ไม่เกิน ${stock}`)
-            }
-            return false;
-        }else if (mode === "add_reuse"){
-            let prod_id = parseInt(($("input[name=prod_id]").val()));
-            let stock = parseInt(($("input[name=stock]").val()));
-            let can_used = parseInt(($("input[name=can_used]").val()));
-            if( prod_id !== undefined, prod_id !== undefined, prod_id !== undefined){
-                $("#mange_add_reuse").submit();
-            }else{
-                toastr.error(`! กรุณาเลือกสินค้า`)
-            }
-            return false;
-        }else if (mode === "update_reuse"){
-            let max_used = parseInt(($("input[name=Umax_used]").val()));
-            let remaining = parseInt(($("input[name=Uremaining]").val()));
-            let remaining_backup = parseInt(($("input[name=Uremaining_backup]").val()));
-            if( remaining === remaining_backup){
-                $("#modal-update-reuse").modal("hide")
-            }
-            else if( remaining !== "" && remaining >= 0 && remaining <= max_used){
-                $("#mange_update_reuse").submit();
-            }
-            else{
-                toastr.error(`จำนวนต้องไม่น้อยกว่า 0 และไม่เกิน ${max_used}`)
+                toastr.error("กรุณาลงคะแนนให้ครบถ้วน")
             }
             return false;
         }
-        
+    }
+
+    function search() {
+        let appt_id = $("input[name=code]").val();
+        if (appt_id!=""){
+            window.location = `../rating?sale_id=${appt_id}`;
+        }
+    }
+
+    function rate(mode,value) {
+        $(`input[name=rate_${mode}]`).val(parseInt(value));
     }
   
 </script>

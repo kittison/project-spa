@@ -1,0 +1,55 @@
+<!-- =================== Modal serve ===================-->
+<div class="modal fade" id="modal-serve">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header bg-purple">
+          <h4 class="modal-title ">เริ่มดำเนินการบริการ</h4>
+          <button type="button " class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true" class="text-light">&times;</span>
+          </button>
+        </div>
+
+        <form id="serve" action="manage_appointment/serve" method="post">
+            <div class="modal-body">
+            <!-- ============================== Form ==============================-->
+                <div class="form-group">
+                    <label >ID การนัดหมาย</label>
+                    <input type="text" class="form-control" name="SVappt_id" readonly>
+                </div>
+                <div class="form-group">
+                    <label >เวาลาเริ่ม</label>
+                    <input type="datetime-local" class="form-control" name="SVstart_date" step="60" readonly>
+                </div>
+                <div class="form-group">
+                    <label >เวลาสิ้นสุด</label>
+                    <input type="datetime-local" class="form-control" name="SVend_date" step="60" readonly>
+                </div>
+                <div class="form-group">
+                    <label >บริการ</label>
+                    <input type="text" class="form-control" name="SVserv_data" readonly>
+                </div>
+                <div class="form-group">
+                    <label >ร้าน</label>
+                    <input type="text" class="form-control" name="SVshop" readonly>
+                </div>
+                <div class="form-group">
+                    <label >พนักงาน</label>
+                    <input type="text" class="form-control" name="SVemp" readonly>
+                </div>
+                <div class="form-group">
+                    <label >สิ้นค้าที่ใช้</label>
+                    <input type="text" class="form-control" name="SVproduct" readonly>
+                </div>
+                <input type="number" name="SVemp_id" class="d-none" value="">
+            </div>
+
+            <div class="modal-footer justify-content-between">
+                <button type="button" class="btn btn-default" data-dismiss="modal">ยกเลิก</button>
+                <button type="submit" class="btn btn-primary" onclick="return vali('serve')">ยืนยัน</button>
+            </div>
+
+        </form>
+
+      </div>
+    </div>
+</div>

@@ -56,7 +56,7 @@
                                 <td><%= i.id%></td>
                                 <td><%= i.appt_id%></td>
                                 <% if(i.datetime){ %>
-                                    <% let f_datetime = new Intl.DateTimeFormat('id-ID',{ day:'2-digit', month:'2-digit', year:'numeric', hour: 'numeric', minute: 'numeric', second: 'numeric', timeZoneName: 'short'}).format(i.datetime) %>
+                                    <% let f_datetime = new Intl.DateTimeFormat('id-ID',{ day:'2-digit', month:'2-digit', year:'numeric', hour: '2-digit', minute: 'numeric', second: 'numeric', timeZoneName: 'short'}).format(i.datetime) %>
                                     <td><%= f_datetime%></td>
                                 <% } else{ %>  
                                     <td>-</td>
@@ -64,7 +64,7 @@
                                 <td><%= i.total_price%></td>
                                 <td><%= i.status%></td>
                                 <% if(i.pay_datetime){ %>
-                                    <% let f_pay_datetime = new Intl.DateTimeFormat('id-ID',{ day:'2-digit', month:'2-digit', year:'numeric', hour: 'numeric', minute: 'numeric', second: 'numeric', timeZoneName: 'short'}).format(i.pay_datetime) %>
+                                    <% let f_pay_datetime = new Intl.DateTimeFormat('id-ID',{ day:'2-digit', month:'2-digit', year:'numeric', hour: '2-digit', minute: 'numeric', second: 'numeric', timeZoneName: 'short'}).format(i.pay_datetime) %>
                                     <td><%= f_pay_datetime%></td>
                                 <% } else{ %>  
                                     <td></td>
@@ -74,12 +74,17 @@
                                 <td>
                                     <div class="" style="display: grid; gap: 5px;">
                                         <button  type="button" class="btn btn-secondary p-1 px-1" data-toggle="modal" data-target="#modal-display-appointment"
-                                            onclick="update('<%=JSON.stringify(i)%>') ">ข้อมูลนัดหมาย</button>
+                                            onclick="update('display','<%=JSON.stringify(i)%>') ">ข้อมูลนัดหมาย</button>
                                         <button  type="button" class="btn btn-primary p-1 px-1"
                                             onclick="go('invoice','<%=JSON.stringify(i)%>') ">ออกใบแจ้งหนี้</button>
                                         <% if(i.status=="PENDING"){ %>
-                                            <button  type="button" class="btn btn-success p-1 px-1" data-toggle="modal" data-target="#modal-manage-payment"
-                                            onclick="update('<%=JSON.stringify(i)%>') ">จ่าย</button>
+                                            <% if(i.vip_id){ %>
+                                                <button  type="button" class="btn btn-success p-1 px-1" data-toggle="modal" data-target="#modal-manage-payment-vip"
+                                                onclick="update('vip_pay','<%=JSON.stringify(i)%>') ">จ่าย</button>
+                                            <% } else {%>
+                                                <button  type="button" class="btn btn-success p-1 px-1" data-toggle="modal" data-target="#modal-manage-payment"
+                                                onclick="update('pay','<%=JSON.stringify(i)%>') ">จ่าย</button>
+                                            <% } %> 
                                         <% } else if(i.status=="PAID"){%>
                                             <button  type="button" class="btn btn-primary p-1 px-1"
                                             onclick="go('receipt','<%=JSON.stringify(i)%>') ">ออกใบเสร็จ</button>
@@ -122,7 +127,7 @@
                                 <td><%= i.id%></td>
                                 <td><%= i.appt_id%></td>
                                 <% if(i.rate_datetime){ %>
-                                    <% let f_rate_datetime = new Intl.DateTimeFormat('id-ID',{ day:'2-digit', month:'2-digit', year:'numeric', hour: 'numeric', minute: 'numeric', second: 'numeric', timeZoneName: 'short'}).format(i.rate_datetime) %>
+                                    <% let f_rate_datetime = new Intl.DateTimeFormat('id-ID',{ day:'2-digit', month:'2-digit', year:'numeric', hour: '2-digit', minute: 'numeric', second: 'numeric', timeZoneName: 'short'}).format(i.rate_datetime) %>
                                     <td><%= f_rate_datetime%></td>
                                 <% } else{ %>  
                                     <td>-</td>
@@ -134,7 +139,7 @@
                                 <td>
                                     <div class="">
                                         <button  type="button" class="btn btn-secondary p-1 px-1" data-toggle="modal" data-target="#modal-display-appointment"
-                                        onclick="update('<%=JSON.stringify(i)%>') ">ข้อมูลนัดหมาย</button>
+                                        onclick="update('display','<%=JSON.stringify(i)%>') ">ข้อมูลนัดหมาย</button>
                                     </div>
                                 </td>
                                 
@@ -149,74 +154,6 @@
 </div>
 
 
-<!-- =================== Modal Delete Standard Appointment ===================-->
-
-<form id="delete" action="manage_appointment/delete" method="post" class="d-inline">
-    <input type="number" name="id_del" class="d-none" value="">
-</form>
-
-
-<!-- =================== Modal Update Vip Appointment ===================-->
-<div class="modal fade" id="modal-update-standard">
-    <div class="modal-dialog modal-lg">
-      <div class="modal-content">
-        <div class="modal-header bg-purple">
-          <h4 class="modal-title ">แก้ไขข้อมูลนัดหมายลูกค้า Vip</h4>
-          <button type="button " class="close" data-dismiss="modal" aria-label="Close">
-            <span aria-hidden="true" class="text-light">&times;</span>
-          </button>
-        </div>
-
-        <form id="mange_update" action="manage_appointment/update_vip" method="post">
-            <div class="modal-body">
-            <!-- ============================== Form ==============================-->
-            <div class="form-group">
-                <label >ลูกค้า</label>
-                <input type="text" class="form-control" name="Uf_name">
-            </div>
-            <div class="form-group">
-                <label >วันเวลา</label>
-                <input type="text" class="form-control" name="Ul_name">
-            </div>
-            <div class="form-group">
-                <label >บริการ</label>
-                <input type="text" class="form-control" name="Ugender">
-            </div>
-            <div class="form-group">
-                <label >ที่อยู่</label>
-                <input type="text" class="form-control" name="Uaddress">
-            </div>
-            <div class="form-group">
-                <label >เบอร์โทร</label>
-                <input type="number" class="form-control" name="Utel">
-            </div>
-            <div class="form-group">
-                <label >อีเมล</label>
-                <input type="text" class="form-control" name="Uemail">
-            </div>
-            <div class="form-group">
-                <label >ประเภทลูกค้า</label>
-                <input type="text" class="form-control" name="Utype">
-            </div>
-            <div class="form-group">
-                <label >แต้มสมาชิก</label>
-                <input type="number" class="form-control" name="Upoint" >
-            </div>
-                <input type="number" name="id_update" class="d-none" value="">
-            </div>
-
-            <div class="modal-footer justify-content-between">
-                <button type="button" class="btn btn-default" data-dismiss="modal">ยกเลิก</button>
-                <button type="submit" class="btn btn-primary" onclick="return vali('update')">ยืนยัน</button>
-            </div>
-
-        </form>
-
-      </div>
-    </div>
-</div>
-
-
 <!-- =================== Modal manage paymemt ===================-->
 <div class="modal fade" id="modal-manage-payment">
     <div class="modal-dialog modal-lg">
@@ -228,16 +165,20 @@
           </button>
         </div>
 
-        <form id="mange_update" action="manage_sale/pay" method="post">
+        <form id="pay" action="manage_sale/pay" method="post">
             <div class="modal-body">
             <!-- ============================== Form ==============================-->
                 <div class="form-group">
                     <label >ID รายการขาย</label>
-                    <input type="text" class="form-control" name="Sappt_id" readonly>
+                    <input type="number" class="form-control" name="sale_id" readonly>
+                </div>
+                <div class="form-group">
+                    <label >ราคาที่ต้องจ่าย</label>
+                    <input type="number" class="form-control" name="total" readonly>
                 </div>
                 <div class="form-group">
                     <label>วิธีการจ่าย</label>
-                    <select class="form-control" name="Spayment_meth" value="">
+                    <select class="form-control" name="payment_meth" value="">
                         <% for(i of db_payment_meth){%> 
                             <option  id="payment_meth_<%=i.id%>" value="<%=i.id%>"><%=i.name%></option>
                         <%} %> 
@@ -245,18 +186,84 @@
                 </div>
                 <div class="form-group">
                     <label >วันเวลาที่จ่าย</label>
-                    <input type="datetime-local" class="form-control" name="Sdatetime" step="60">
+                    <input type="datetime-local" class="form-control" name="datetime">
                 </div>
                 <div class="form-group">
                     <label >จำนวนเงิน</label>
-                    <input type="number" class="form-control" name="Sprice">
+                    <input type="number" class="form-control" name="amount">
                 </div>
                 <input type="number" name="id_update" class="d-none" value="">
             </div>
 
             <div class="modal-footer justify-content-between">
                 <button type="button" class="btn btn-default" data-dismiss="modal">ยกเลิก</button>
-                <button type="submit" class="btn btn-primary" onclick="return vali('update')" disabled>ยืนยัน</button>
+                <button type="submit" class="btn btn-primary" onclick="return vali('pay')">ยืนยัน</button>
+            </div>
+
+        </form>
+
+      </div>
+    </div>
+</div>
+
+<!-- =================== Modal manage paymemt vip ===================-->
+<div class="modal fade" id="modal-manage-payment-vip">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header bg-purple">
+          <h4 class="modal-title ">บันทึกการจ่าย</h4>
+          <button type="button " class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true" class="text-light">&times;</span>
+          </button>
+        </div>
+
+        <form id="vip_pay" action="manage_sale/vip_pay" method="post">
+            <div class="modal-body">
+            <!-- ============================== Form ==============================-->
+                <div class="form-group">
+                    <label >ID รายการขาย</label>
+                    <input type="number" class="form-control" name="sale_id" readonly>
+                </div>
+                <div class="form-group">
+                    <label >บัตร vip</label>
+                    <input type="number" class="form-control" name="vip_id" readonly>
+                </div>
+                <div class="form-group">
+                    <label >ราคาทั้งหมด</label>
+                    <input type="number" class="form-control" name="all" readonly>
+                </div>
+                <div class="form-group">
+                    <label >ราคาที่หักจากบัตร</label>
+                    <input type="number" class="form-control" name="use_val" readonly>
+                </div>
+                <div class="form-group">
+                    <label >ราคาที่ต้องจ่าย</label>
+                    <input type="number" class="form-control" name="total" readonly>
+                </div>
+                <div class="form-group">
+                    <label>วิธีการจ่าย</label>
+                    <select class="form-control" name="payment_meth" value="">
+                        <% for(i of db_payment_meth){%> 
+                            <option id="payment_meth_<%=i.id%>" value="<%=i.id%>"><%=i.name%></option>
+                        <%} %> 
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label >วันเวลาที่จ่าย</label>
+                    <input type="datetime-local" class="form-control" name="vip_datetime">
+                </div>
+                <div class="form-group">
+                    <label >จำนวนเงิน</label>
+                    <input type="number" class="form-control" name="vip_amount">
+                </div>
+                <input type="number" name="acc_val" class="d-none" value="">
+                <input type="number" name="remain_val" class="d-none" value="">
+                <input type="number" name="id_update" class="d-none" value="">
+            </div>
+
+            <div class="modal-footer justify-content-between">
+                <button type="button" class="btn btn-default" data-dismiss="modal">ยกเลิก</button>
+                <button type="submit" class="btn btn-primary" onclick="return vali('vip_pay')">ยืนยัน</button>
             </div>
 
         </form>
@@ -314,54 +321,6 @@
     </div>
 </div>
 
-<!-- =================== Modal manage paymemt ===================-->
-<div class="modal fade" id="modal-manage-payment">
-    <div class="modal-dialog modal-lg">
-      <div class="modal-content">
-        <div class="modal-header bg-purple">
-          <h4 class="modal-title ">บันทึกการจ่าย</h4>
-          <button type="button " class="close" data-dismiss="modal" aria-label="Close">
-            <span aria-hidden="true" class="text-light">&times;</span>
-          </button>
-        </div>
-
-        <form id="mange_update" action="manage_sale/pay" method="post">
-            <div class="modal-body">
-            <!-- ============================== Form ==============================-->
-                <div class="form-group">
-                    <label >ID รายการขาย</label>
-                    <input type="text" class="form-control" name="Sappt_id" readonly>
-                </div>
-                <div class="form-group">
-                    <label>วิธีการจ่าย</label>
-                    <select class="form-control" name="Spayment_meth" value="">
-                        <% for(i of db_payment_meth){%> 
-                            <option  id="payment_meth_<%=i.id%>" value="<%=i.id%>"><%=i.name%></option>
-                        <%} %> 
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label >วันเวลาที่จ่าย</label>
-                    <input type="datetime-local" class="form-control" name="Sdatetime" step="60">
-                </div>
-                <div class="form-group">
-                    <label >จำนวนเงิน</label>
-                    <input type="number" class="form-control" name="Sprice">
-                </div>
-                <input type="number" name="id_update" class="d-none" value="">
-            </div>
-
-            <div class="modal-footer justify-content-between">
-                <button type="button" class="btn btn-default" data-dismiss="modal">ยกเลิก</button>
-                <button type="submit" class="btn btn-primary" onclick="return vali('update')" disabled>ยืนยัน</button>
-            </div>
-
-        </form>
-
-      </div>
-    </div>
-</div>
-
 
 <script src="/axios/axios.min.js"></script>
 <script>
@@ -415,35 +374,40 @@
     });
 
     let oldOp ="";
-    function update(data){
+    function update(mode,data){
         data = JSON.parse(data)
-        let f_start_date = new Intl.DateTimeFormat('id-ID',{ day:'2-digit', month:'2-digit', year:'numeric', hour: 'numeric', minute: 'numeric', second: 'numeric', timeZoneName: 'short'}).format(new Date(data.start_date))
-        let f_end_date = new Intl.DateTimeFormat('id-ID',{ day:'2-digit', month:'2-digit', year:'numeric', hour: 'numeric', minute: 'numeric', second: 'numeric', timeZoneName: 'short'}).format(new Date(data.end_date))
-        $("input[name=Dcustomer]").val(`${data.cust_fname} ${data.cust_lname}`)
-        $("input[name=Dstart_date]").val(f_start_date)
-        $("input[name=Dend_date]").val(f_end_date)
-        $("input[name=Dservice]").val(`${data.serv_name} - ${data.serv_time} นาที ${data.serv_price} บาท`) 
-        $("input[name=Dshop]").val(data.shop_name)
-        $("input[name=Demployee]").val(`${data.emp_fname} ${data.emp_lname}`)
-        $("input[name=Droom]").val(data.room_name)           
-        $("input[name=id_update]").val(data.id)
-
-        // let new_select = data.position;
-        // $(`option[id=${new_select}]`).attr("selected","true");
-        // if(oldOp !== new_select ){
-        //     if(oldOp != ""){
-        //         $(`option[id=${oldOp}]`).removeAttr("selected");
-        //     }
-        //     oldOp = new_select ;
-        // }
-
-    }
-
-    function del(id){
-        $("input[name=id_del]").val(parseInt(id))
-        if(confirm("ยืนยันการลบข้อมูล") == true){
-            $("#delete").submit();
+        console.log(data)
+        if (mode=="display"){
+            let f_start_date = new Intl.DateTimeFormat('id-ID',{ day:'2-digit', month:'2-digit', year:'numeric', hour: 'numeric', minute: 'numeric', second: 'numeric', timeZoneName: 'short'}).format(new Date(data.start_date))
+            let f_end_date = new Intl.DateTimeFormat('id-ID',{ day:'2-digit', month:'2-digit', year:'numeric', hour: 'numeric', minute: 'numeric', second: 'numeric', timeZoneName: 'short'}).format(new Date(data.end_date))
+            $("input[name=Dcustomer]").val(`${data.cust_fname} ${data.cust_lname}`)
+            $("input[name=Dstart_date]").val(f_start_date)
+            $("input[name=Dend_date]").val(f_end_date)
+            $("input[name=Dservice]").val(`${data.serv_name} - ${data.serv_time} นาที ${data.serv_price} บาท`) 
+            $("input[name=Dshop]").val(data.shop_name)
+            $("input[name=Demployee]").val(`${data.emp_fname} ${data.emp_lname}`)
+            $("input[name=Droom]").val(data.room_name)           
+            $("input[name=id_update]").val(data.id)
+        } else if (mode=="vip_pay"){
+            $("input[name=sale_id]").val(data.id)
+            $("input[name=vip_id]").val(data.vip_id)
+            $("input[name=acc_val]").val(data.acc_val)
+            $("input[name=remain_val]").val(data.remain_val)
+            $("input[name=all]").val(data.total_price)
+            if (data.remain_val > data.total_price){
+                $("input[name=use_val]").val(data.total_price) 
+                $("input[name=total]").val(0) 
+            } else {
+                $("input[name=use_val]").val(data.remain_val) 
+                $("input[name=total]").val(data.total_price-data.remain_val) 
+            }   
+            $("input[name=id_update]").val(data.id)
+        } else if (mode=="pay"){
+            $("input[name=sale_id]").val(data.id)
+            $("input[name=total]").val(data.total_price)         
+            $("input[name=id_update]").val(data.id)
         }
+
     }
 
     function vali(mode){
@@ -451,62 +415,43 @@
             Mode insert , update 
         */
         // (document.querySelector("input[name=Fname]").innerText).trim()
-        if(mode === "add"){
-            let f_name = ($("input[name=f_name]").val()).trim();
-            let l_name = ($("input[name=l_name]").val()).trim();
-            let gender = ($("input[name=gender]").val()).trim();
-            let address = ($("input[name=address]").val()).trim();
-            let tel = ($("input[name=tel]").val()).trim();
-            let email = ($("input[name=email]").val()).trim();
-            let cus_type = ($("input[name=type]").val()).trim();
-            let member_point = ($("input[name=point]").val()).trim();
-    
-            if( f_name !== "" && l_name !== "" && gender !== "" && address !== "" && 
-                tel !== "" && email !== "" && cus_type !== "" && member_point !== ""
-            ){
-                let params= {
-                    f_name:f_name,
-                    l_name:l_name,
+        if(mode === "pay"){
+            let sale_id = $("input[name=sale_id]").val();
+            let total = $("input[name=total]").val();
+            let payment_meth = $("select[name=payment_meth]").val();
+            let datetime = $("input[name=datetime]").val();
+            let amount = $("input[name=amount]").val();
+            if( sale_id !== "" && total !== "" && payment_meth !== "" && datetime !== "" && amount !== ""){
+                if (total == amount) {
+                    $("#pay").submit();
+                }else{
+                    toastr.error("! จำนวนเงินไม่ถูกต้อง")
                 }
-                axios_validation(
-                    'manage_cust/check_can_add',
-                    params,
-                    '#mange_add',
-                    'มีชื่อ/นามสุกลลูกค้านี้อยู่เเล้ว'
-                );
-                
             }else{
-                toastr.error("! กรุณาใส่ข้อมูลให้ครบ")
+                toastr.error("! ข้อมูลไม่ถูกต้อง")
             }
             return false;
 
 
-        }else if(mode === "update"){
-            let f_name = ($("input[name=Uf_name]").val()).trim();
-            let l_name = ($("input[name=Ul_name]").val()).trim();
-            let gender = ($("input[name=Ugender]").val()).trim();
-            let address = ($("input[name=Uaddress]").val()).trim();
-            let tel = ($("input[name=Utel]").val()).trim();
-            let email = ($("input[name=Uemail]").val()).trim();
-            let cus_type = ($("input[name=Utype]").val()).trim();
-            let member_point = ($("input[name=Upoint]").val()).trim();
-    
-            if( f_name !== "" && l_name !== "" && gender !== "" && address !== "" && 
-                tel !== "" && email !== "" && cus_type !== "" && member_point !== ""
+        }else if(mode === "vip_pay"){
+            let sale_id = $("input[name=sale_id]").val();
+            let vip_id = $("input[name=vip_id]").val();
+            let all = $("input[name=all]").val();
+            let use_val = $("input[name=use_val]").val();
+            let total = $("input[name=total]").val();
+            let payment_meth = $("select[name=payment_meth]").val();
+            let datetime = $("input[name=vip_datetime]").val();
+            let amount = $("input[name=vip_amount]").val();
+            if( sale_id !== "" && vip_id !== "" && all !== "" && use_val !== "" && total !== "" && 
+                payment_meth !== "" && datetime !== "" && amount !== ""
             ){
-                let params= {
-                    f_name:f_name,
-                    l_name:l_name,
-                    id:$("input[name=id_update]").val()
+                if (total == amount) {
+                    $("#vip_pay").submit();
+                }else{
+                    toastr.error("! จำนวนเงินไม่ถูกต้อง")
                 }
-                axios_validation(
-                    'manage_cust/check_can_update',
-                    params,
-                    '#mange_update',
-                    'มีชื่อ/นามสุกลลูกค้านี้อยู่เเล้ว'
-                );
             }else{
-                toastr.error("! กรุณาใส่ข้อมูลให้ครบ")
+                toastr.error("! ข้อมูลไม่ถูกต้อง")
             }
             return false;
         }

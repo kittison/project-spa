@@ -10,6 +10,14 @@ exports.get_product = async () => {
     let result = await con.query(sql)
     return result;
 };
+exports.get_product_byID = async (input) => {
+    let sql = `SELECT p.id, p.type_id, pt.name as type, p.name, p.price, p.stock, p.min_stock, p.max_stock, p.can_used
+                FROM product as p 
+                JOIN product_type as pt ON p.type_id = pt.id 
+                where p.id = ${input.id} and p.flag = 1 and pt.flag = 1;`
+    let result = await con.query(sql)
+    return result;
+};
 exports.get_product_alert = async () => {
     let sql = ` SELECT p.id, p.type_id, pt.name as type, p.name, p.price, p.stock, p.min_stock, p.max_stock, p.can_used
                 FROM product as p
@@ -24,6 +32,15 @@ exports.get_product_reuse = async () => {
                 JOIN product_type as pt ON p.type_id = pt.id
                 JOIN product_reuse as pr ON p.id = pr.prod_id
                 WHERE p.flag = 1 and pr.flag = 1 and pr.remaining > 0`
+    let result = await con.query(sql)
+    return result;
+};
+exports.get_product_reuse_byID = async (input) => {
+    let sql = ` SELECT pr.id, pr.prod_id, p.name as prod_name, p.type_id, pt.name as type_name, p.can_used as max_used, pr.remaining
+                FROM product as p 
+                JOIN product_type as pt ON p.type_id = pt.id 
+                JOIN product_reuse as pr ON p.id = pr.prod_id 
+                WHERE pr.id = ${input.id} and pr.prod_id = ${input.prod_id} and p.flag = 1 and pr.flag = 1 and pr.remaining > 0`
     let result = await con.query(sql)
     return result;
 };

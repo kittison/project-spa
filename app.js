@@ -3,7 +3,8 @@ const path = require('path');
 const express = require('express');
 const bodyParser = require('body-parser');
 const session = require('express-session');
-
+const http = require('http');
+const socketIo = require('socket.io');
 
 
 const app = express();
@@ -46,4 +47,24 @@ app.use('/customer',customerRoutes);
 app.use('/webhook',webhookRoutes);
 app.use('/services',serviceRoutes);
 
-app.listen(3000);
+const server = http.createServer(app);
+const io = socketIo(server);
+
+io.on('connection', (socket) => {
+    console.log('A client connected');
+
+    // Example: Handle chat message event
+    socket.on('chat message', (message) => {
+        console.log('Message received:', message);
+        // Broadcast the message to all connected clients
+        io.emit('chat message', message);
+    });
+
+    // Other event handlers...
+});
+
+server.listen(3000, () => {
+    console.log('Server is running on port 3000');
+});
+
+// app.listen(3000);

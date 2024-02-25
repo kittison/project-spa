@@ -168,7 +168,7 @@ exports.Manage_emp_work = async (req, res) => {
     if( req.session.role === "admin" ){
         let db_emp_work =  await model.get_emp_work();
         let db_emp_queue =  await model.get_emp_queue();
-        // console.log("#",db_employee);
+        // console.log(db_emp_work);
         res.render('template',{
             session_user_id:req.session.user_id,
             session_user:req.session.user,

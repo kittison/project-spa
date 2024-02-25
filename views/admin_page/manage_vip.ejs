@@ -95,7 +95,7 @@
 </div>
 
 
-<form id="delete" action="manage_cust/delete" method="post" class="d-inline">
+<form id="delete" action="manage_vip/delete" method="post" class="d-inline">
     <input type="number" name="id_del" class="d-none" value="">
 </form>
 
@@ -109,7 +109,7 @@
             <span aria-hidden="true" class="text-light">&times;</span>
           </button>
         </div>
-        <form id="mange_add" action="manage_cust/add" method="post">
+        <form id="mange_add" action="manage_vip/add" method="post">
             <div class="modal-body">
             <!-- ============================== Form ==============================-->
                 <div class="form-group">
@@ -119,8 +119,13 @@
                 <div class="form-group">
                     <label>คอร์ส</label>
                     <select class="form-control" name="course_id" value="">
-                        <% for(i of db_course){%> 
-                            <option  id="course_<%=i.id%>" value="<%=i.id%>"><%=i.name%> - <%=i.price%> บาท</option>
+                        <% if (db_course.length > 0){%>
+                            <option value="" disabled selected>เลือกคอร์ส</option>
+                            <% for(i of db_course){%> 
+                                <option  id="course_<%=i.id%>" value="<%=i.id%>"><%=i.name%> - <%=i.price%> บาท</option>
+                            <%} %> 
+                        <% } else{%>
+                            <option value="" disabled selected>ไม่พบข้อมูล</option>
                         <%} %> 
                     </select>
                 </div>
@@ -134,11 +139,11 @@
                 </div>
                 <div class="form-group">
                     <label >ราคาที่ใช้ไป</label>
-                    <input type="number" class="form-control" name="acc_val">
+                    <input type="number" class="form-control" name="acc_val" min="0">
                 </div>
                 <div class="form-group">
                     <label >ราคาคงเหลือ</label>
-                    <input type="number" class="form-control" name="remain_val">
+                    <input type="number" class="form-control" name="remain_val" min="0">
                 </div>
 
             </div>
@@ -166,14 +171,19 @@
           </button>
         </div>
 
-        <form id="mange_update" action="manage_cust/update" method="post">
+        <form id="mange_update" action="manage_vip/update" method="post">
             <div class="modal-body">
             <!-- ============================== Form ==============================-->
                 <div class="form-group">
                     <label >คอร์ส</label>
-                    <select class="form-control" name="Ucourse_id">
-                        <% for(i of db_course){%> 
-                            <option  id="course_<%=i.id%>" value="<%=i.id%>"><%=i.name%> - <%=i.price%> บาท</option>
+                    <select class="form-control" name="Ucourse_id" value="">
+                        <% if (db_course.length > 0){%>
+                            <option value="" disabled selected>เลือกคอร์ส</option>
+                            <% for(i of db_course){%> 
+                                <option  id="Ucourse_<%=i.id%>" value="<%=i.id%>"><%=i.name%> - <%=i.price%> บาท</option>
+                            <%} %> 
+                        <% } else{%>
+                            <option value="" disabled selected>ไม่พบข้อมูล</option>
                         <%} %> 
                     </select>
                 </div>
@@ -187,18 +197,18 @@
                 </div>
                 <div class="form-group">
                     <label >ราคาที่ใช้ไป</label>
-                    <input type="number" class="form-control" name="Uacc_val">
+                    <input type="number" class="form-control" name="Uacc_val" min="0">
                 </div>
                 <div class="form-group">
                     <label >ราคาคงเหลือ</label>
-                    <input type="number" class="form-control" name="Uremain_val">
+                    <input type="number" class="form-control" name="Uremain_val" min="0">
                 </div>
                 <input type="number" name="id_update" class="d-none" value="">
             </div>
 
             <div class="modal-footer justify-content-between">
                 <button type="button" class="btn btn-default" data-dismiss="modal">ยกเลิก</button>
-                <button type="submit" class="btn btn-primary" onclick="return vali('update')" disabled>ยืนยัน</button>
+                <button type="submit" class="btn btn-primary" onclick="return vali('update')">ยืนยัน</button>
             </div>
 
         </form>
@@ -206,10 +216,6 @@
       </div>
     </div>
 </div>
-
-
-
-
 
 
 <script src="/axios/axios.min.js"></script>
@@ -256,15 +262,14 @@
         $("input[name=Ujoin_date]").val(formatDateTimeForInput(data.join_date));
         $("input[name=Uexpire_date]").val(formatDateTimeForInput(data.expire_date));
         $("input[name=Uacc_val]").val(data.acc_val);
-        $("input[name=Uremain_val]").val(data.remain_val);
-        $("input[name=id_update]").val(data.id)
+        $("input[name=Uremain_val]").val(data.remain_val);         
+        $("input[name=id_update]").val(data.id);
 
-        let new_select = data.id;
-        $(`option[id=course_${new_select}]`).attr("selected","true");
-        console.log(oldOp,new_select)
+        let new_select = data.serv_course_id;
+        $(`option[id=Ucourse_${new_select}]`).attr("selected","true");
         if(oldOp !== new_select ){
             if(oldOp != ""){
-                $(`option[id=course_${oldOp}]`).removeAttr("selected");
+                $(`option[id=Ucourse_${oldOp}]`).removeAttr("selected");
             }
             oldOp = new_select ;
         }
@@ -278,76 +283,66 @@
         }
     }
 
-    // function vali(mode){
-    //     /*
-    //         Mode insert , update 
-    //     */
-    //     // (document.querySelector("input[name=Fname]").innerText).trim()
-    //     if(mode === "add"){
-    //         let f_name = ($("input[name=f_name]").val()).trim();
-    //         let l_name = ($("input[name=l_name]").val()).trim();
-    //         let gender = ($("input[name=gender]").val()).trim();
-    //         let address = ($("input[name=address]").val()).trim();
-    //         let tel = ($("input[name=tel]").val()).trim();
-    //         let email = ($("input[name=email]").val()).trim();
-    //         let cus_type = ($("input[name=type]").val()).trim();
-    //         let member_point = ($("input[name=point]").val()).trim();
-    
-    //         if( f_name !== "" && l_name !== "" && gender !== "" && address !== "" && 
-    //             tel !== "" && email !== "" && cus_type !== "" && member_point !== ""
-    //         ){
-    //             let params= {
-    //                 f_name:f_name,
-    //                 l_name:l_name,
-    //             }
-    //             axios_validation(
-    //                 'manage_cust/check_can_add',
-    //                 params,
-    //                 '#mange_add',
-    //                 'มีชื่อ/นามสุกลลูกค้านี้อยู่เเล้ว'
-    //             );
+    function vali(mode){
+        if(mode === "add"){
+            let cust_id = $("input[name=cust_id]").val();
+            let course_id = $("select[name=course_id]").val();
+            let join_date = $("input[name=join_date]").val();
+            let expire_date = $("input[name=expire_date]").val();
+            let acc_val = $("input[name=acc_val]").val();
+            let remain_val = $("input[name=remain_val]").val();
+            if( cust_id !== "", course_id && join_date !== "" && expire_date !== "" && acc_val !== "" && remain_val !== ""){
+                let params= {
+                    id:cust_id,
+                }
+                axios_validation(
+                    'manage_vip/check_can_add',
+                    params,
+                    '#mange_add',
+                    'ไม่พบลูกค้า ID นี้'
+                );
                 
-    //         }else{
-    //             toastr.error("! กรุณาใส่ข้อมูลให้ครบ")
-    //         }
-    //         return false;
+            }else{
+                toastr.error("! กรุณาใส่ข้อมูลให้ครบ")
+            }
+            return false;
 
 
-    //     }else if(mode === "update"){
-    //         let f_name = ($("input[name=Uf_name]").val()).trim();
-    //         let l_name = ($("input[name=Ul_name]").val()).trim();
-    //         let gender = ($("input[name=Ugender]").val()).trim();
-    //         let address = ($("input[name=Uaddress]").val()).trim();
-    //         let tel = ($("input[name=Utel]").val()).trim();
-    //         let email = ($("input[name=Uemail]").val()).trim();
-    //         let cus_type = ($("input[name=Utype]").val()).trim();
-    //         let member_point = ($("input[name=Upoint]").val()).trim();
+        }else if(mode === "update"){
+            let f_name = ($("input[name=Uf_name]").val()).trim();
+            let l_name = ($("input[name=Ul_name]").val()).trim();
+            let gender = ($("input[name=Ugender]").val()).trim();
+            let address = ($("input[name=Uaddress]").val()).trim();
+            let tel = ($("input[name=Utel]").val()).trim();
+            let email = ($("input[name=Uemail]").val()).trim();
+            let cus_type = ($("input[name=Utype]").val()).trim();
+            let member_point = ($("input[name=Upoint]").val()).trim();
     
-    //         if( f_name !== "" && l_name !== "" && gender !== "" && address !== "" && 
-    //             tel !== "" && email !== "" && cus_type !== "" && member_point !== ""
-    //         ){
-    //             let params= {
-    //                 f_name:f_name,
-    //                 l_name:l_name,
-    //                 id:$("input[name=id_update]").val()
-    //             }
-    //             axios_validation(
-    //                 'manage_cust/check_can_update',
-    //                 params,
-    //                 '#mange_update',
-    //                 'มีชื่อ/นามสุกลลูกค้านี้อยู่เเล้ว'
-    //             );
-    //         }else{
-    //             toastr.error("! กรุณาใส่ข้อมูลให้ครบ")
-    //         }
-    //         return false;
-    //     }
+            if( f_name !== "" && l_name !== "" && gender !== "" && address !== "" && 
+                tel !== "" && email !== "" && cus_type !== "" && member_point !== ""
+            ){
+                let params= {
+                    f_name:f_name,
+                    l_name:l_name,
+                    id:$("input[name=id_update]").val()
+                }
+                axios_validation(
+                    'manage_cust/check_can_update',
+                    params,
+                    '#mange_update',
+                    'มีชื่อ/นามสุกลลูกค้านี้อยู่เเล้ว'
+                );
+            }else{
+                toastr.error("! กรุณาใส่ข้อมูลให้ครบ")
+            }
+            return false;
+        }
         
-    // }
+    }
 
     function req_detail(type, input){
         if (type=="history") {
-            // window.location = `manage_vip?vip_id=${input}`
+            window.location = `history_vip?vip_id=${input}`
         }
         
     }

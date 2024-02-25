@@ -1,0 +1,30 @@
+<div class="modal fade" id="modal-search-add-vip">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header bg-purple">
+          <h4 class="modal-title ">เพิ่มการนัดหมายลูกค้า Vip</h4>
+          <button type="button " class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true" class="text-light">&times;</span>
+          </button>
+        </div>
+        <form id="search_<%=mode%>" >
+            <div class="modal-body">
+            <!-- ============================== Form ==============================-->
+                <div class="form-group row">
+                    <label class="col-sm-2 col-form-label">ID บัตร</label>
+                    <div class="col-sm-10">
+                        <input type="number" class="form-control" id="search<%=keyword%>" name="search<%=keyword%>" min="1">
+                    </div>
+                </div>
+            </div>
+            
+            <div class="modal-footer justify-content-between">
+                <button type="button" class="btn btn-default" data-dismiss="modal">ยกเลิก</button>
+                <button type="button" class="btn btn-primary" onclick="return searchVip('<%=mode%>','<%=keyword%>')">ค้นหา</button>
+            </div>
+
+        </form>
+
+      </div>
+    </div>
+</div>

@@ -15,8 +15,15 @@ router.get('/make_appointment', make_appointment_controller.Make_appointment);
 router.post('/make_appointment/:action', make_appointment_controller.setMakeAppointment);
 
 router.get('/manage_appointment', manage_appointment_controller.Manage_appointment);
+router.post('/manage_appointment/:action', manage_appointment_controller.setAppointment);
+
 router.get('/buy_vip', buy_vip_controller.Buy_vip);
+router.post('/buy_vip/:action', buy_vip_controller.setBuyVip);
+
 router.get('/manage_vip', manage_vip_controller.Manage_vip);
+router.post('/manage_vip/:action', manage_vip_controller.setManageVip);
+
 router.get('/rating', rating_controller.Rating);
+router.post('/rating/:action', rating_controller.setRating);
 
 module.exports = router;

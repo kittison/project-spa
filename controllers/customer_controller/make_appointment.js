@@ -34,13 +34,13 @@ exports.setMakeAppointment = async (req, res) => {
             console.log(req.body)
             let new_cust_id = await model_cust.insert_cust(req.body);
             req.body.cust_id = new_cust_id
-            await model.insert_appt(req.body).then((data)=>{return data});
+            let appt_id = await model.insert_appt(req.body).then((data)=>{return data});
+            res.redirect(`../manage_appointment?id=${appt_id}`);
         }
         else{
             req.body.cust_id = search[0].id
-            await model.insert_appt(req.body).then((data)=>{return data});
+            let appt_id = await model.insert_appt(req.body).then((data)=>{return data});
+            res.redirect(`../manage_appointment?id=${appt_id}`);
         }
-        
-        res.redirect("../make_appointment");
     }
 };

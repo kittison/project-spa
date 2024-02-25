@@ -38,90 +38,112 @@
     </div>
 
     <div class="d-flex justify-content-center pt-2" >
-        <form class="w-100" id="make_appointment" action="make_appointment_vip" method="post">
+        <div class="w-100">
             <div class="card card-body w-100">
                 <div class="form-group row">
                     <label class="col-sm-2 col-form-label d-flex justify-content-end">หมายเลขนัดหมาย:</label>
                     <div class="col-sm-8">
-                        <input type="text" class="form-control" id="code" name="code" placeholder="หมายเลขนัดหมาย">
+                        <input type="text" class="form-control" id="code" name="code" placeholder="หมายเลขนัดหมาย" 
+                        value="<%= search_appt%>">
                     </div>
                     <div class="col-sm-2">
-                        <button type="button" class="btn btn-info" onclick="return ">ตรวจสอบ</button>
+                        <button type="button" class="btn btn-info" onclick="search()">ตรวจสอบ</button>
                     </div>
                 </div>
             </div>
-            <div class="card card-body w-100">
-                <div class="form-group row">
-                    <label class="col-sm-3 col-form-label">หมายเลขนัดหมาย:</label>
-                    <label id="code" name="code" class="col-sm-9 col-form-label">หมายเลขนัดหมาย</label>
-                </div>
-                <div class="form-group row">
-                    <label class="col-sm-3 col-form-label">ชื่อ:</label>
-                    <label id="lname" name="fname" class="col-sm-9 col-form-label">ชื่อ</label>
-                </div>
-                <div class="form-group row">
-                    <label for="lname" class="col-sm-3 col-form-label">นามสกุล:</label>
-                    <label id="lname" name="lname" class="col-sm-9 col-form-label">นามสกุล</label>
-                </div>
-                <div class="form-group row">
-                    <label for="gender" class="col-sm-3 col-form-label">เพศ:</label>
-                    <label id="gender" name="gender" class="col-sm-9 col-form-label">เพศ</label>
-                </div>
-                <div class="form-group row">
-                    <label for="address" class="col-sm-3 col-form-label">ที่อยู่:</label>
-                    <label id="address" name="address" class="col-sm-9 col-form-label">ที่อยู่</label>
-                </div>
-                <div class="form-group row">
-                    <label for="tel" class="col-sm-3 col-form-label">เบอร์โทร:</label>
-                    <label id="tel" name="tel" class="col-sm-9 col-form-label">เบอร์โทร</label>
-                </div>
-                <div class="form-group row">
-                    <label for="email" class="col-sm-3 col-form-label">อีเมล:</label>
-                    <label id="email" name="email" class="col-sm-9 col-form-label">อีเมล</label>
-                </div>
-                <div class="form-group row">
-                    <label class="col-sm-3 col-form-label">บริการ/คอร์ส:</label>
-                    <div class="col-sm-9 col-form-label">
-                        <label id="course1" name="course1">บริการ1</label>
+            <% if (data_appt.length> 0) {%>
+                <div class="card card-body w-100">
+                    <div class="form-group row">
+                        <label class="col-sm-3 col-form-label">หมายเลขนัดหมาย:</label>
+                        <label id="appt_id" name="appt_id" class="col-sm-9 col-form-label"><%= data_appt[0].id%></label>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-sm-3 col-form-label">ชื่อ:</label>
+                        <label id="lname" name="fname" class="col-sm-9 col-form-label"><%= data_appt[0].cust_fname%></label>
+                    </div>
+                    <div class="form-group row">
+                        <label for="lname" class="col-sm-3 col-form-label">นามสกุล:</label>
+                        <label id="lname" name="lname" class="col-sm-9 col-form-label"><%= data_appt[0].cust_lname%></label>
+                    </div>
+                    <div class="form-group row">
+                        <label for="gender" class="col-sm-3 col-form-label">เพศ:</label>
+                        <label id="gender" name="gender" class="col-sm-9 col-form-label"><%= data_appt[0].cust_gender%></label>
+                    </div>
+                    <div class="form-group row">
+                        <label for="address" class="col-sm-3 col-form-label">ที่อยู่:</label>
+                        <label id="address" name="address" class="col-sm-9 col-form-label"><%= data_appt[0].cust_address%></label>
+                    </div>
+                    <div class="form-group row">
+                        <label for="tel" class="col-sm-3 col-form-label">เบอร์โทร:</label>
+                        <label id="tel" name="tel" class="col-sm-9 col-form-label"><%= data_appt[0].cust_tel%></label>
+                    </div>
+                    <div class="form-group row">
+                        <label for="email" class="col-sm-3 col-form-label">อีเมล:</label>
+                        <label id="email" name="email" class="col-sm-9 col-form-label"><%= data_appt[0].cust_email%></label>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-sm-3 col-form-label">วันเวลาเริ่มต้น:</label>
+                        <label id="start_date" name="start_date" class="col-sm-9 col-form-label">
+                            <% let f_start_date = new Intl.DateTimeFormat('id-ID',{ day:'2-digit', month:'2-digit', year:'numeric', hour: '2-digit', minute: 'numeric', second: 'numeric', timeZoneName: 'short', hour12: false}).format(data_appt[0].start_date) %>
+                            <%= f_start_date%>
+                        </label>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-sm-3 col-form-label">วันเวลาสิ้นสุด:</label>
+                        <label id="end_date" name="end_date" class="col-sm-9 col-form-label">
+                            <% let f_end_date = new Intl.DateTimeFormat('id-ID',{ day:'2-digit', month:'2-digit', year:'numeric', hour: '2-digit', minute: 'numeric', second: 'numeric', timeZoneName: 'short', hour12: false}).format(data_appt[0].end_date) %>
+                            <%= f_end_date%>
+                        </label>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-sm-3 col-form-label">บริการ:</label>
+                        <div class="col-sm-9 col-form-label">
+                            <label id="course1" name="course1"><%= data_appt[0].serv_name%></label>
+                            <% if (data_appt[0].course) {%>
+                                <label class="pl-2" id="course1" name="course1"><%= data_appt[0].course_name%></label>
+                            <% } %>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-sm-3 col-form-label">ร้าน:</label>
+                        <label id="shop" name="shop" class="col-sm-9 col-form-label"><%= data_appt[0].shop_name%></label>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-sm-3 col-form-label">พนักงาน:</label>
+                        <label id="employee" name="employee" class="col-sm-9 col-form-label">
+                            <%= data_appt[0].emp_fname%> <%= data_appt[0].emp_lname%>
+                        </label>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-sm-3 col-form-label">ห้อง:</label>
+                        <label id="room" name="room" class="col-sm-9 col-form-label"><%= data_appt[0].room_name%></label>
+                    </div>
+                    <div class="form-group row pt-2">
+                        <div class="col-sm-12">
+                            <button type="button" class="btn btn-info w-100" style="padding: 10px;"
+                                data-toggle="modal" data-target="#modal-update-appointment"
+                                onclick="update('<%= JSON.stringify(data_appt[0])%>')">แก้ไขการนัดหมาย
+                            </button>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <div class="col-sm-12">
+                            <button type="button" class="btn btn-danger w-100" style="padding: 10px;" 
+                                onclick="return del('<%= data_appt[0].id%>')">ยกเลิกการนัดหมาย 
+                            </button>
+                        </div>
                     </div>
                 </div>
-
-                <div class="form-group row">
-                    <label class="col-sm-3 col-form-label">วัน เวลา:</label>
-                    <label id="datetime" name="datetime" class="col-sm-9 col-form-label">วัน เวลา</label>
-                </div>
-                <div class="form-group row">
-                    <label class="col-sm-3 col-form-label">พนักงาน:</label>
-                    <label id="employee" name="employee" class="col-sm-9 col-form-label">พนักงาน</label>
-                </div>
-                <div class="form-group row">
-                    <label class="col-sm-3 col-form-label">ห้อง:</label>
-                    <label id="room" name="room" class="col-sm-9 col-form-label">ห้อง</label>
-                </div>
-                <div class="form-group row pt-2">
-                    <div class="col-sm-12">
-                        <button type="button" class="btn btn-info w-100" style="padding: 10px;"
-                            data-toggle="modal" data-target="#modal-update-appointment"
-                            onclick="return vali('add')">แก้ไขการนัดหมาย
-                        </button>
-                    </div>
-                </div>
-                <div class="form-group row">
-                    <div class="col-sm-12">
-                        <button type="button" class="btn btn-danger w-100" style="padding: 10px;" 
-                            data-toggle="modal" data-target=""
-                            onclick="return vali('add')" disabled>ยกเลิกการนัดหมาย 
-                        </button>
-                    </div>
-                </div>
+            <% } %>
             </div>
-        </form>
     </div>
 
 </div>
 
+<% if (data_appt.length> 0) {%>
+    
 <!-- =================== Modal Update Appointment ===================-->
-<div class="modal fade" id="modal-update-appointment">
+<div class="modal fade" id="modal-update-appointment" >
     <div class="modal-dialog modal-lg">
       <div class="modal-content">
         <div class="modal-header bg-purple">
@@ -131,23 +153,28 @@
           </button>
         </div>
 
-        <form id="mange_update_appointment" action="manage_appointment/update_appointment" method="post">
+        <form id="mange_update_appointment" action="manage_appointment/update" method="post">
             <div class="modal-body">
             <!-- ============================== Form ==============================-->
+            <input type="number" name="id_update" class="d-none" value="<%= data_appt[0].id%>">
             <div class="form-group row">
                 <label for="datetime" class="col-sm-2 col-form-label">วัน เวลา:</label>
                 <div class="col-sm-10">
-                    <input type="datetime-local" class="form-control" id="datetime" name="datetime" step="60" 
-                    onchange="{selectDatetime(this.value)}">
+                    <input type="datetime-local" class="form-control" id="Ustart_date" name="Ustart_date" step="60" 
+                    onchange="checkAvailable()">
                 </div>
             </div>
             <div class="form-group row">
                 <label class="col-sm-2 col-form-label">บริการ:</label>
                 <div class="col-sm-10">
-                    <select class="form-control" id="service" name="service" value="" disabled onchange="selectService(this.value)">
-                        <option id="shop_none" value="" ></option>
-                        <% for(i of data_service){%> 
-                            <option  id="shop_<%=i.id%>" value="<%=i.id%>"><%=i.name%></option>
+                    <select class="form-control" id="Userv_data" name="Userv_data" value="">
+                        <% if(data_service.length > 0) {%>
+                            <option value="" disabled selected>เลือกบริการ</option>
+                            <% for(i of data_service){%> 
+                                <option  id="Userv_<%=i.id%>" value="<%=i.id%>_<%=i.time%>"><%=i.name%> - <%=i.time%> นาที - <%=i.price%> บาท</option>
+                            <%} %> 
+                        <% } else{%>  
+                            <option value="" disabled selected>ไม่พบข้อมูล</option>
                         <%} %> 
                     </select>
                 </div>
@@ -155,10 +182,14 @@
             <div class="form-group row">
                 <label class="col-sm-2 col-form-label">ร้าน:</label>
                 <div class="col-sm-10">
-                    <select class="form-control" id="shop" name="shop" value="" disabled onchange="selectService(this.value)">
-                        <option id="shop_none" value="" ></option>
-                        <% for(i of data_shop){%> 
-                            <option  id="shop_<%=i.id%>" value="<%=i.id%>"><%=i.name%></option>
+                    <select class="form-control" id="Ushop_id" name="Ushop_id" value="" onchange="checkAvailable()">
+                        <% if(data_shop.length > 0) {%>
+                            <option value="" disabled selected>เลือกร้าน</option>
+                            <% for(i of data_shop){%> 
+                                <option  id="Ushop_<%=i.id%>" value="<%=i.id%>"><%=i.shop_name%></option>
+                            <%} %> 
+                        <% } else{%>  
+                            <option value="" disabled selected>ไม่พบข้อมูล</option>
                         <%} %> 
                     </select>
                 </div>
@@ -166,30 +197,20 @@
             <div class="form-group row">
                 <label for="employee" class="col-sm-2 col-form-label">พนักงาน:</label>
                 <div class="col-sm-10">
-                    <select class="form-control" id="employee" name="employee" disabled onchange="selectService(this.value)">
-                        <option id="employee_none" value="" ></option>
-                        <% for(i of data_employee){%> 
-                            <option  id="employee_<%=i.id%>" value="<%=i.id%>"><%=i.name%></option>
-                        <%} %> 
-                    </select>
+                    <select class="form-control" id="Uemp_id" name="Uemp_id"></select>
                 </div>
             </div>
             <div class="form-group row">
                 <label for="room" class="col-sm-2 col-form-label">ห้อง:</label>
                 <div class="col-sm-10">
-                    <select class="form-control" id="room" name="room" value="" disabled onchange="selectService(this.value)">
-                        <option id="room_none" value="" ></option>
-                        <% for(i of data_room){%> 
-                            <option  id="room_<%=i.id%>" value="<%=i.id%>"><%=i.name%></option>
-                        <%} %> 
-                    </select>
+                    <select class="form-control" id="Uroom_id" name="Uroom_id" value="" ></select>
                 </div>
             </div>
             </div>
 
             <div class="modal-footer justify-content-between">
                 <button type="button" class="btn btn-default" data-dismiss="modal">ยกเลิก</button>
-                <button type="submit" class="btn btn-primary" onclick="return vali('update_product')" disabled>ยืนยัน</button>
+                <button type="submit" class="btn btn-primary" onclick="return vali('update')">ยืนยัน</button>
             </div>
 
         </form>
@@ -197,6 +218,13 @@
       </div>
     </div>
 </div>
+
+
+<form id="cancel" action="manage_appointment/cancel" method="post" class="d-inline">
+    <input type="number" name="id_cancel" class="d-none" value="<%= data_appt[0].id%>">
+</form>
+
+<% }%>
 
 <script src="/axios/axios.min.js"></script>
 <script>
@@ -217,6 +245,86 @@
             toastr.error("404 Error Not Found")
         });
     }
+
+    // selected_emp, selected_room is optional for setup modal
+    function getServiceData(appt_id, datetime, shop_id, selected_emp, selected_room) {
+        // console.log(datetime, shop_id)
+        axios({
+            url:'/services/get_employee_room_4_change',
+            method:'get',
+            params:{
+                appt_id:appt_id,
+                datetime:datetime,
+                shop_id:shop_id,
+            },
+            timeout:3000
+        }).then((result)=>{
+            // console.log(result.data)
+            let employees = result.data.employees;
+            let rooms = result.data.rooms;
+            // console.log(employees,rooms);
+            
+            const selectEmployee = document.getElementById('Uemp_id');
+            const selectRoom = document.getElementById('Uroom_id');
+
+            // Clear the existing options of the select
+            selectEmployee.innerHTML = '';
+            selectRoom.innerHTML = '';
+
+            if (employees.length > 0) {
+                const optionElement = document.createElement('option');
+                optionElement.text = `เลือกพนักงาน`;
+                optionElement.disabled = true;
+                optionElement.selected = true;
+                selectEmployee.appendChild(optionElement);
+                employees.forEach(item => {
+                    const optionElement = document.createElement('option');
+                    optionElement.id = "Uemp_"+item.id;
+                    optionElement.value = item.id;
+                    optionElement.text = `${item.f_name} ${item.l_name}`;
+                    selectEmployee.appendChild(optionElement);
+                });
+                selectEmployee.disabled = false;
+            }
+            else{
+                selectEmployee.disabled = true;
+                const optionElement = document.createElement('option');
+                optionElement.text = `ไม่พบข้อมูล`;
+                optionElement.disabled = true;
+                optionElement.selected = true;
+                selectEmployee.appendChild(optionElement);
+            }
+            if (rooms.length > 0) {
+                const optionElement = document.createElement('option');
+                optionElement.text = `เลือกห้อง`;
+                optionElement.disabled = true;
+                optionElement.selected = true;
+                selectRoom.appendChild(optionElement);
+                rooms.forEach(item => {
+                    const optionElement = document.createElement('option');
+                    optionElement.id = "Uroom_"+item.id;
+                    optionElement.value = item.id;
+                    optionElement.text = `${item.name}`;
+                    selectRoom.appendChild(optionElement);
+                });
+                selectRoom.disabled = false;
+            }
+            else{
+                selectRoom.disabled = true
+                const optionElement = document.createElement('option');
+                optionElement.text = `ไม่พบข้อมูล`;
+                optionElement.disabled = true;
+                optionElement.selected = true;
+                selectRoom.appendChild(optionElement);
+            }
+            if (selected_emp && selected_room) {
+                $(`option[id=Uemp_${selected_emp}]`).attr("selected","true"),
+                $(`option[id=Uroom_${selected_room}]`).attr("selected","true")
+            }
+        }).catch((error)=>{
+            toastr.error("404 Error Not Found",error)
+        });
+    }
 </script>
 
 <script>
@@ -228,101 +336,70 @@
         document.getElementById('room').removeAttribute("disabled");
     }
 
-    function selectService(value){
-        console.log(value);
-    }
-
-    function select(){
-        const selectedOption = document.querySelector("select[name=data_add_reuse] option:checked");
-        $("input[name=prod_id]").val(selectedOption.getAttribute("data-id"));
-        $("input[name=stock]").val(selectedOption.getAttribute("data-id"));
-        $("input[name=can_used]").val(selectedOption.getAttribute("data-used"));
-    }
-
-    function update(mode,data){
+    let oldOpServ = "";
+    let oldOpShop = "";
+    function update(data){
         data = JSON.parse(data)
-        if (mode === "add"){
-            $("input[name=Iid]").val(data.id);
-            $("input[name=Iname]").val(data.name);
-            $("input[name=Itype]").val(data.type);
-            $("input[name=Istock]").val(data.stock);
-            $("input[name=Iamount]").val(0);
+        $("input[name=Ustart_date]").val(formatDateTimeForInput(data.start_date));
+        let new_select1 = data.serv_id;
+        $(`option[id=Userv_${new_select1}]`).attr("selected","true");
+        if(oldOpServ !== new_select1 ){
+            if(oldOpServ != ""){
+                $(`option[id=Userv_${oldOpServ}]`).removeAttr("selected");
+            }
+            oldOpServ = new_select1 ;
         }
-        else if (mode === "remove"){
-            $("input[name=Did]").val(data.id);
-            $("input[name=Dname]").val(data.name);
-            $("input[name=Dtype]").val(data.type);
-            $("input[name=Dstock]").val(data.stock);
-            $("input[name=Damount]").val(0);
+        let new_select2 = data.shop_id;
+        $(`option[id=Ushop_${new_select2}]`).attr("selected","true");
+        if(oldOpShop !== new_select2 ){
+            if(oldOpShop != ""){
+                $(`option[id=Ushop_${oldOpShop}]`).removeAttr("selected");
+            }
+            oldOpShop = new_select2 ;
         }
-        else if (mode === "update_reuse"){
-            $("input[name=Uid]").val(data.id);
-            $("input[name=Uprod_id]").val(data.prod_id);
-            $("input[name=Uprod_name]").val(data.prod_name);
-            $("input[name=Uprod_type]").val(data.type_name);
-            $("input[name=Umax_used]").val(data.max_used);
-            $("input[name=Uremaining]").val(data.remaining);
-            $("input[name=Uremaining_backup]").val(data.remaining);
-        }
+        checkAvailable(data.emp_id,data.room_id)
+        // $(`option[id=Uemp_${data.emp_id}]`).attr("selected","true"),
+        // $(`option[id=Uroom_${data.room_id}]`).attr("selected","true")
+        
     }
     
     function del(id){
-        $("input[name=id_del_reuse]").val(parseInt(id))
-        if(confirm("ยืนยันการลบข้อมูล") == true){
-            $("#delete_reuse").submit();
+        $("input[name=id_cancel]").val(parseInt(id))
+        if(confirm("ยืนยันการยกเลิกนัด") == true){
+            $("#cancel").submit();
         }
     }
 
+    function checkAvailable(selected_emp,selected_room){
+        let appt_id = $("input[name=id_update]").val();
+        let datetime = $("input[name=Ustart_date]").val();
+        let shop_id = $("select[name=Ushop_id]").val();
+        getServiceData(appt_id,datetime,shop_id,selected_emp,selected_room);
+    }
+
     function vali(mode){
-        /*
-            Mode insert , update 
-        */
-        // (document.querySelector("input[name=Fname]").innerText).trim()
-        if(mode === "add_stock"){
-            let amount = parseInt(($("input[name=Iamount]").val()));
-            if( amount > 0){
-                $("#mange_add_stock").submit();
-                
+        if (mode === "update"){
+            let appt_id = $("input[name=id_update]").val();
+            let start_date = $("input[name=Ustart_date]").val();
+            let serv_id = $("select[name=Userv_data]").val();
+            let shop_id = $("select[name=Ushop_id]").val();
+            let emp_id = $("select[name=Uemp_id]").val();
+            let room_id = $("select[name=Uroom_id]").val();
+            if( appt_id !== "" && start_date !== "" && serv_id && shop_id && emp_id && room_id){
+                $("#mange_update_appointment").submit();
             }else{
-                toastr.error("จำนวนต้องมากกว่า 0")
-            }
-            return false;
-        }else if(mode === "remove_stock"){
-            let stock = parseInt(($("input[name=Dstock]").val()));
-            let amount = parseInt(($("input[name=Damount]").val()));
-            // console.log(stock,amount)
-            if( amount > 0 && amount <= stock){
-                $("#mange_remove_stock").submit();
-            }else{
-                toastr.error(`จำนวนต้องมากกว่า 0 และ ไม่เกิน ${stock}`)
-            }
-            return false;
-        }else if (mode === "add_reuse"){
-            let prod_id = parseInt(($("input[name=prod_id]").val()));
-            let stock = parseInt(($("input[name=stock]").val()));
-            let can_used = parseInt(($("input[name=can_used]").val()));
-            if( prod_id !== undefined, prod_id !== undefined, prod_id !== undefined){
-                $("#mange_add_reuse").submit();
-            }else{
-                toastr.error(`! กรุณาเลือกสินค้า`)
-            }
-            return false;
-        }else if (mode === "update_reuse"){
-            let max_used = parseInt(($("input[name=Umax_used]").val()));
-            let remaining = parseInt(($("input[name=Uremaining]").val()));
-            let remaining_backup = parseInt(($("input[name=Uremaining_backup]").val()));
-            if( remaining === remaining_backup){
-                $("#modal-update-reuse").modal("hide")
-            }
-            else if( remaining !== "" && remaining >= 0 && remaining <= max_used){
-                $("#mange_update_reuse").submit();
-            }
-            else{
-                toastr.error(`จำนวนต้องไม่น้อยกว่า 0 และไม่เกิน ${max_used}`)
+                toastr.error("! กรุณาใส่ข้อมูลให้ครบ")
             }
             return false;
         }
         
+    }
+
+    function search() {
+        let appt_id = $("input[name=code]").val();
+        if (appt_id!=""){
+            window.location = `../manage_appointment?id=${appt_id}`;
+        }
     }
   
 </script>

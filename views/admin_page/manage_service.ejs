@@ -112,11 +112,11 @@
                     </div>
                     <div class="form-group">
                         <label >อัตราส่วนของร้าน</label>
-                        <input type="number" class="form-control" name="shop_ratio">
+                        <input type="number" class="form-control" name="shop_ratio" min="0" max="100" onchange="divideRatio('shop_ratio','emp_ratio',this.value)" >
                     </div>
                     <div class="form-group">
                         <label >อัตราส่วนของพนักงาน</label>
-                        <input type="number" class="form-control" name="emp_ratio">
+                        <input type="number" class="form-control" name="emp_ratio" min="0" max="100" onchange="divideRatio('emp_ratio','shop_ratio',this.value)" >
                     </div>
                     <input type="number" name="group_id" value="<%= db_serv_group[0].id %>" class="d-none">
                     <input type="number" name="type_id" value="<%= db_serv_type[0].id %>" class="d-none">
@@ -153,11 +153,11 @@
                 </div>
                 <div class="form-group">
                     <label >อัตราส่วนของร้าน</label>
-                    <input type="number" class="form-control" name="Ushop_ratio">
+                    <input type="number" class="form-control" name="Ushop_ratio" min="0" max="100" onchange="divideRatio('Ushop_ratio','Uemp_ratio',this.value)" >
                 </div>
                 <div class="form-group">
                     <label >อัตราส่วนของพนักงาน</label>
-                    <input type="number" class="form-control" name="Uemp_ratio">
+                    <input type="number" class="form-control" name="Uemp_ratio" min="0" max="100" onchange="divideRatio('Uemp_ratio','Ushop_ratio',this.value)" >
                 </div>
                 <input type="number" name="group_id" value="<%= db_serv_group[0].id %>" class="d-none">
                 <input type="number" name="type_id" value="<%= db_serv_type[0].id %>" class="d-none">
@@ -222,6 +222,11 @@
         if(confirm("ยืนยันการลบข้อมูล") == true){
             $("#delete").submit();
         }
+    }
+
+    function divideRatio(ratio1, ratio2, value){
+        $(`input[name=${ratio1}]`).val(value);
+        $(`input[name=${ratio2}]`).val(100-value);
     }
 
     function vali(mode){

@@ -15,7 +15,7 @@ exports.get_product_type_byID = async (input) => {
 };
 exports.insert_product_type = async (input) => {
     let sql = ` INSERT INTO product_type( name, refill_by, flag) 
-                VALUES ("${input.name}", "${input.name}", 1);`
+                VALUES ("${input.name}", "${input.refill_by}", 1);`
     let result = await con.query(sql)
 };
 exports.update_product_type = async (input) => {
@@ -51,6 +51,12 @@ exports.is_duplicate_name_self_product_type = async (input) => {
 
 exports.get_product = async () => {
     let sql = `SELECT id, type_id, name, price, stock, min_stock, max_stock, can_used FROM product where flag = 1;`
+    let result = await con.query(sql)
+    return result;
+};
+exports.get_product_byID = async (input) => {
+    let sql = ` SELECT id, type_id, name, price, stock, min_stock, max_stock, can_used FROM product 
+                where id = '${input.id}' and flag = 1;`
     let result = await con.query(sql)
     return result;
 };

@@ -14,6 +14,7 @@ const manage_course_controller = require('../controllers/admin_controller/manage
 const manage_appointment_controller = require('../controllers/admin_controller/manage_appointment');
 const manage_vip_controller = require('../controllers/admin_controller/manage_vip');
 const manage_sale_controller = require('../controllers/admin_controller/manage_sale');
+const manage_report_controller = require('../controllers/admin_controller/manage_report');
 
 const manage_role_controller = require('../controllers/admin_controller/manage_privileges');
 
@@ -66,6 +67,7 @@ router.get('/manage_cust/check_can_add', manage_cust_controller.check_can_add);
 router.get('/manage_cust/check_can_update', manage_cust_controller.check_can_update);
 
 router.get('/manage_cust_vip', manage_cust_controller.Manage_customer_vip);
+router.post('/manage_cust_vip/:action', manage_cust_controller.setCustomerVip);
 
 // ---------------  manage-product ---------------
 router.get('/manage_product_type', manage_prod_controller.Manage_product_type);
@@ -139,17 +141,29 @@ router.get('/manage_course_service/check_can_add_service', manage_course_control
 
 // ---------------  manage-appointment ---------------
 router.get('/manage_appointment', manage_appointment_controller.Manage_appointment);
+router.post('/manage_appointment/:action', manage_appointment_controller.setAppointment);
 
-
+router.get('/manage_appointment/check_can_add', manage_appointment_controller.check_can_add);
+router.get('/manage_appointment/search_vip', manage_appointment_controller.search_vip);
 
 
 // ---------------  manage-vip ---------------
 router.get('/manage_vip', manage_vip_controller.Manage_vip);
+router.post('/manage_vip/:action', manage_vip_controller.setVip);
 
+router.get('/manage_vip/check_can_add', manage_vip_controller.check_can_add);
+router.get('/history_vip', manage_vip_controller.Manage_vip_history);
 
 
 // ---------------  manage-sale ---------------
 router.get('/manage_sale', manage_sale_controller.Manage_sale);
+router.post('/manage_sale/:action', manage_sale_controller.setSale);
+
+
+// ---------------  manage-report ---------------
+router.get('/manage_report', manage_report_controller.Manage_report);
+router.get('/export_report', manage_report_controller.Save_report);
+
 
 
 

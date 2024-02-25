@@ -203,7 +203,7 @@ exports.is_duplicate_self_service_function = async (input) => {
 // -------------------- Service product --------------------
 
 exports.get_serv_prod_by_servFuncID = async (input) => {
-    let sql = ` SELECT sp.id, p.id as prod_id, p.name as prod_name, sp.qty
+    let sql = ` SELECT sp.id, p.id as prod_id, p.name as prod_name, sp.qty, p.can_used as prod_can_used 
                 FROM service_product as sp
                 JOIN product as p ON p.id = sp.prod_id
                 WHERE sp.sv_func_id = ${input.id} and sp.flag = 1 and p.flag = 1`

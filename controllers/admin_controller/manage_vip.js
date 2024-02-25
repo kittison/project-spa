@@ -1,6 +1,9 @@
 
 const model = require('../../models/vip');
 const model_course = require('../../models/course');
+const model_cust = require('../../models/customer');
+const model_sale = require('../../models/sale');
+const model_appt = require('../../models/appointment');
 
 exports.Manage_vip = async (req, res) => {
     if( req.session.role === "admin" ){
@@ -42,37 +45,33 @@ exports.setVip =async (req, res) => {
 
 // ---------------------- validate ----------------------
 exports.check_can_add = async (req, res) => {
-    let is_duplicate_name = await model.is_duplicate_name(req.query).then((data)=>{return data})
-    const status = is_duplicate_name? 0 : 1
-    res.send({status:status});
-};
-exports.check_can_update = async (req, res) => {
-    let is_duplicate_name = await model.is_duplicate_name(req.query).then((data)=>{return data})
-    let is_duplicate_name_self = await model.is_duplicate_name_self(req.query).then((data)=>{return data})
-    const status = is_duplicate_name? (is_duplicate_name_self? 1 : 0) : 1
+    let search_cust = await model_cust.get_cust_byID(req.query).then((data)=>{return data})
+    const status = (search_cust.length>0)? 1 : 0
     res.send({status:status});
 };
 
 // ---------------------- Vip History ----------------------
 
-// exports.Manage_vip_history = async (req, res) => {
-//     if( req.session.role === "admin" ){
-//         let db_cust =  await model.get_cust_byID({id:req.query.cust_id});
-//         let db_cust_vip =  await model.get_cust_vip({id:req.query.cust_id});
-//         let db_course =  await model_course.get_course();
-//         // console.log("#",db_employee);
-//         res.render('template',{
-//             session_user_id:req.session.user_id,
-//             session_user:req.session.user,
-//             session_role:req.session.role,
-//             db_cust:db_cust,
-//             db_cust_vip:db_cust_vip,
-//             db_course:db_course,
-//             header:"Manage Customer",
-//             file:'admin_page/manage_cust_vip'
-//         });
-//     }else{
-//         res.redirect('/admin');
-//     }
+exports.Manage_vip_history = async (req, res) => {
+    if( req.session.role === "admin" ){
+        if (req.query.vip_id) {
+            let db_appt =  await model_appt.get_appt_vip_byID({id:req.query.vip_id});
+            let db_sale =  await model_sale.get_sale_vip_byID({id:req.query.vip_id});
+            res.render('template',{
+                session_user_id:req.session.user_id,
+                session_user:req.session.user,
+                session_role:req.session.role,
+                vip_id:req.query.vip_id,
+                db_appt:db_appt,
+                db_sale:db_sale,
+                header:"History Vip",
+                file:'admin_page/history_vip'
+            });
+        }else{
+            res.redirect('./manage_vip');
+        }
+    }else{
+        res.redirect('/admin');
+    }
 
-// };
+};

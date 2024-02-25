@@ -1,4 +1,5 @@
 const con = require('../config/db_config.js')
+const formatDate = require('../config/formatDate.js')
 
 exports.get_emp = async () => {
     let sql = ` SELECT em.id,em.f_name,em.l_name,em.n_name,em.address,em.tel,em.date_start,em.date_end,em.bank_account,em.wage,
@@ -147,9 +148,12 @@ exports.get_emp_queue = async () => {
 };
 
 exports.get_emp_work = async () => {
+    const now = new Date(new Date().toLocaleString('en-US', {timeZone: 'Asia/Bangkok'}))
+    const format = formatDate(now)
+    
+    // console.log(format)
     let sql = ` SELECT
                     e.id, e.f_name, e.l_name, e.n_name, e.is_service,
-                    NOW(),
                     SUM(CASE WHEN DATE(a.start_date) = CURDATE() AND a.status = 'Completed' THEN 1 ELSE 0 END) AS daily_completed_count,
                     SUM(CASE WHEN YEARWEEK(a.start_date) = YEARWEEK(CURDATE()) AND a.status = 'Completed' THEN 1 ELSE 0 END) AS weekly_completed_count,
                     SUM(CASE WHEN YEAR(a.start_date) = YEAR(CURDATE()) AND MONTH(a.start_date) = MONTH(CURDATE()) AND a.status = 'Completed' THEN 1 ELSE 0 END) AS monthly_completed_count,
@@ -171,9 +175,10 @@ exports.get_emp_work = async () => {
                         appointment appt
                     WHERE
                         appt.status = 'Onprocess'
-                        AND NOW() BETWEEN appt.start_date AND appt.end_date
+                        AND "${format}" > appt.start_date 
+                        AND appt.flag = 1
                     ORDER BY
-                        appt.start_date ASC
+                        appt.start_date DESC
                     LIMIT 1
                 ) onprocess_appointment ON
                     e.id = onprocess_appointment.emp_id
@@ -183,6 +188,7 @@ exports.get_emp_work = async () => {
                 GROUP BY e.id`
                 
     let result = await con.query(sql)
+    result.now = format
     return result;
 };
 

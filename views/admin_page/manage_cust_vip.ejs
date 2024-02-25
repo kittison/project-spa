@@ -88,7 +88,8 @@
 </div>
 
 
-<form id="delete" action="manage_cust/delete" method="post" class="d-inline">
+<form id="delete" action="manage_cust_vip/delete" method="post" class="d-inline">
+    <input type="number" name="cust_id" class="d-none" value="<%=db_cust[0].id%>">
     <input type="number" name="id_del" class="d-none" value="">
 </form>
 
@@ -102,15 +103,20 @@
             <span aria-hidden="true" class="text-light">&times;</span>
           </button>
         </div>
-        <form id="mange_add" action="manage_cust/add" method="post">
+        <form id="mange_add" action="manage_cust_vip/add" method="post">
             <div class="modal-body">
             <!-- ============================== Form ==============================-->
+                <input type="number" name="cust_id" class="d-none" value="<%=db_cust[0].id%>">
                 <div class="form-group">
                     <label>คอร์ส</label>
                     <select class="form-control" name="course_id" value="">
-                        <option id="course_none" value="" ></option>
-                        <% for(i of db_course){%> 
-                            <option  id="course_<%=i.id%>" value="<%=i.id%>"><%=i.name%> - <%=i.price%> บาท</option>
+                        <% if (db_course.length > 0){%>
+                            <option value="" disabled selected>เลือกคอร์ส</option>
+                            <% for(i of db_course){%> 
+                                <option  id="course_<%=i.id%>" value="<%=i.id%>"><%=i.name%> - <%=i.price%> บาท</option>
+                            <%} %> 
+                        <% } else{%>
+                            <option value="" disabled selected>ไม่พบข้อมูล</option>
                         <%} %> 
                     </select>
                 </div>
@@ -124,11 +130,11 @@
                 </div>
                 <div class="form-group">
                     <label >ราคาที่ใช้ไป</label>
-                    <input type="number" class="form-control" name="acc_val">
+                    <input type="number" class="form-control" name="acc_val" min="0">
                 </div>
                 <div class="form-group">
                     <label >ราคาคงเหลือ</label>
-                    <input type="number" class="form-control" name="remain_val">
+                    <input type="number" class="form-control" name="remain_val" min="0">
                 </div>
 
             </div>
@@ -150,18 +156,28 @@
     <div class="modal-dialog modal-lg">
       <div class="modal-content">
         <div class="modal-header bg-purple">
-          <h4 class="modal-title ">แก้ไขข้อมูลลูกค้า</h4>
+          <h4 class="modal-title ">แก้ไขข้อมูลบัตร</h4>
           <button type="button " class="close" data-dismiss="modal" aria-label="Close">
             <span aria-hidden="true" class="text-light">&times;</span>
           </button>
         </div>
 
-        <form id="mange_update" action="manage_cust/update" method="post">
+        <form id="mange_update" action="manage_cust_vip/update" method="post">
             <div class="modal-body">
             <!-- ============================== Form ==============================-->
+                <input type="number" name="cust_id" class="d-none" value="<%=db_cust[0].id%>">
                 <div class="form-group">
                     <label >คอร์ส</label>
-                    <input type="datetime-local" class="form-control" name="Ucourse_id" step="60">
+                    <select class="form-control" name="Ucourse_id" value="">
+                        <% if (db_course.length > 0){%>
+                            <option value="" disabled selected>เลือกคอร์ส</option>
+                            <% for(i of db_course){%> 
+                                <option  id="Ucourse_<%=i.id%>" value="<%=i.id%>"><%=i.name%> - <%=i.price%> บาท</option>
+                            <%} %> 
+                        <% } else{%>
+                            <option value="" disabled selected>ไม่พบข้อมูล</option>
+                        <%} %> 
+                    </select>
                 </div>
                 <div class="form-group">
                     <label >วันที่เข้าเป็น</label>
@@ -173,11 +189,11 @@
                 </div>
                 <div class="form-group">
                     <label >ราคาที่ใช้ไป</label>
-                    <input type="number" class="form-control" name="Uacc_val">
+                    <input type="number" class="form-control" name="Uacc_val" min="0">
                 </div>
                 <div class="form-group">
                     <label >ราคาคงเหลือ</label>
-                    <input type="number" class="form-control" name="Uremain_val">
+                    <input type="number" class="form-control" name="Uremain_val" min="0">
                 </div>
                 <input type="number" name="id_update" class="d-none" value="">
             </div>
@@ -192,10 +208,6 @@
       </div>
     </div>
 </div>
-
-
-
-
 
 
 <script src="/axios/axios.min.js"></script>
@@ -239,24 +251,20 @@
     let oldOp ="";
     function update(data){
         data = JSON.parse(data)
-        $("input[name=Uf_name]").val(data.f_name);
-        $("input[name=Ul_name]").val(data.l_name)
-        $("input[name=Ugender]").val(data.gender)
-        $("input[name=Uaddress]").val(data.address)
-        $("input[name=Utel]").val(data.tel) 
-        $("input[name=Uemail]").val(data.email)
-        $("input[name=Utype]").val(data.cus_type)
-        $("input[name=Upoint]").val(data.member_point)           
-        $("input[name=id_update]").val(data.id)
+        $("input[name=Ujoin_date]").val(formatDateTimeForInput(data.join_date));
+        $("input[name=Uexpire_date]").val(formatDateTimeForInput(data.expire_date));
+        $("input[name=Uacc_val]").val(data.acc_val);
+        $("input[name=Uremain_val]").val(data.remain_val);         
+        $("input[name=id_update]").val(data.id);
 
-        // let new_select = data.position;
-        // $(`option[id=${new_select}]`).attr("selected","true");
-        // if(oldOp !== new_select ){
-        //     if(oldOp != ""){
-        //         $(`option[id=${oldOp}]`).removeAttr("selected");
-        //     }
-        //     oldOp = new_select ;
-        // }
+        let new_select = data.serv_course_id;
+        $(`option[id=Ucourse_${new_select}]`).attr("selected","true");
+        if(oldOp !== new_select ){
+            if(oldOp != ""){
+                $(`option[id=Ucourse_${oldOp}]`).removeAttr("selected");
+            }
+            oldOp = new_select ;
+        }
 
     }
 
@@ -273,59 +281,25 @@
         */
         // (document.querySelector("input[name=Fname]").innerText).trim()
         if(mode === "add"){
-            let f_name = ($("input[name=f_name]").val()).trim();
-            let l_name = ($("input[name=l_name]").val()).trim();
-            let gender = ($("input[name=gender]").val()).trim();
-            let address = ($("input[name=address]").val()).trim();
-            let tel = ($("input[name=tel]").val()).trim();
-            let email = ($("input[name=email]").val()).trim();
-            let cus_type = ($("input[name=type]").val()).trim();
-            let member_point = ($("input[name=point]").val()).trim();
-    
-            if( f_name !== "" && l_name !== "" && gender !== "" && address !== "" && 
-                tel !== "" && email !== "" && cus_type !== "" && member_point !== ""
-            ){
-                let params= {
-                    f_name:f_name,
-                    l_name:l_name,
-                }
-                axios_validation(
-                    'manage_cust/check_can_add',
-                    params,
-                    '#mange_add',
-                    'มีชื่อ/นามสุกลลูกค้านี้อยู่เเล้ว'
-                );
-                
+            let course_id = $("select[name=course_id]").val();
+            let join_date = $("input[name=join_date]").val();
+            let expire_date = $("input[name=expire_date]").val();
+            let acc_val = $("input[name=acc_val]").val();
+            let remain_val = $("input[name=remain_val]").val();
+            if( course_id && join_date !== "" && expire_date !== "" && acc_val !== "" && remain_val !== ""){
+                $('#mange_add').submit();
             }else{
                 toastr.error("! กรุณาใส่ข้อมูลให้ครบ")
             }
             return false;
-
-
         }else if(mode === "update"){
-            let f_name = ($("input[name=Uf_name]").val()).trim();
-            let l_name = ($("input[name=Ul_name]").val()).trim();
-            let gender = ($("input[name=Ugender]").val()).trim();
-            let address = ($("input[name=Uaddress]").val()).trim();
-            let tel = ($("input[name=Utel]").val()).trim();
-            let email = ($("input[name=Uemail]").val()).trim();
-            let cus_type = ($("input[name=Utype]").val()).trim();
-            let member_point = ($("input[name=Upoint]").val()).trim();
-    
-            if( f_name !== "" && l_name !== "" && gender !== "" && address !== "" && 
-                tel !== "" && email !== "" && cus_type !== "" && member_point !== ""
-            ){
-                let params= {
-                    f_name:f_name,
-                    l_name:l_name,
-                    id:$("input[name=id_update]").val()
-                }
-                axios_validation(
-                    'manage_cust/check_can_update',
-                    params,
-                    '#mange_update',
-                    'มีชื่อ/นามสุกลลูกค้านี้อยู่เเล้ว'
-                );
+            let id_update = $("input[name=id_update]").val();
+            let Ujoin_date = $("input[name=Ujoin_date]").val();
+            let Uexpire_date = $("input[name=Uexpire_date]").val();
+            let Uacc_val = $("input[name=Uacc_val]").val();
+            let Uremain_val = $("input[name=Uremain_val]").val();
+            if( id_update && Ujoin_date !== "" && Uexpire_date !== "" && Uacc_val !== "" && Uremain_val !== ""){
+                $('#mange_update').submit();
             }else{
                 toastr.error("! กรุณาใส่ข้อมูลให้ครบ")
             }

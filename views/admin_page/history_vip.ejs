@@ -1,0 +1,198 @@
+<style>
+    .container-fluid {
+        padding: 12px;
+    }
+
+    .modal-body {
+        padding-left: 30px;
+        padding-right: 30px;
+    }
+
+    .modal-footer {
+        padding-left: 30px;
+        padding-right: 30px;
+    }
+
+    .form-control {
+        background-color: rgba(175, 175, 175, 0.3);
+    }
+</style>
+
+<div class="container-fluid">
+    
+    <div class="d-flex justify-content-center">
+        <div class="">
+            <div class="card card-body text-center" style="padding-left: 40px; padding-right: 40px;">
+                <h3>ประวัติการใช้งาน Vip : <%= vip_id%></h3>
+            </div>
+        </div>
+    </div>
+
+    <div class="d-flex  justify-content-start mb-2" style="gap: 5px;">
+        <a href="manage_vip" class="btn btn-info">กลับไปที่จัดการข้อมูลบัตร Vip</a>
+    </div>
+
+    <div class="d-flex  justify-content-start mb-2" style="gap: 10px;">
+        <h5 style="margin-top: 10px; padding-left: 10px; font-weight: bold;">รายการนัดหมาย</h5>
+    </div>
+
+    <div class="row">
+        <div class="col-12">
+            <div class="card card-body">
+                
+                <table id="appointment" class="table table-bordered table-hover " >
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>เวลาเริ่ม</th>
+                            <th>เวลาสิ้นสุด</th>
+                            <th>คอร์ส</th>
+                            <th>บริการ</th>
+                            <th>ร้าน</th>
+                            <th>พนักงาน</th>
+                            <th>ห้อง</th>
+                            <th>สถานะ</th>
+                            <th>การยืนยัน</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% for(let i of db_appt) {%>
+                            <tr>
+                                <td><%= i.id%></td>
+                                <% if(i.start_date){ %>
+                                    <% let f_date_start = new Intl.DateTimeFormat('id-ID',{ day:'2-digit', month:'2-digit', year:'numeric', hour: '2-digit', minute: 'numeric', second: 'numeric', timeZoneName: 'short'}).format(i.start_date) %>
+                                    <td><%= f_date_start%></td>
+                                <% } else{ %>  
+                                    <td>-</td>
+                                <% } %>
+                                <% if(i.end_date){ %>
+                                    <% let f_date_end = new Intl.DateTimeFormat('id-ID',{ day:'2-digit', month:'2-digit', year:'numeric', hour: '2-digit', minute: 'numeric', second: 'numeric', timeZoneName: 'short'}).format(i.end_date) %>
+                                    <td><%= f_date_end%></td>
+                                <% } else{ %>  
+                                    <td>-</td>
+                                <% } %>
+                                <td><%= i.course_name%> </td>
+                                <td><%= i.serv_name%> </td>
+                                <td><%= i.shop_name%></td>
+                                <td><%= i.emp_fname%> <%= i.emp_lname%></td>
+                                <td><%= i.room_name%></td>
+                                <td><%= i.status%></td>
+                                <td> <% if (i.is_confirmed==1) { %>
+                                    Confirmed
+                                  <% } else { %>
+                                    -
+                                  <% } %></td>
+                            </tr>
+                        <% } %>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div class="d-flex  justify-content-start mb-2" style="gap: 10px;">
+        <h5 style="margin-top: 10px; padding-left: 10px; font-weight: bold;">รายการขาย</h5>
+    </div>
+
+    <div class="row">
+        <div class="col-12">
+            <div class="card card-body">
+                
+                <table id="sale" class="table table-bordered table-hover " >
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>ID นัดหมาย</th>
+                            <th>วันเวลาที่ขาย</th>
+                            <th>ราคารวม</th>
+                            <th>สถานะการจ่าย</th>
+                            <th>วันเวลาที่จ่าย</th>
+                            <th>ราคาที่จ่าย</th>
+                            <th>วิธีที่จ่าย</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% for(let i of db_sale) {%>
+                            <tr>
+                                <td><%= i.id%></td>
+                                <td><%= i.appt_id%></td>
+                                <% if(i.datetime){ %>
+                                    <% let f_datetime = new Intl.DateTimeFormat('id-ID',{ day:'2-digit', month:'2-digit', year:'numeric', hour: '2-digit', minute: 'numeric', second: 'numeric', timeZoneName: 'short'}).format(i.datetime) %>
+                                    <td><%= f_datetime%></td>
+                                <% } else{ %>  
+                                    <td>-</td>
+                                <% } %>
+                                <td><%= i.total_price%></td>
+                                <td><%= i.status%></td>
+                                <% if(i.pay_datetime){ %>
+                                    <% let f_pay_datetime = new Intl.DateTimeFormat('id-ID',{ day:'2-digit', month:'2-digit', year:'numeric', hour: '2-digit', minute: 'numeric', second: 'numeric', timeZoneName: 'short'}).format(i.pay_datetime) %>
+                                    <td><%= f_pay_datetime%></td>
+                                <% } else{ %>  
+                                    <td></td>
+                                <% } %>
+                                <td><%= i.amount%></td>
+                                <td><%= i.pay_meth%></td>
+                                <td>
+                                    <div class="" style="display: grid; gap: 5px;">
+                                        <button  type="button" class="btn btn-secondary p-1 px-1" data-toggle="modal" data-target="#modal-display-appointment"
+                                            onclick="update('<%=JSON.stringify(i)%>') ">ข้อมูลนัดหมาย</button>
+                                        <button  type="button" class="btn btn-primary p-1 px-1"
+                                            onclick="go('invoice','<%=JSON.stringify(i)%>') ">ออกใบแจ้งหนี้</button>
+                                        <% if(i.status=="PENDING"){ %>
+                                            <button  type="button" class="btn btn-success p-1 px-1" data-toggle="modal" data-target="#modal-manage-payment"
+                                            onclick="update('<%=JSON.stringify(i)%>') ">จ่าย</button>
+                                        <% } else if(i.status=="PAID"){%>
+                                            <button  type="button" class="btn btn-primary p-1 px-1"
+                                            onclick="go('receipt','<%=JSON.stringify(i)%>') ">ออกใบเสร็จ</button>
+                                        <% } %>
+                                    </div>
+                                </td>
+                                
+                            </tr>
+                        <% } %>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script>
+
+    $(function () {
+      $('#appointment').DataTable({
+        "paging": true,
+        "lengthMenu": [[5, 10, 20], [5, 10, 20]],
+        "searching": true,
+        "ordering": true,
+        "info": true,
+        "autoWidth": false,
+        "responsive": true,
+      });
+      
+    });
+
+    $(function () {
+      $('#sale').DataTable({
+        "paging": true,
+        "lengthMenu": [[5, 10, 20], [5, 10, 20]],
+        "searching": true,
+        "ordering": true,
+        "info": true,
+        "autoWidth": false,
+        "responsive": true,
+      });
+      
+    });
+
+</script>
+
+
+<!-- ============================= ERROR Zone =============================-->
+<!-- toastr.success('Lorem ipsum dolor sit amet, consetetur sadipscing elitr.')
+toastr.info('Lorem ipsum dolor sit amet, consetetur sadipscing elitr.')
+toastr.error('Lorem ipsum dolor sit amet, consetetur sadipscing elitr.')
+toastr.warning('Lorem ipsum dolor sit amet, consetetur sadipscing elitr.') -->
+<!-- ============================= ERROR Zone =============================-->

@@ -78,10 +78,14 @@
             <div class="form-group row">
                 <label class="col-sm-2 col-form-label">คอร์ส:</label>
                 <div class="col-sm-10">
-                    <select class="form-control" id="service" name="course" value="">
-                        <option id="course_none" value="" ></option>
-                        <% for(i of data_course){%> 
-                            <option  id="course_<%=i.id%>" value="<%=i.id%>"><%=i.name%> - <%=i.price%> บาท</option>
+                    <select class="form-control" id="course_data" name="course_data" value="">
+                        <% if(data_course.length > 0) {%>
+                            <option value="" disabled selected>เลือกคอร์ส</option>
+                            <% for(i of data_course){%> 
+                                <option  id="course_<%=i.id%>" value="<%=i.id%>_<%=i.price%>"><%=i.name%> - <%=i.price%> บาท</option>
+                            <%} %> 
+                        <% } else{%>  
+                            <option value="" disabled selected>ไม่พบข้อมูล</option>
                         <%} %> 
                     </select>
                 </div>
@@ -89,13 +93,13 @@
             <div class="form-group row pt-2">
                 <div class="col-sm-12">
                     <button  class="btn btn-primary w-100" style="padding: 10px;"
-                        onclick="return vali('add')">ยืนยันการเลือกซื้อ
+                        onclick="return confirm()" disabled>ยืนยันการเลือกซื้อ
                     </button>
                 </div>
             </div>
         </form>
     </div>
-
+    
 </div>
 
 <script src="/axios/axios.min.js"></script>
@@ -117,44 +121,23 @@
             toastr.error("404 Error Not Found")
         });
     }
+
+    function create_charge(data){
+        axios({
+            url:'/buy_vip/create_charge',
+            method:'post',
+            data:data,
+            timeout:3000
+        }).then((result)=>{
+            console.log(result.data);
+
+            // if( result.data.status == 1 ){
+            //     window.location="/";
+        })
+    }
 </script>
 
 <script>
-    $(function () {
-      $('#product_alert').DataTable({
-        "paging": true,
-        "lengthMenu": [[5, 10, 20], [5, 10, 20]],
-        "searching": true,
-        "ordering": true,
-        "info": true,
-        "autoWidth": false,
-        "responsive": true,
-      }); 
-    });
-
-    $(function () {
-      $('#product').DataTable({
-        "paging": true,
-        "lengthMenu": [[5, 10, 20], [5, 10, 20]],
-        "searching": true,
-        "ordering": true,
-        "info": true,
-        "autoWidth": false,
-        "responsive": true,
-      }); 
-    });
-
-    $(function () {
-      $('#product_reuse').DataTable({
-        "paging": true,
-        "lengthMenu": [[5, 10, 20], [5, 10, 20]],
-        "searching": true,
-        "ordering": true,
-        "info": true,
-        "autoWidth": false,
-        "responsive": true,
-      }); 
-    });
 
     function select(){
         const selectedOption = document.querySelector("select[name=data_add_reuse] option:checked");
@@ -163,89 +146,32 @@
         $("input[name=can_used]").val(selectedOption.getAttribute("data-used"));
     }
 
-    function update(mode,data){
-        data = JSON.parse(data)
-        if (mode === "add"){
-            $("input[name=Iid]").val(data.id);
-            $("input[name=Iname]").val(data.name);
-            $("input[name=Itype]").val(data.type);
-            $("input[name=Istock]").val(data.stock);
-            $("input[name=Iamount]").val(0);
+    function confirm(){
+        let fname = $("input[name=fname]").val();
+        let lname = $("input[name=lname]").val();
+        let gender = $("input[name=gender]").val();
+        let address = $("input[name=address]").val();
+        let tel = $("input[name=tel]").val();
+        let email = $("input[name=email]").val();
+        let course_data = $("select[name=course_data]").val();
+        if( fname !== "" && lname !== "" && gender !== "" && address !== "" && tel !== "" && email !== "" && course_data)
+        {
+            let [course_id, course_price] = course_data.split('_')
+            const data = {
+                fname: fname,
+                lname: lname,
+                gender: gender,
+                address: address,
+                tel: tel,
+                email: email,
+                course_id: course_id,
+                course_price: course_price
+            }
+            create_charge(data)
+        }else{
+            toastr.error("กรุณากรอก/เลือกข้อมูลให้ครบถ้วน")
         }
-        else if (mode === "remove"){
-            $("input[name=Did]").val(data.id);
-            $("input[name=Dname]").val(data.name);
-            $("input[name=Dtype]").val(data.type);
-            $("input[name=Dstock]").val(data.stock);
-            $("input[name=Damount]").val(0);
-        }
-        else if (mode === "update_reuse"){
-            $("input[name=Uid]").val(data.id);
-            $("input[name=Uprod_id]").val(data.prod_id);
-            $("input[name=Uprod_name]").val(data.prod_name);
-            $("input[name=Uprod_type]").val(data.type_name);
-            $("input[name=Umax_used]").val(data.max_used);
-            $("input[name=Uremaining]").val(data.remaining);
-            $("input[name=Uremaining_backup]").val(data.remaining);
-        }
-    }
-    
-    function del(id){
-        $("input[name=id_del_reuse]").val(parseInt(id))
-        if(confirm("ยืนยันการลบข้อมูล") == true){
-            $("#delete_reuse").submit();
-        }
-    }
-
-    function vali(mode){
-        /*
-            Mode insert , update 
-        */
-        // (document.querySelector("input[name=Fname]").innerText).trim()
-        if(mode === "add_stock"){
-            let amount = parseInt(($("input[name=Iamount]").val()));
-            if( amount > 0){
-                $("#mange_add_stock").submit();
-                
-            }else{
-                toastr.error("จำนวนต้องมากกว่า 0")
-            }
-            return false;
-        }else if(mode === "remove_stock"){
-            let stock = parseInt(($("input[name=Dstock]").val()));
-            let amount = parseInt(($("input[name=Damount]").val()));
-            // console.log(stock,amount)
-            if( amount > 0 && amount <= stock){
-                $("#mange_remove_stock").submit();
-            }else{
-                toastr.error(`จำนวนต้องมากกว่า 0 และ ไม่เกิน ${stock}`)
-            }
-            return false;
-        }else if (mode === "add_reuse"){
-            let prod_id = parseInt(($("input[name=prod_id]").val()));
-            let stock = parseInt(($("input[name=stock]").val()));
-            let can_used = parseInt(($("input[name=can_used]").val()));
-            if( prod_id !== undefined, prod_id !== undefined, prod_id !== undefined){
-                $("#mange_add_reuse").submit();
-            }else{
-                toastr.error(`! กรุณาเลือกสินค้า`)
-            }
-            return false;
-        }else if (mode === "update_reuse"){
-            let max_used = parseInt(($("input[name=Umax_used]").val()));
-            let remaining = parseInt(($("input[name=Uremaining]").val()));
-            let remaining_backup = parseInt(($("input[name=Uremaining_backup]").val()));
-            if( remaining === remaining_backup){
-                $("#modal-update-reuse").modal("hide")
-            }
-            else if( remaining !== "" && remaining >= 0 && remaining <= max_used){
-                $("#mange_update_reuse").submit();
-            }
-            else{
-                toastr.error(`จำนวนต้องไม่น้อยกว่า 0 และไม่เกิน ${max_used}`)
-            }
-            return false;
-        }
+        return false;
         
     }
   

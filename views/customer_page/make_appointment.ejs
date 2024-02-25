@@ -187,11 +187,14 @@
                     optionElement.text = `${item.f_name} ${item.l_name}`;
                     selectEmployee.appendChild(optionElement);
                 });
+                selectEmployee.disabled = false;
             }
             else{
                 selectEmployee.disabled = true;
                 const optionElement = document.createElement('option');
                 optionElement.text = `ไม่พบข้อมูล`;
+                optionElement.disabled = true;
+                optionElement.selected = true;
                 selectEmployee.appendChild(optionElement);
             }
             if (rooms.length > 0) {
@@ -206,11 +209,14 @@
                     optionElement.text = `${item.name}`;
                     selectRoom.appendChild(optionElement);
                 });
+                selectRoom.disabled = false;
             }
             else{
                 selectRoom.disabled = true
                 const optionElement = document.createElement('option');
                 optionElement.text = `ไม่พบข้อมูล`;
+                optionElement.disabled = true;
+                optionElement.selected = true;
                 selectRoom.appendChild(optionElement);
             }
         }).catch(()=>{
@@ -247,8 +253,8 @@
         */
         // (document.querySelector("input[name=Fname]").innerText).trim()
         if(mode === "add"){
-            let f_name = $("input[name=fname]").val();
-            let l_name = $("input[name=lname]").val();
+            let f_name = $("input[name=f_name]").val();
+            let l_name = $("input[name=l_name]").val();
             let gender = $("input[name=gender]").val();
             let address = $("input[name=address]").val();
             let tel = $("input[name=tel]").val();
@@ -259,7 +265,7 @@
             let emp_id = $("select[name=emp_id]").val();
             let room_id = $("select[name=room_id]").val();
             if( f_name !== "" && l_name !== "" && gender !== "" && address !== "" && tel !== "" && email !== "" && 
-                datetime !== "" && serv_id !== "" && shop_id !== "" && emp_id !== "" && room_id !== ""
+                datetime !== "" && serv_id && shop_id && emp_id && room_id
             ){
                 $("#make_appointment").submit();
             }else{

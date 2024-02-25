@@ -102,6 +102,13 @@
       max-height: 100px;
       overflow-y: auto;
     }
+
+    .menubar {
+      max-height: 70vh; 
+      overflow-y: auto; 
+      scrollbar-width: thin;
+    }
+
   </style>
 </head>
 
@@ -179,13 +186,12 @@
 
 
             <!-- Sidebar Menu -->
-            <nav class="user-panel pt-3 pb-3">
+            <nav class="user-panel menubar pt-3 pb-3">
               <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu"
-                data-accordion="false">
+                data-accordion="false" >
                 <!-- Add icons to the links using the .nav-icon class
                  with font-awesome or any other icon font library -->
                 <li class="nav-item menu-open">
-
                   <% if( session_role=="admin" ){ %>
                     <%- include('../menu/manage_shop'); %>
                     <%- include('../menu/manage_emp'); %>
@@ -198,6 +204,7 @@
                     <%- include('../menu/manage_emp_work'); %>
                     <%- include('../menu/manage_appointment'); %>
                     <%- include('../menu/manage_sale'); %>
+                    <%- include('../menu/manage_report'); %>
                     <!-- <%- include('../menu/manage_privileges'); %> -->
                     <!-- <%- include('../menu/manu_product',{role:session_role}); %> -->
                   <% } else{ %>

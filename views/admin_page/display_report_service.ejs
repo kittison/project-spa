@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>รายงานการใช้บริการ</title>
+    <style>
+
+        .report {
+            width: 90%;
+            padding: 20px;
+            margin: 0 auto;
+        }
+        .header {
+            padding: 10px;
+            text-align: center;
+        }
+        .report-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .report-table th, .report-table td {
+            border: 1px solid #ddd;
+            padding: 10px;
+        }
+
+    </style>
+</head>
+<body>
+    <div class="report">
+        <div class="col-12">
+            <div class="card card-body">
+                <div class="header">
+                    <h2>รายงานการใช้บริการ <%=value%></h2>
+                </div>
+                
+                <table id="table" class="report-table" >
+                    <thead>
+                        <tr class="text-center"> 
+                            <th colspan="2"></th> 
+                            <th colspan="2">จำนวนการใช้บริการ</th> 
+                            <th colspan="2">รายได้ (บาท)</th> 
+                            <th colspan="2">รวมทั้งหมด</th> 
+                        </tr>
+                        <tr>
+                            <th>ID</th>
+                            <th>ชื่อ</th>
+                            <th>ลูกค้าทั่วไป</th>
+                            <th>ลูกค้าvip</th>
+                            <th>ลูกค้าทั่วไป</th>
+                            <th>ลูกค้าvip</th>
+                            <th>จำนวนการใช้</th>
+                            <th>รายได้ (บาท)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% for(let i of data) {%>
+                            <tr>
+                                <td><%= i.id%></td>
+                                <td><%= i.name%></td>
+                                <td><%= i.count_std%></td>
+                                <td><%= i.count_vip%></td>
+                                <td><%= parseFloat(i.amount_std).toFixed(2)%></td>
+                                <td><%= parseFloat(i.amount_vip).toFixed(2)%></td>
+                                <td><%= i.count_all%></td>
+                                <td><%= parseFloat(i.amount_all).toFixed(2)%></td>
+                            </tr>
+                        <% } %>
+                    </tbody>
+                    <tfoot>
+                        <tr>
+                            <th style="text-align:end;" colspan="7">รายได้รวมทั้งหมด</th>
+                            <td id="total"></td>
+                        </tr>
+                    </tfoot>
+                </table>
+
+                <script>
+                    var table = document.getElementById("table"), sumVal = 0;
+        
+                    for(var i = 2; i < table.rows.length-1; i++)
+                    {
+                        sumVal = sumVal + parseFloat(table.rows[i].cells[7].innerHTML);
+                    }
+                    
+                    document.getElementById("total").textContent = sumVal.toFixed(2);
+                </script>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

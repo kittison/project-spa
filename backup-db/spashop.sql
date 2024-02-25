@@ -625,9 +625,9 @@ INSERT INTO `service_in_course` (`id`, `serv_course_id`, `serv_func_id`, `flag`)
 CREATE TABLE `sale` (
   `id` int(11) NOT NULL,
   `appt_id` int(11) NOT NULL,
-  `cust_id` int(11) NOT NULL,
-  `shop_id` int(11) NOT NULL,
-  `emp_id` int(11) NOT NULL,
+  `cust_id` int(11) NULL,
+  `shop_id` int(11) NULL,
+  `emp_id` int(11) NULL,
   `serv_id` int(11) NULL,
   `prod_id` int(11) NULL,
   `prom_id` int(11) NULL,
@@ -643,8 +643,8 @@ CREATE TABLE `sale` (
 
 INSERT INTO `sale` (`id`, `appt_id`, `cust_id`, `shop_id`, `emp_id`, `serv_id`, `prod_id`, `prom_id`, 
 `quantity`, `datetime`, `total_price`, `flag`) VALUES
-(1, 1, 1, 1, 2, null, null, null, null, '2023-10-04 14:00:00', 500, 1),
-(2, 2, 2, 1, 3, null, null, null, null, '2023-10-04 14:00:00', 500, 1),
+(1, 1, null, null, null, null, null, null, null, '2023-10-04 14:00:00', 500, 1),
+(2, 2, null, null, null, null, null, null, null, '2023-10-04 14:00:00', 500, 1),
 
 
 -- --------------------------------------------------------
@@ -714,6 +714,36 @@ INSERT INTO `payment` (`id`, `sale_id`, `payment_meth_id`, `amount`, `datetime`,
 (1, 1, 1, 500, '2023-10-04 14:00:00', 'PAID', 1),
 (2, 2, NULL, NULL, NULL, 'PENDING', 1)
 
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `pre_vip_member`
+--
+
+CREATE TABLE `pre_vip_member` (
+  `id` int(11) NOT NULL,
+  `id` int(11) NULL,
+  `createE_date` DATETIME NOT NULL,
+  `serv_course_id` int(11) NOT NULL,
+  `f_name` text NOT NULL,
+  `l_name` text NOT NULL,
+  `gender` text NOT NULL,
+  `address` text NOT NULL,
+  `tel` text NOT NULL,
+  `email` text NOT NULL,
+  `tel` text int NULL,
+  `price` int(11) NOT NULL,
+  `omise_id` text NOT NULL,
+  `omise_qr` text NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `pre_vip_member`
+--
+
+-- INSERT INTO `pre_vip_member` (`id`, `vip_id`, `create_date`, `serv_course_id`, `f_name`, `l_name`, `gender`, `address`, `tel`, `email`, 
+--  `price`, `omise_id`, `omise_qr`, `flag`) VALUES
+-- (1, NULL, '2024-01-04 14:00:00', 1, "ลูกค้า", "วีไอพี", "เพศ", "ที่อยู่", "0987452163", "เมลล", 600, 'chrg_test_5yw075rajycujsr6ye8', 'https://api.omise.co/charges/chrg_test_5yw075rajycujsr6ye8/documents/docu_test_5yw075t5wtj69t74fbf/downloads/3C0FE352B1ADFCC2', 1)
 
 
 
@@ -1019,6 +1049,12 @@ ALTER TABLE `employee_queue`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4
 
 --
+-- AUTO_INCREMENT for table `vip_member`
+--
+ALTER TABLE `vip_member`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2
+
+--
 -- AUTO_INCREMENT for table `appointment`
 --
 ALTER TABLE `appointment`
@@ -1053,12 +1089,6 @@ ALTER TABLE `sale`
 --
 ALTER TABLE `satisfaction_rating`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3
-
---
--- AUTO_INCREMENT for table `vip_member`
---
-ALTER TABLE `vip_member`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2
 
 --
 -- AUTO_INCREMENT for table `vip_member`
@@ -1163,7 +1193,7 @@ ALTER TABLE `vip_member`
 --
 ALTER TABLE `appointment`
   ADD CONSTRAINT `appointment_ibfk_1` FOREIGN KEY (`cust_id`) REFERENCES `customer` (`id`),
-  ADD CONSTRAINT `appointment_ibfk_2` FOREIGN KEY (`serv_id`) REFERENCES `service` (`id`),
+  ADD CONSTRAINT `appointment_ibfk_2` FOREIGN KEY (`serv_id`) REFERENCES `service_function` (`id`),
   ADD CONSTRAINT `appointment_ibfk_3` FOREIGN KEY (`emp_id`) REFERENCES `employee` (`id`),
   ADD CONSTRAINT `appointment_ibfk_4` FOREIGN KEY (`room_id`) REFERENCES `room` (`id`),
   ADD CONSTRAINT `appointment_ibfk_5` FOREIGN KEY (`vip_id`) REFERENCES `vip_member` (`id`),
