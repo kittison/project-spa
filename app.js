@@ -54,10 +54,12 @@ io.on('connection', (socket) => {
     console.log('A client connected');
 
     // Example: Handle chat message event
-    socket.on('chat message', (message) => {
-        console.log('Message received:', message);
+    socket.on('pre_vip', (data) => {
+        // console.log('Message received:', data);
         // Broadcast the message to all connected clients
-        io.emit('chat message', message);
+        if (data.id){
+            io.emit(`pre_vip_${data.id}`, data);
+        }
     });
 
     // Other event handlers...

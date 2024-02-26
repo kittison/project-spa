@@ -42,13 +42,13 @@
             <div class="form-group row">
                 <label class="col-sm-2 col-form-label">ชื่อ:</label>
                 <div class="col-sm-10">
-                    <input type="text" class="form-control" id="fname" name="fname" placeholder="ชื่อ">
+                    <input type="text" class="form-control" id="f_name" name="f_name" placeholder="ชื่อ">
                 </div>
             </div>
             <div class="form-group row">
                 <label class="col-sm-2 col-form-label">นามสกุล:</label>
                 <div class="col-sm-10">
-                    <input type="text" class="form-control" id="lname" name="lname" placeholder="นามสกุล">
+                    <input type="text" class="form-control" id="l_name" name="l_name" placeholder="นามสกุล">
                 </div>
             </div>
             <div class="form-group row">
@@ -93,13 +93,12 @@
             <div class="form-group row pt-2">
                 <div class="col-sm-12">
                     <button  class="btn btn-primary w-100" style="padding: 10px;"
-                        onclick="return confirm()" disabled>ยืนยันการเลือกซื้อ
+                        onclick="return confirm()">ยืนยันการเลือกซื้อ
                     </button>
                 </div>
             </div>
         </form>
     </div>
-    
 </div>
 
 <script src="/axios/axios.min.js"></script>
@@ -130,9 +129,13 @@
             timeout:3000
         }).then((result)=>{
             console.log(result.data);
-
-            // if( result.data.status == 1 ){
-            //     window.location="/";
+            if (result.data.pre_vip_id){
+                window.location = `buy_vip_pending?id=${result.data.pre_vip_id}`
+            }else if (result.data.error){
+                toastr.error(result.data.code)
+            }else {
+                toastr.error("404 Error Not Found")
+            }
         })
     }
 </script>
@@ -147,19 +150,19 @@
     }
 
     function confirm(){
-        let fname = $("input[name=fname]").val();
-        let lname = $("input[name=lname]").val();
+        let f_name = $("input[name=f_name]").val();
+        let l_name = $("input[name=l_name]").val();
         let gender = $("input[name=gender]").val();
         let address = $("input[name=address]").val();
         let tel = $("input[name=tel]").val();
         let email = $("input[name=email]").val();
         let course_data = $("select[name=course_data]").val();
-        if( fname !== "" && lname !== "" && gender !== "" && address !== "" && tel !== "" && email !== "" && course_data)
+        if( f_name !== "" && l_name !== "" && gender !== "" && address !== "" && tel !== "" && email !== "" && course_data)
         {
             let [course_id, course_price] = course_data.split('_')
             const data = {
-                fname: fname,
-                lname: lname,
+                f_name: f_name,
+                l_name: l_name,
                 gender: gender,
                 address: address,
                 tel: tel,

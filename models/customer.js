@@ -19,6 +19,13 @@ exports.insert_cust = async (input) => {
     let result = await con.query(sql)
     return result.insertId
 };
+exports.insert_cust_vip = async (input) => {
+    let sql = ` INSERT INTO customer( f_name, l_name, gender, address, tel, email, cus_type, member_point, is_member, is_walkin, flag) 
+                VALUES ("${input.f_name}", "${input.l_name}", "${input.gender}", "${input.address}", "${input.tel}", "${input.email}",
+                "${input.type}", ${parseInt(input.point)}, 1, 0, 1);`
+    let result = await con.query(sql)
+    return result.insertId
+};
 exports.update_cust = async (input) => {
     let sql = ` UPDATE customer SET f_name=  "${input.Uf_name}", l_name= "${input.Ul_name}", gender= "${input.Ugender}",
                 address= "${input.Uaddress}", tel= "${input.Utel}", email= "${input.Uemail}", cus_type= "${input.Utype}", 

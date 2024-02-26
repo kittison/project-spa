@@ -18,10 +18,12 @@ router.get('/manage_appointment', manage_appointment_controller.Manage_appointme
 router.post('/manage_appointment/:action', manage_appointment_controller.setAppointment);
 
 router.get('/buy_vip', buy_vip_controller.Buy_vip);
+router.get('/buy_vip_pending', buy_vip_controller.Buy_vip_pending);
 router.post('/buy_vip/:action', buy_vip_controller.setBuyVip);
 
 router.get('/manage_vip', manage_vip_controller.Manage_vip);
 router.post('/manage_vip/:action', manage_vip_controller.setManageVip);
+router.get('/activate_vip_password', manage_vip_controller.Activate_vip_password);
 
 router.get('/rating', rating_controller.Rating);
 router.post('/rating/:action', rating_controller.setRating);

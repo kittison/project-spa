@@ -31,7 +31,7 @@ exports.setMakeAppointment = async (req, res) => {
         if (search.length == 0){
             req.body.type = "ทั่วไป";
             req.body.point = 0;
-            console.log(req.body)
+            // console.log(req.body)
             let new_cust_id = await model_cust.insert_cust(req.body);
             req.body.cust_id = new_cust_id
             let appt_id = await model.insert_appt(req.body).then((data)=>{return data});

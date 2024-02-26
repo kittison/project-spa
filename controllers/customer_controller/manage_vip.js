@@ -59,6 +59,8 @@ exports.setManageVip =async (req, res) => {
             }else{
                 res.send({error:1,code:'ไม่พบข้อมูล'});
             }
+        }else{
+            res.redirect("/customer");
         }
     }else if(req.params.action === "close_card"){
         req.session.destroy(function(err){
@@ -87,7 +89,36 @@ exports.setManageVip =async (req, res) => {
     }else if(req.params.action === "cancel_appointment"){
         await model_appt.cancel_appt(req.body).then((data)=>{return data});
         res.redirect("../manage_vip");
+    }else if(req.params.action === "activate_password"){
+        await model.update_vip_password(req.body).then((data)=>{return data});
+        res.redirect("../manage_vip");
+    }else if(req.params.action === "check_pwd"){
+        if(req.body.id!=undefined){
+            let result = await model.check_activate_pwd(req.body);
+            const status = result? 1 : 0;
+            res.send({status:status});
+        }else{
+            res.redirect("/customer");
+        }
     }else{
         res.redirect("/customer");
+    }
+};
+
+exports.Activate_vip_password = async (req, res) => {
+    if (!isNaN(parseInt(req.query.id))){
+        let check_pwd =  await model.check_activate_pwd({id: req.query.id});
+        if (check_pwd){
+            res.render('template',{
+                session_role:"customer",
+                header:"Pending Buy Vip",
+                file:'customer_page/activate_vip_password',
+                vip_id:req.query.id
+            });
+        }else{
+            res.redirect("/buy_vip");
+        }
+    }else{
+        res.redirect("/buy_vip");
     }
 };

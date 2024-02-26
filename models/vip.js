@@ -1,5 +1,6 @@
 const con = require('../config/db_config.js')
-const sha = require('../config/encrypt')
+const sha = require('../config/encrypt');
+const formatDate = require('../config/formatDate.js');
 
 exports.vertify_vip = async (input) => {
     const date = new Date();
@@ -94,3 +95,40 @@ exports.get_vip_appointment = async (input) => {
         return null
     }
 };
+
+exports.get_pre_vip = async (input) => {
+    let sql = ` SELECT * FROM pre_vip_member where id = ${input.id} and flag = 1`
+    let result = await con.query(sql)
+    return result;
+};
+
+exports.get_pre_vip_by_omise = async (input) => {
+    let sql = ` SELECT * FROM pre_vip_member where omise_id = "${input.id}" and price = ${input.amount} and flag = 1`
+    let result = await con.query(sql)
+    return result;
+};
+
+exports.insert_pre_vip = async (input) => {
+    let now = formatDate(new Date())
+    let sql = ` INSERT INTO pre_vip_member( vip_id, created_date, serv_course_id, f_name, l_name, gender, address, tel, email, 
+                price, omise_id, flag) 
+                VALUES (NULL, "${now}", ${input.course_id}, "${input.f_name}", "${input.l_name}", "${input.gender}", 
+                "${input.address}", "${input.tel}", "${input.email}", "${input.course_price}", "${input.omise_id}", 1);`
+    let result = await con.query(sql)
+    return result.insertId
+};
+
+exports.update_pre_vip = async (input) => {
+    let sql = ` UPDATE pre_vip_member SET vip_id= ${input.vip_id} WHERE id = ${input.id} `
+    let result = await con.query(sql)
+};
+exports.update_vip_password = async (input) => {
+    let sql = ` UPDATE vip_member SET password= '${sha.encrypt(input.pwd)}' WHERE id = ${input.id_update} `
+    let result = await con.query(sql)
+};
+
+exports.check_activate_pwd = async (input) => {
+    let sql = ` SELECT * from vip_member where id= ${input.id} and password = '' and flag = 1`
+    let result = await con.query(sql)
+    return result.length > 0;
+}

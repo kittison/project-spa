@@ -722,8 +722,8 @@ INSERT INTO `payment` (`id`, `sale_id`, `payment_meth_id`, `amount`, `datetime`,
 
 CREATE TABLE `pre_vip_member` (
   `id` int(11) NOT NULL,
-  `id` int(11) NULL,
-  `createE_date` DATETIME NOT NULL,
+  `vip_id` int(11) NULL,
+  `created_date` DATETIME NOT NULL,
   `serv_course_id` int(11) NOT NULL,
   `f_name` text NOT NULL,
   `l_name` text NOT NULL,
@@ -731,19 +731,18 @@ CREATE TABLE `pre_vip_member` (
   `address` text NOT NULL,
   `tel` text NOT NULL,
   `email` text NOT NULL,
-  `tel` text int NULL,
   `price` int(11) NOT NULL,
   `omise_id` text NOT NULL,
-  `omise_qr` text NOT NULL
+  `flag` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `pre_vip_member`
 --
 
--- INSERT INTO `pre_vip_member` (`id`, `vip_id`, `create_date`, `serv_course_id`, `f_name`, `l_name`, `gender`, `address`, `tel`, `email`, 
---  `price`, `omise_id`, `omise_qr`, `flag`) VALUES
--- (1, NULL, '2024-01-04 14:00:00', 1, "ลูกค้า", "วีไอพี", "เพศ", "ที่อยู่", "0987452163", "เมลล", 600, 'chrg_test_5yw075rajycujsr6ye8', 'https://api.omise.co/charges/chrg_test_5yw075rajycujsr6ye8/documents/docu_test_5yw075t5wtj69t74fbf/downloads/3C0FE352B1ADFCC2', 1)
+-- INSERT INTO `pre_vip_member` (`id`, `vip_id`, `created_date`, `serv_course_id`, `f_name`, `l_name`, `gender`, `address`, `tel`, 
+-- `email`, `price`, `omise_id`, `flag`) VALUES
+-- (1, NULL, '2024-01-04 14:00:00', 1, "ลูกค้า", "วีไอพี", "เพศ", "ที่อยู่", "0987452163", "เมลล", 600, 'chrg_test_5yw075rajycujsr6ye8', 1)
 
 
 
@@ -941,6 +940,13 @@ ALTER TABLE `payment`
   ADD PRIMARY KEY (`id`),
   ADD KEY `payment_meth_id` (`payment_meth_id`)
 
+--
+-- Indexes for table `prepare_vip_member`
+--
+ALTER TABLE `pre_vip_member`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `vip_id` (`vip_id`)
+
 
 --
 -- AUTO_INCREMENT for dumped tables
@@ -1102,7 +1108,11 @@ ALTER TABLE `payment_method`
 ALTER TABLE `payment`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3
 
-
+--
+-- AUTO_INCREMENT for table `pre_vip_member`
+--
+ALTER TABLE `pre_vip_member`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=1
 
 
 
@@ -1222,7 +1232,11 @@ ALTER TABLE `satisfaction_rating`
 ALTER TABLE `payment`
   ADD CONSTRAINT `payment_ibfk_1` FOREIGN KEY (`payment_meth_id`) REFERENCES `payment_method` (`id`)
 
-
+--
+-- Constraints for table `pre_vip_member`
+--
+ALTER TABLE `pre_vip_member`
+  ADD CONSTRAINT `pre_vip_member_ibfk_1` FOREIGN KEY (`vip_id`) REFERENCES `vip_member` (`id`)
 
 
 

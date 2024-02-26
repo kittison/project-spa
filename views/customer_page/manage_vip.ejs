@@ -39,7 +39,7 @@
         <div class="w-100" >
             <% if (!data_vip) {%>
                 <div class="d-flex justify-content-center" >
-                    <div class="card card-body" style="max-width: 800px;">
+                    <div class="card card-body">
                         <div class="form-group d-flex" style="gap: 10px">
                             <div class="flex-grow-1">
                                 <label >หมายเลขบัตร:</label>
@@ -50,7 +50,21 @@
                                 <input type="password" class="form-control" id="v_pwd" name="v_pwd" placeholder="รหัสผ่าน">
                             </div>
                             <div class="d-flex flex-wrap align-content-end">
-                                <button type="button" class="btn btn-info" onclick="return checkCode()">ตรวจสอบ</button>
+                                <button type="button" class="btn btn-info" onclick="return checkCode('use_card')">ตรวจสอบ</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="d-flex justify-content-center w-100" ><label class="">หรือ</label></div>
+                <div class="d-flex justify-content-center" >
+                    <div class="card card-body">
+                        <div class="form-group d-flex" style="gap: 10px">
+                            <div class="flex-grow-1">
+                                <label >หมายเลขบัตร ที่ยังไม่ได้ตั้งรหัสผ่าน:</label>
+                                <input type="text" class="form-control" id="v_id2" name="v_id2" placeholder="หมายเลขบัตร">
+                            </div>
+                            <div class="d-flex flex-wrap align-content-end">
+                                <button type="button" class="btn btn-info" onclick="return checkCode('check_pwd')">ตรวจสอบ</button>
                             </div>
                         </div>
                     </div>
@@ -440,6 +454,24 @@
         })
     }
 
+    function check_pwd(id){
+        axios({
+            url:'/manage_vip/check_pwd',
+            method:'post',
+            data:{
+                id:id
+            },
+            timeout:3000
+        }).then((result)=>{
+            // console.log(result.data);
+            if( result.data.status == 1){
+                window.location=`./activate_vip_password?id=${id}`;
+            }else{
+                toastr.error('ไม่พบบัตรหมายเลขนี้/หมายเลขบัตรนี้ถูกตั้งรหัสผ่านแล้ว')
+            }
+        })
+    }
+
     function closeCard() {
         axios({
             url:'/manage_vip/close_card',
@@ -629,15 +661,24 @@
         }
     }
 
-    function checkCode(){
-        let id = $("input[name=v_id]").val();
-        let pwd = $("input[name=v_pwd]").val();
-        if(isNaN(id)){
-            toastr.error(`! หมายเลขบัตรไม่ถูกต้อง`)
-        }else if( id !== "" && pwd !== ""){
-            vertify_vip(id,pwd);
-        }else{
-            toastr.error(`! กรุณากรอกข้อมูลให้ครบถ้วน`)
+    function checkCode(mode){
+        if (mode == "use_card"){
+            let id = $("input[name=v_id]").val();
+            let pwd = $("input[name=v_pwd]").val();
+            if(isNaN(parseInt(id))){
+                toastr.error(`! หมายเลขบัตรไม่ถูกต้อง`)
+            }else if( id !== "" && pwd !== ""){
+                vertify_vip(id,pwd);
+            }else{
+                toastr.error(`! กรุณากรอกข้อมูลให้ครบถ้วน`)
+            }
+        }else if (mode == "check_pwd") {
+            let id = $("input[name=v_id2]").val();
+            if(isNaN(parseInt(id))){
+                toastr.error(`! หมายเลขบัตรไม่ถูกต้อง`)
+            }else {
+                check_pwd(id);
+            }
         }
     }
 

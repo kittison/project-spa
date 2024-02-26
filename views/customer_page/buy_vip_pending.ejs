@@ -1,0 +1,72 @@
+<style>
+    .container-fluid {
+        padding: 12px;
+    }
+
+    img {
+        display: block;
+        width: 100%;
+        height: 70vh;
+        object-fit: fill;
+        overflow: hidden;
+    }
+
+</style>
+
+<div class="container-fluid">
+    <input class="d-none" type="text" id="pre_vip_id" value="<%= pre_vip_id%>">
+    <img src="<%= qr_url%>" alt="SVG Image">
+    <div class="d-flex justify-content-center p-3" style="gap: 5px;">
+        <input class="d-none" type="text" id="expired_date" value="<%= expired_date%>">
+        <label >กรุณาจ่ายเงินก่อน <%= new Date(expired_date).toLocaleString('th-TH', { timeZone: 'Asia/Bangkok' })%></label>
+        <label id="countdown"></label>
+    </div>
+</div>
+
+<script>
+    // Set the target date for the countdown (replace with your target date)
+    const expired_date = document.getElementById('expired_date').value
+    const targetDate = new Date(expired_date).getTime();
+    targetDate.add
+    // Update the countdown display every second
+    const countdownInterval = setInterval(updateCountdown, 1000);
+
+    function updateCountdown() {
+        // Get the current date and time
+        const currentDate = new Date().getTime();
+
+        // Calculate the remaining time in milliseconds
+        const timeRemaining = targetDate - currentDate;
+
+        // Check if the countdown has reached zero
+        if (timeRemaining <= 0) {
+            clearInterval(countdownInterval); // Stop the countdown
+            document.getElementById('countdown').innerHTML = '(หมดเวลาแล้ว)';
+            return;
+        }
+
+        // Convert milliseconds to days, hours, minutes, and seconds
+        const days = Math.floor(timeRemaining / (1000 * 60 * 60 * 24));
+        const hours = Math.floor((timeRemaining % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        const minutes = Math.floor((timeRemaining % (1000 * 60 * 60)) / (1000 * 60));
+        const seconds = Math.floor((timeRemaining % (1000 * 60)) / 1000);
+
+        // Update the countdown display
+        document.getElementById('countdown').innerHTML = 
+        `(เหลือเวลา: ${days>0?`${day} วัน`:''} ${hours>0?`${hours} ชม.`:''} ${minutes>0?`${minutes} น.`:''} ${seconds>0?`${seconds} วิ`:''})`;
+    }
+</script>
+
+<script src="/socket.io/socket.io.js"></script>
+<script>
+    const pre_vip_id = document.getElementById('pre_vip_id').value
+    const socket = io();
+
+    socket.on(`pre_vip_${pre_vip_id}`, function(data) {
+            // Handle the received data
+            console.log('Received data:', data);
+            if (data.vip_id) {
+                window.location = `activate_vip_password?id=${data.vip_id}`
+            }
+        });
+</script>
