@@ -236,7 +236,7 @@ exports.get_summary_sale = async (start_date,end_date) => {
                 JOIN employee e ON e.id = a.emp_id 
                 LEFT JOIN service_product sp ON sp.sv_func_id = sf.id 
                 LEFT JOIN product p ON p.id = sp.prod_id 
-                WHERE s.datetime BETWEEN '${start_date}' AND '${end_date}' AND s.flag = 1 AND sp.flag = 1
+                WHERE s.datetime BETWEEN '${start_date} 0:00:00' AND '${end_date} 23:59:59' AND s.flag = 1 AND sp.flag = 1
                 GROUP BY DATE(s.datetime)
                 ORDER BY date`
     let result = await con.query(sql)

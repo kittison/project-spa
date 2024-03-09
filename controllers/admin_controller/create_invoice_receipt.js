@@ -6,7 +6,7 @@ const puppeteer = require('puppeteer');
 
 exports.Create_invoice = async (req, res) => {
     if( req.session.role === "admin" && req.query.sale_id){
-        const data = await model.get_sales_byID({id:req.query.sale_id})
+        const data = await model.get_sales_save({id:req.query.sale_id})
         if (data.length > 0) {
             res.render('template',{
                 session_user_id:req.session.user_id,
@@ -27,7 +27,7 @@ exports.Create_invoice = async (req, res) => {
 
 exports.Create_receipt = async (req, res) => {
     if( req.session.role === "admin" && req.query.sale_id){
-        const data = await model.get_sales_byID({id:req.query.sale_id})
+        const data = await model.get_sales_save({id:req.query.sale_id})
         if (data.length > 0) {
             res.render('template',{
                 session_user_id:req.session.user_id,
@@ -48,7 +48,7 @@ exports.Create_receipt = async (req, res) => {
 
 exports.Save_invoice = async (req, res) => {
     if( req.session.role === "admin" && req.query.sale_id){
-        const data = await model.get_sales_byID({id:req.query.sale_id});
+        const data = await model.get_sales_save({id:req.query.sale_id});
         if (data.length > 0) {
             const filePath = path.join(__dirname, '..', '..', 'views', 'admin_page', 'display_invoice.ejs')
             const html = await ejs.renderFile(filePath, {data:data[0]} );
@@ -80,7 +80,7 @@ exports.Save_invoice = async (req, res) => {
 
 exports.Save_receipt = async (req, res) => {
     if( req.session.role === "admin" && req.query.sale_id){
-        const data = await model.get_sales_byID({id:req.query.sale_id});
+        const data = await model.get_sales_save({id:req.query.sale_id});
         if (data.length > 0) {
             const filePath = path.join(__dirname, '..', '..', 'views', 'admin_page', 'display_receipt.ejs')
             const html = await ejs.renderFile(filePath, {data:data[0]} );

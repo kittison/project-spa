@@ -45,6 +45,28 @@ exports.get_sales_byID = async (input) => {
     return result;
 };
 
+exports.get_sales_save = async (input) => {
+    let sql = ` SELECT sale.*, a.start_date, a.end_date, a.cust_id, c.f_name as cust_fname, c.l_name as cust_lname,
+                a.emp_id, e.f_name as emp_fname, e.l_name as emp_lname, a.serv_id, s.name as serv_name, 
+                sf.time as serv_time, sf.price as serv_price, a.room_id, r.name as room_name, a.shop_id, 
+                sh.shop_name as shop_name, sh.location as shop_location, sh.contact as shop_contact,
+                a.status, a.is_confirmed, p.id as payment_id, p.payment_meth_id, p.amount, p.datetime as pay_datetime, p.status, 
+                pm.name as pay_meth
+                FROM sale
+                JOIN appointment as a on sale.appt_id = a.id
+                JOIN customer AS c on a.cust_id = c.id
+                JOIN service_function AS sf on a.serv_id = sf.id
+                JOIN service AS s on sf.serv_id = s.id
+                JOIN employee AS e on a.emp_id = e.id
+                JOIN room AS r on a.room_id = r.id
+                JOIN shop AS sh on a.shop_id = sh.id
+                JOIN payment as p on sale.id = p.sale_id
+                LEFT JOIN payment_method as pm on p.payment_meth_id = pm.id
+                where sale.id = ${input.id} and sale.flag = 1`
+    let result = await con.query(sql)
+    return result;
+};
+
 exports.get_sale_rating = async () => {
     let sql = ` SELECT sale.*, a.start_date, a.end_date, a.cust_id, c.f_name as cust_fname, c.l_name as cust_lname,
                 a.emp_id, e.f_name as emp_fname, e.l_name as emp_lname, a.serv_id, s.name as serv_name, 
