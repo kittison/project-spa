@@ -141,7 +141,7 @@ exports.get_emp_queue = async () => {
     let sql = ` SELECT em_q.id, em_q.number, em.id as emp_id, em.f_name, em.l_name, em.n_name, em_q.created_date, em_q.status
                 FROM employee_queue em_q
                 JOIN employee em ON em_q.emp_id = em.id
-                where em.emp_type_id = 2 and em.flag = 1 and em_q.flag = 1 and em_q.status = 0
+                where em.emp_type_id != 1 and em.flag = 1 and em_q.flag = 1 and em_q.status = 0
                 ORDER BY em_q.number asc`
     let result = await con.query(sql)
     return result;
@@ -183,7 +183,7 @@ exports.get_emp_work = async () => {
                 ) onprocess_appointment ON
                     e.id = onprocess_appointment.emp_id
                 WHERE
-                    e.emp_type_id = 2
+                    e.emp_type_id != 1
                     AND e.flag = 1
                 GROUP BY e.id`
                 

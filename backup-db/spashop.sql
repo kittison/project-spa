@@ -1207,7 +1207,7 @@ ALTER TABLE `appointment`
   ADD CONSTRAINT `appointment_ibfk_3` FOREIGN KEY (`emp_id`) REFERENCES `employee` (`id`),
   ADD CONSTRAINT `appointment_ibfk_4` FOREIGN KEY (`room_id`) REFERENCES `room` (`id`),
   ADD CONSTRAINT `appointment_ibfk_5` FOREIGN KEY (`vip_id`) REFERENCES `vip_member` (`id`),
-  ADD CONSTRAINT `appointment_ibfk_6` FOREIGN KEY (`shop_id`) REFERENCES `employee` (`id`)
+  ADD CONSTRAINT `appointment_ibfk_6` FOREIGN KEY (`shop_id`) REFERENCES `shop` (`id`)
 
 --
 -- Constraints for table `sale`
