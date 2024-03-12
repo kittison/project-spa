@@ -115,6 +115,7 @@ router.get('/manage_service_function/check_can_add_product', manage_serv_control
 // ---------------  manage-employee-work ---------------
 router.get('/manage_emp_work', manage_emp_controller.Manage_emp_work);
 router.post('/manage_emp_work/:action', manage_emp_controller.setEmployeeWork);
+router.get('/manage_emp_work/check_can_add_emp_queue', manage_shop_controller.check_can_add_emp);
 
 // ---------------  manage-employee-queue ---------------
 router.get('/manage_emp_queue', manage_emp_controller.Manage_emp_queue);

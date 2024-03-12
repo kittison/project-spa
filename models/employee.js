@@ -3,14 +3,16 @@ const formatDate = require('../config/formatDate.js')
 
 exports.get_emp = async () => {
     let sql = ` SELECT em.id,em.f_name,em.l_name,em.n_name,em.address,em.tel,em.date_start,em.date_end,em.bank_account,em.wage,
-                em.is_service,em.emp_type_id,em_type.name as emp_type,em.job_level_id,job_level.description, job_level.responsibilities  FROM employee em , employee_type em_type, job_level
+                em.is_service,em.emp_type_id,em_type.name as emp_type,em.job_level_id,job_level.description, job_level.responsibilities  
+                FROM employee em , employee_type em_type, job_level
                 where em_type.id = em.emp_type_id and job_level.id = em.job_level_id and em.flag = 1`
     let result = await con.query(sql)
     return result;
 };
 exports.get_emp_service = async () => {
     let sql = ` SELECT em.id,em.f_name,em.l_name,em.n_name,em.address,em.tel,em.date_start,em.date_end,em.bank_account,em.wage,
-                em.is_service,em.emp_type_id,em_type.name as emp_type,em.job_level_id,job_level.description, job_level.responsibilities  FROM employee em , employee_type em_type, job_level
+                em.is_service,em.emp_type_id,em_type.name as emp_type,em.job_level_id,job_level.description, job_level.responsibilities  
+                FROM employee em , employee_type em_type, job_level
                 where em.job_level_id != 1 and em_type.id = em.emp_type_id and job_level.id = em.job_level_id and em.flag = 1`
     let result = await con.query(sql)
     return result;
@@ -191,9 +193,45 @@ exports.get_emp_work = async () => {
     result.now = format
     return result;
 };
-
+exports.insert_emp_queue = async (input) => {
+    let date = formatDate(new Date())
+    let queue = await con.query(`SELECT max(number) as max_number FROM employee_queue`)
+    let sql = ` INSERT INTO employee_queue( emp_id, number, created_date, status, flag) 
+                VALUES (${input.emp_id}, ${queue[0].max_number!=null?queue[0].max_number:1}, "${date}", 0, 1);`
+    let result = await con.query(sql)
+};
 exports.update_emp_queue = async (input) => {
     let sql = ` UPDATE employee_queue SET emp_id=${input.emp_id}, number=${input.number} 
                 WHERE id = ${input.id} `
     let result = await con.query(sql)
+};
+exports.delete_emp_queue = async (input) => {
+    // Set flag to 0
+    let sql = ` UPDATE employee_queue SET flag = 0 WHERE id = ${parseInt(input.id_del)}`
+    let result = await con.query(sql)
+};
+exports.get_emp_no_queue = async () => {
+    let sql = ` SELECT em.id,em.f_name,em.l_name,em.n_name,em_type.name as emp_type,em.job_level_id,
+                    job_level.description, job_level.responsibilities
+                    FROM employee em 
+                    JOIN employee_type em_type ON em_type.id = em.emp_type_id
+                    JOIN job_level ON job_level.id = em.job_level_id
+                    LEFT JOIN employee_queue eq ON eq.emp_id = em.id
+                    where em.flag = 1 and em.emp_type_id != 1 and ISNULL(eq.id) 
+                UNION 
+                SELECT em.id,em.f_name,em.l_name,em.n_name,em_type.name as emp_type,em.job_level_id,
+                    job_level.description, job_level.responsibilities
+                    FROM employee em 
+                    JOIN employee_type em_type ON em_type.id = em.emp_type_id
+                    JOIN job_level ON job_level.id = em.job_level_id
+                    JOIN (
+                        SELECT em.id, max(eq.flag) as flag
+                        FROM employee em 
+                        JOIN employee_queue eq ON eq.emp_id = em.id
+                        where em.flag = 1 and em.emp_type_id != 1 
+                        GROUP BY em.id
+                    ) eq ON eq.id = em.id AND eq.flag = 0
+                ORDER BY id  `
+    let result = await con.query(sql)
+    return result;
 };

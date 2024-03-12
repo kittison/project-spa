@@ -168,6 +168,7 @@ exports.Manage_emp_work = async (req, res) => {
     if( req.session.role === "admin" ){
         let db_emp_work =  await model.get_emp_work();
         let db_emp_queue =  await model.get_emp_queue();
+        let db_emp_no_queue =  await model.get_emp_no_queue();
         // console.log(db_emp_work);
         res.render('template',{
             session_user_id:req.session.user_id,
@@ -175,6 +176,7 @@ exports.Manage_emp_work = async (req, res) => {
             session_role:req.session.role,
             db_emp_queue:db_emp_queue,
             db_emp_work:db_emp_work,
+            db_emp_no_queue:db_emp_no_queue,
             header:"Manage Employee Work",
             file:'admin_page/manage_emp_work'
         });
@@ -195,6 +197,13 @@ exports.setEmployeeWork =async (req, res) => {
             res.redirect("../manage_emp_work");
         }else if(req.params.action === "update"){
             await model.update_emp(req.body).then((data)=>{return data});
+            res.redirect("../manage_emp_work");
+        }
+        if(req.params.action === "add_queue"){
+            await model.insert_emp_queue(req.body).then((data)=>{return data});
+            res.redirect("../manage_emp_work");
+        }else if(req.params.action === "delete_queue"){
+            await model.delete_emp_queue(req.body).then((data)=>{return data});
             res.redirect("../manage_emp_work");
         }
     }else{

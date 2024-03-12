@@ -1052,7 +1052,8 @@ ALTER TABLE `service_product`
 -- AUTO_INCREMENT for table `employee_queue`
 --
 ALTER TABLE `employee_queue`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4 
+  MODIFY COLUMN `number` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4 ;
 
 --
 -- AUTO_INCREMENT for table `vip_member`
