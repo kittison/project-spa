@@ -42,9 +42,8 @@ exports.setStorage =async (req, res) => {
             res.redirect("../manage_storage");
         }else if(req.params.action === "add_reuse"){
             await model.insert_product_reuse(req.body).then((data)=>{return data});
-            await model.update_stock(req.body.req.body.prod_id,req.body.stock-1).then((data)=>{return data});
-            await model.record_history(req.body.Did,req.body.stock,req.body.stock-1,2)
-            await model.record_history(req.body.Did,req.body.can_used,req.body.can_used-1,3)
+            await model.update_stock(req.body.prod_id,req.body.stock-1).then((data)=>{return data});
+            await model.record_history(req.body.prod_id,req.body.stock,req.body.stock-1,2)
             res.redirect("../manage_storage");
         }else if(req.params.action === "update_reuse"){
             await model.update_product_reuse(req.body).then((data)=>{return data});
