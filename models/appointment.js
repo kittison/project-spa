@@ -106,7 +106,7 @@ exports.get_employee_available = async (input) => {
                 AND a.start_date <= '${input.datetime}'
                 AND a.end_date >= '${input.datetime}'
                 AND a.status not in ('Cancelled','Complete')
-                WHERE a.start_date IS NULL and s.shop_id = ${input.shop_id} and e.emp_type_id != 1 and e.flag = 1`
+                WHERE a.start_date IS NULL and s.shop_id = ${input.shop_id} and e.emp_type_id != 1 and e.flag = 1 and s.flag = 1`
     let result = await con.query(sql)
     // console.log('!',result)
     return result;
@@ -194,7 +194,7 @@ exports.get_employee_4_change = async (input) => {
                 LEFT JOIN appointment a ON e.id = a.emp_id
                 AND a.start_date <= '${input.datetime}'
                 AND a.end_date >= '${input.datetime}'
-                WHERE a.id = ${input.appt_id} and s.shop_id = ${input.shop_id} and e.emp_type_id != 1 and e.flag = 1`
+                WHERE a.id = ${input.appt_id} and s.shop_id = ${input.shop_id} and e.emp_type_id != 1 and e.flag = 1 and s.flag = 1`
     let result = await con.query(sql)
     // console.log('!',result)
     return result;
