@@ -163,6 +163,7 @@ exports.setAppointment =async (req, res) => {
             const data = {
                 appt_id:req.body.Sappt_id,
                 emp_id:appt[0].emp_id,
+                room_id:appt[0].room_id,
                 datetime:req.body.Sdatetime,
                 price:req.body.Sprice,
             }

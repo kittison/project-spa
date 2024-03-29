@@ -713,6 +713,8 @@
             $("input[name=SVserv_data]").val(`${data.serv_name} - ${data.serv_time} นาที - ${data.serv_price} บาท`);
             $("input[name=SVshop]").val(data.shop_name);
             $("input[name=SVemp]").val(`${data.emp_fname} ${data.emp_lname}`);
+            $("input[name=SVroom]").val(data.room_name);
+            $("input[name=SVroom_id]").val(data.room_id);
             let product = ""
             for (p of data.product) {
                 if (product != "") { product += ' | '}

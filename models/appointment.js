@@ -66,6 +66,8 @@ exports.update_appt_by_admin = async (input) => {
 exports.serve_appt = async (input) => {
     let sql_emp = `UPDATE employee SET is_service= 1 WHERE id = ${input.SVemp_id}`
     await con.query(sql_emp)
+    let sql_room = `UPDATE room SET status= 1 WHERE id = ${input.SVroom_id}`
+    await con.query(sql_room)
     let sql = ` UPDATE appointment SET status= "Onprocess" WHERE id = ${input.SVappt_id} `
     let result = await con.query(sql)
 };

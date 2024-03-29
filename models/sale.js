@@ -118,6 +118,8 @@ exports.get_payment_meth = async () => {
 exports.insert_sale = async (input) => {
     let sql_emp = `UPDATE employee SET is_service= 0 WHERE id = ${input.emp_id}`
     await con.query(sql_emp)
+    let sql_room= `UPDATE room SET status= 0 WHERE id = ${input.room_id}`
+    await con.query(sql_room)
     let sql_appt = ` UPDATE appointment SET status= "Completed"
                 WHERE id = ${input.appt_id} `
     await con.query(sql_appt)
